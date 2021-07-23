@@ -23,7 +23,7 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GCE_PROJECT }}
   GCE_INSTANCE: sh-3
-  GCE_INSTANCE_ZONE: us-central1-a
+  GCE_INSTANCE_ZONE: us-east1-b
 
 jobs:
   setup-build-publish-deploy:
