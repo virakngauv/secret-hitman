@@ -1,8 +1,14 @@
 import logo from './logo.svg';
 import './App.css';
-import { Server } from 'socket.io';
 
+const express = require('express');
+const app = express();
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
 const io = new Server(server);
+
+let latency = Date.now();
 
 // server-side
 io.on("connection", (socket) => {
@@ -18,7 +24,7 @@ setInterval(() => {
 
   // volatile, so the packet will be discarded if the socket is not connected
   socket.volatile.emit("ping", () => {
-    const latency = Date.now() - start;
+    latency = Date.now() - start;
     // ...
   });
 }, 5000);
