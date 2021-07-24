@@ -23,7 +23,7 @@ setInterval(() => {
   const start = Date.now();
 
   // volatile, so the packet will be discarded if the socket is not connected
-  socket.volatile.emit("ping", () => {
+  io.volatile.emit("ping", () => {
     latency = Date.now() - start;
     // ...
   });
