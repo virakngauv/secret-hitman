@@ -8,7 +8,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
-let latency = Date.now();
+// let latency = Date.now();
 
 // server-side
 io.on("connection", (socket) => {
@@ -24,7 +24,8 @@ setInterval(() => {
 
   // volatile, so the packet will be discarded if the socket is not connected
   io.volatile.emit("ping", () => {
-    latency = Date.now() - start;
+    const latency = Date.now() - start;
+    console.log(latency)
     // ...
   });
 }, 5000);
@@ -45,7 +46,6 @@ function App() {
         >
           Learn React
         </a>
-        {latency}
       </header>
     </div>
   );
