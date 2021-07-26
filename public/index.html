@@ -39,6 +39,15 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+    <p>
+      Latency is:
+    </p>
+    <p id="latency">
+      INITIALIZING 
+    </p>
+
+
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io();
@@ -49,10 +58,14 @@
         // volatile, so the packet will be discarded if the socket is not connected
         socket.volatile.emit("ping", () => {
           const latency = Date.now() - start;
-          console.log(latency + " ms")
+          console.log(latency + " ms");
           // ...
+
+          const latencyText = document.querySelector('#latency');
+          latencyText.innerText = latency + " ms";
         });
       }, 5000);
     </script>
+
   </body>
 </html>
