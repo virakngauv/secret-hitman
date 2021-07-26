@@ -1,34 +1,34 @@
 import logo from './logo.svg';
 import './App.css';
 
-const express = require('express');
-const app = express();
-const http = require('http');
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
+// const express = require('express');
+// const app = express();
+// const http = require('http');
+// const server = http.createServer(app);
+// const { Server } = require("socket.io");
+// const io = new Server(server);
 
 // let latency = Date.now();
 
-// server-side
-io.on("connection", (socket) => {
-  socket.on("ping", (cb) => {
-    if (typeof cb === "function")
-      cb();
-  });
-});
+//// server-side
+// io.on("connection", (socket) => {
+//   socket.on("ping", (cb) => {
+//     if (typeof cb === "function")
+//       cb();
+//   });
+// });
 
-// client-side
-setInterval(() => {
-  const start = Date.now();
+//// client-side
+// setInterval(() => {
+//   const start = Date.now();
 
-  // volatile, so the packet will be discarded if the socket is not connected
-  io.volatile.emit("ping", () => {
-    const latency = Date.now() - start;
-    console.log(latency)
-    // ...
-  });
-}, 5000);
+//   // volatile, so the packet will be discarded if the socket is not connected
+//   io.volatile.emit("ping", () => {
+//     const latency = Date.now() - start;
+//     console.log(latency)
+//     // ...
+//   });
+// }, 5000);
 
 function App() {
   return (
