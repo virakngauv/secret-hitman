@@ -71,10 +71,10 @@ jobs:
           --metadata=startup-script='#! /bin/bash
             docker image prune -af'
 
-    # # Purge old images from GCR (not latest)
-    # - name: Purge GCR images
-    #   run: |-
-    #     gcloud container images list-tags gcr.io/secret-hitman/sh-3-image \
-    #       --format='get(digest)' --filter='-tags:$GITHUB_SHA' |\
-    #       awk '{print "gcr.io/secret-hitman/sh-3-image@" $1}' |\
-    #       xargs -r gcloud container images delete --force-delete-tags --quiet
+    # Purge old images from GCR (not latest)
+    - name: Purge GCR images
+      run: |-
+        gcloud container images list-tags gcr.io/secret-hitman/sh-3-image \
+          --format='get(digest)' --filter='-tags:$GITHUB_SHA' |\
+          awk '{print "gcr.io/secret-hitman/sh-3-image@" $1}' |\
+          xargs -r gcloud container images delete --force-delete-tags --quiet
