@@ -71,6 +71,11 @@ jobs:
           --metadata=startup-script='#! /bin/bash
             docker image prune -af'
 
+    # Echo GitHub SHA for testing
+    - name: Echo GitHub SHA
+      run: |-
+        echo $GITHUB_SHA
+
     # Purge old images from GCR (not latest)
     - name: Purge GCR images
       run: |-
