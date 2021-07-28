@@ -75,6 +75,6 @@ jobs:
     - name: Purge GCR images
       run: |-
         gcloud container images list-tags gcr.io/$PROJECT_ID/$GCE_INSTANCE-image \
-          --format='get(digest)' --filter="NOT tags=$GITHUB_SHA" | \
+          --format="get(digest)" --filter="NOT tags=$GITHUB_SHA" | \
           awk -v image_path="gcr.io/$PROJECT_ID/$GCE_INSTANCE-image@" '{print image_path $1}' | \
           xargs -r gcloud container images delete --force-delete-tags --quiet
