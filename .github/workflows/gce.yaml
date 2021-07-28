@@ -64,7 +64,6 @@ jobs:
           --container-image "gcr.io/$PROJECT_ID/$GCE_INSTANCE-image:$GITHUB_SHA"
 
     # Add pruning to VM startup script
-    # TODO: only prune from secret hitman
     - name: Update startup script to prune
       run: |-
         gcloud compute instances add-metadata $GCE_INSTANCE \
@@ -72,15 +71,10 @@ jobs:
           --metadata=startup-script='#! /bin/bash
             docker image prune -af'
 
-    # Echo GitHub SHA for testing
-    - name: Echo GitHub SHA
-      run: |-
-        echo $GITHUB_SHA
-
     # Purge old images from GCR (not latest)
     - name: Purge GCR images
       run: |-
         gcloud container images list-tags gcr.io/$PROJECT_ID/$GCE_INSTANCE-image \
-          --format='get(digest)' --filter="NOT tags=$GITHUB_SHA" |\
-          awk '{print "gcr.io/secret-hitman/sh-3-image@" $1}' |\
+          --format='get(digest)' --filter="NOT tags=$GITHUB_SHA" | \
+          awk -v image_path="gcr.io/$PROJECT_ID/$GCE_INSTANCE-image@" '{print image_path $1}' | \
           xargs -r gcloud container images delete --force-delete-tags --quiet
