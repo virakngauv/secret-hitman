@@ -52,7 +52,7 @@
     <script>
       var socket = io();
 
-      setInterval(function latencyTest() {
+      setInterval(() => {
         const start = Date.now();
 
         // volatile, so the packet will be discarded if the socket is not connected
@@ -63,9 +63,7 @@
           const latencyText = document.querySelector('#latency');
           latencyText.innerText = latency + " ms";
         });
-
-        return latencyTest;
-      }(), 5000);
+      }, 5000);
     </script>
 
   </body>
