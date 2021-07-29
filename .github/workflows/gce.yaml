@@ -24,6 +24,7 @@ env:
   PROJECT_ID: ${{ secrets.GCE_PROJECT }}
   GCE_INSTANCE: sh-3
   GCE_INSTANCE_ZONE: us-east1-b
+  DDNS_AUTH_STRING: ${{ secrets.DDNS_AUTH_STRING }}
 
 jobs:
   setup-build-publish-deploy:
@@ -64,12 +65,15 @@ jobs:
           --container-image "gcr.io/$PROJECT_ID/$GCE_INSTANCE-image:$GITHUB_SHA"
 
     # Add pruning to VM startup script
-    - name: Update startup script to prune
+    - name: Update startup script to prune and update IP address
       run: |-
         gcloud compute instances add-metadata $GCE_INSTANCE \
           --zone "$GCE_INSTANCE_ZONE" \
-          --metadata=startup-script='#! /bin/bash
-            docker image prune -af'
+          --metadata=startup-script="#! /bin/bash
+            docker image prune -af
+            curl --location --request GET 'domains.google.com/nic/update?hostname=codenames-hitman.com' \
+              --header 'User-Agent: VM' \
+              --header 'Authorization: Basic $DDNS_AUTH_STRING'"
 
     # Purge old images from GCR (not latest)
     - name: Purge GCR images
