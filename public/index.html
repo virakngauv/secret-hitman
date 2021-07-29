@@ -52,19 +52,20 @@
     <script>
       var socket = io();
 
-      setInterval(() => {
+      setInterval((function latencyTest() {
         const start = Date.now();
 
         // volatile, so the packet will be discarded if the socket is not connected
         socket.volatile.emit("ping", () => {
           const latency = Date.now() - start;
           console.log(latency + " ms");
-          // ...
 
           const latencyText = document.querySelector('#latency');
           latencyText.innerText = latency + " ms";
         });
-      }, 5000);
+
+        return latencyTest;
+      })(), 5000);
     </script>
 
   </body>
