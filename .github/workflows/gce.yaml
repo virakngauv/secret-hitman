@@ -57,14 +57,7 @@ jobs:
       run: |-
         docker push "gcr.io/$PROJECT_ID/$GCE_INSTANCE-image:$GITHUB_SHA"
 
-    # Deploy new image to GCE VM
-    - name: Deploy
-      run: |-
-        gcloud compute instances update-container "$GCE_INSTANCE" \
-          --zone "$GCE_INSTANCE_ZONE" \
-          --container-image "gcr.io/$PROJECT_ID/$GCE_INSTANCE-image:$GITHUB_SHA"
-
-    # Add pruning to VM startup script
+    # Add pruning and IP address update to VM startup script
     - name: Update startup script to prune and update IP address
       run: |-
         gcloud compute instances add-metadata $GCE_INSTANCE \
@@ -74,6 +67,13 @@ jobs:
             curl --location --request GET 'domains.google.com/nic/update?hostname=codenames-hitman.com' \
               --header 'User-Agent: VM' \
               --header 'Authorization: Basic $DDNS_AUTH_STRING'"
+
+    # Deploy new image to GCE VM
+    - name: Deploy
+      run: |-
+        gcloud compute instances update-container "$GCE_INSTANCE" \
+          --zone "$GCE_INSTANCE_ZONE" \
+          --container-image "gcr.io/$PROJECT_ID/$GCE_INSTANCE-image:$GITHUB_SHA"
 
     # Purge old images from GCR (not latest)
     - name: Purge GCR images
