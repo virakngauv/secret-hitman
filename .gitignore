@@ -129,3 +129,8 @@ dist
 # TernJS port file
 .tern-port
 
+# SSL cert files
+*.crt
+*.ca-bundle
+*.key
+.ssl/
