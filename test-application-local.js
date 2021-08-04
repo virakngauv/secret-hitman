@@ -30,7 +30,6 @@ const credentials = {
 const httpServer = http.createServer(app);
 const httpsServer = https.createServer(credentials, app);
 
-
 const io = new Server();
 io.attach(httpServer);
 io.attach(httpsServer);
