@@ -12,12 +12,28 @@
 
 // Start socket.io example
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
 const app = express();
 const http = require('http');
-const server = http.createServer(app);
+const https = require('https');
 const { Server } = require("socket.io");
-const io = new Server(server);
+
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/codenames-hitman.com/privkey.pem');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/codenames-hitman.com/fullchain.pem');
+
+const credentials = {
+  key: privateKey,
+	cert: certificate
+}
+
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer(credentials, app);
+
+
+const io = new Server();
+io.attach(httpServer);
+io.attach(httpsServer);
 
 app.use(express.static(path.join(__dirname, 'build')));
 
@@ -31,6 +47,10 @@ io.on('connection', (socket) => {
 
 server.listen(80, () => {
   console.log('listening on *:80');
+});
+
+server.listen(443, () => {
+  console.log('listening on *:443');
 });
 // End socket.io example
 
