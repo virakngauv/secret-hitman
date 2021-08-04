@@ -130,6 +130,7 @@ dist
 .tern-port
 
 # SSL cert files
+*.pem
 *.crt
 *.ca-bundle
 *.key
