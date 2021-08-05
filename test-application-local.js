@@ -44,11 +44,12 @@ io.on('connection', (socket) => {
   console.log('a user connected');
 });
 
+// was the below a typo this whole time??
 // server.listen(80, () => {
 //   console.log('listening on *:80');
 // });
 
-server.listen(443, () => {
+httpsServer.listen(443, () => {
   console.log('listening on *:443');
 });
 // End socket.io example
