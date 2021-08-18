@@ -1,10 +1,9 @@
-import logo from './logo.svg';
 import './App.css';
-import Announcer from './components/Announcer';
+import GameScreen from './components/GameScreen';
 
 function App() {
   return (
-    <Announcer />
+    <GameScreen />
   );
 }
 

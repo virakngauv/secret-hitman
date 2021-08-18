@@ -1,10 +1,10 @@
 import Announcer from "../Announcer";
 
-function GameScreen() {
+function GameBoard() {
     return (
         <Announcer />
     );
   }
   
-  export default GameScreen;
+  export default GameBoard;
   
