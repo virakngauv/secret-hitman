@@ -1,0 +1,20 @@
+.status-indicator {
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: auto 5px;
+  vertical-align: 10%;
+}
+
+.status-indicator--codemaster {
+  background-color: black;
+}
+
+.status-indicator--active {
+  background-color: chartreuse;
+}
+
+.status-indicator--inactive {
+  background-color: gold;
+}

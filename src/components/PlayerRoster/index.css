@@ -1,0 +1,6 @@
+.card-group.player-roster {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow: auto;
+}

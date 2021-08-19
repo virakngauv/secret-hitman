@@ -1,3 +1,9 @@
+/* Put the below for the components that neeed the layout as such aka GameBoard */
+/* .screen {
+  width: 315px;
+} */
+
+/*Default CSS from react*/
 .App {
   text-align: center;
 }

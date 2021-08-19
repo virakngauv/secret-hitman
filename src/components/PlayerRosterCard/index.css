@@ -1,0 +1,21 @@
+.player-card {
+  min-width: 70px;
+  font-size: small;
+}
+
+.player-card > .card-header {
+  padding: 0.3rem 0.3rem 0rem;
+  font-weight: bold;
+  background-color: white;
+  border-bottom: hidden;
+
+  /* Hide overflow text */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.player-card > .card-body {
+  padding: 0.3rem;
+  padding-top: 3px;
+}
