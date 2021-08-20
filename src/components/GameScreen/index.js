@@ -45,10 +45,25 @@ function GameScreen() {
     },
   ];
 
+  const codemasterMessages = [
+    "Pick a clue",
+  ]
+  const guesserMessages = [
+    "Calphanlopos is thinking..",
+    "Ready up!",
+    "salty ∞",
+  ]
+  const temporaryMessages = [
+    "Dion hit the assassin!",
+    "Crim also hit the assassin!",
+    "Beth hit a target!",
+    "Alfred hit a civilian!",
+  ]
+
   return (
     <Container className="screen">
       <PlayerRoster players={players} />
-      <Announcer />
+      <Announcer message={guesserMessages[2]} />
       <GameBoard />
       <Footer />
     </Container>

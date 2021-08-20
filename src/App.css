@@ -2,6 +2,9 @@
 /* .screen {
   width: 315px;
 } */
+.screen {
+  font-family: Helvetica, Arial, sans-serif;
+}
 
 /*Default CSS from react*/
 .App {
