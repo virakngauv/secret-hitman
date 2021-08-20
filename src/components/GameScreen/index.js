@@ -34,11 +34,15 @@ function GameScreen() {
       status: Status.inactive
     },
     {
-      name: "Caphanies", 
+      name: "Calphanlopos", 
       score: 4, 
       status: Status.inactive
     },
-
+    {
+      name: "Tundra", 
+      score: 12, 
+      status: Status.active
+    },
   ];
 
   return (
