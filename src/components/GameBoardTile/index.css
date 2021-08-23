@@ -1,0 +1,15 @@
+.game-board-tile {
+  height: 95px;
+  width: 100px;
+  margin: 5px;
+  padding: 0px;
+}
+
+.game-board-tile-text {
+  font-size: medium;
+  font-weight: bold;
+}
+
+.game-board-tile-claimer {
+  font-size: x-small;
+}

@@ -60,11 +60,32 @@ function GameScreen() {
     "Alfred hit a civilian!",
   ]
 
+  // TODO: Make Enum for word type
+  const Type = {
+    target: "target", 
+    civilian: "civilian", 
+    assassin: "assassin"
+  }
+  const words = [
+    {text: "bermuda", type: Type.civilian}, 
+    {text: "casino", type: Type.target, claimer: "Tundra",}, 
+    {text: "unicorn", type: Type.target, claimer: "Tundra",}, 
+    {text: "figure", type: Type.target, claimer: "Tundra",}, 
+    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
+    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
+    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
+    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
+    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
+    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
+    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
+    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
+  ]
+
   return (
     <Container className="screen">
       <PlayerRoster players={players} />
       <Announcer message={guesserMessages[2]} />
-      <GameBoard />
+      <GameBoard words={words} enabled />
       <Footer />
     </Container>
   );
