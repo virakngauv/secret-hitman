@@ -46,26 +46,26 @@ function GameScreen() {
   ];
 
   const codemasterMessages = [
-    "Pick a clue",
-  ]
+    "Write the hint below",
+  ];
   const guesserMessages = [
     "Calphanlopos is thinking..",
     "Ready up!",
     "salty ∞",
-  ]
+  ];
   const temporaryMessages = [
     "Dion hit the assassin!",
     "Crim also hit the assassin!",
     "Beth hit a target!",
     "Alfred hit a civilian!",
-  ]
+  ];
 
   // TODO: Make Enum for word type
   const Type = {
     target: "target", 
     civilian: "civilian", 
     assassin: "assassin"
-  }
+  };
   const words = [
     {text: "bermuda", type: Type.civilian}, 
     {text: "casino", type: Type.target, claimer: "Tundra",}, 
@@ -79,14 +79,14 @@ function GameScreen() {
     {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
     {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
     {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
-  ]
+  ];
 
   return (
     <Container className="screen">
       <PlayerRoster players={players} />
-      <Announcer message={guesserMessages[2]} />
-      <GameBoard words={words} enabled />
-      <Footer />
+      <Announcer message={codemasterMessages[0]} />
+      <GameBoard words={words} enabled={false} />
+      <Footer isCodemaster={true} />
     </Container>
   );
 }

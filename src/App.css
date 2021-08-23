@@ -4,6 +4,8 @@
 } */
 .screen {
   font-family: Arial, sans-serif;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 /*Default CSS from react*/
