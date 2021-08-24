@@ -69,22 +69,22 @@ function GameScreen() {
   const words = [
     {text: "bermuda", type: Type.civilian}, 
     {text: "casino", type: Type.target, claimer: "Tundra",}, 
-    {text: "unicorn", type: Type.target, claimer: "Tundra",}, 
-    {text: "figure", type: Type.target, claimer: "Tundra",}, 
-    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
-    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
-    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
-    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
-    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
-    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
-    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
-    {text: "bermuda", type: Type.target, claimer: "Tundra",}, 
+    {text: "unicorn", type: Type.target, claimer: "Calphanlopos",}, 
+    {text: "figure", type: Type.target, claimer: "Beth",}, 
+    {text: "mail", type: Type.target}, 
+    {text: "drop", type: Type.target,}, 
+    {text: "microscope", type: Type.target, claimer: "Tundra",}, 
+    {text: "watch", type: Type.target, claimer: "Alfred",}, 
+    {text: "atlantis", type: Type.assassin}, 
+    {text: "chair", type: Type.target}, 
+    {text: "bell", type: Type.target}, 
+    {text: "tick", type: Type.target}, 
   ];
 
   return (
     <Container className="screen">
       <PlayerRoster players={players} />
-      <Announcer message={codemasterMessages[0]} />
+      <Announcer message={temporaryMessages[0]} />
       <GameBoard words={words} enabled={false} />
       <Footer isCodemaster={true} />
     </Container>
