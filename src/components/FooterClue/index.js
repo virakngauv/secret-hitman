@@ -27,9 +27,9 @@ function FooterClue(props) {
   return (
     <Form onSubmit={handleSubmit}>
       <InputGroup size="sm" className="footer ms-auto me-auto">
-        <FormControl 
-          name="hint" 
-          placeholder="Type your hint.." 
+        <FormControl
+          name="hint"
+          placeholder="Type your hint.."
           onChange={handleHintChange}
         />
         <DropdownButton
