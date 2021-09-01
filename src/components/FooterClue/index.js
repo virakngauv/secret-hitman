@@ -6,13 +6,8 @@ function FooterClue(props) {
   const [hint, setHint] = useState("");
   const [hintNumber, setHintNumber] = useState("#");
 
-  const handleHintChange = (e) => {
-    setHint(e.target.value);
-  }
-
-  const handleHintNumberChange = (hintNumber) => {
-    setHintNumber(hintNumber);
-  }
+  const handleHintChange = (e) => {setHint(e.target.value);}
+  const handleHintNumberChange = (hintNumber) => {setHintNumber(hintNumber);  }
 
   // This will eventually come from parent props
   const submitClue = () => console.log(hint, hintNumber);
