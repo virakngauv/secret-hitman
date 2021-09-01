@@ -15,15 +15,15 @@ function FooterClue() {
                     setHintNumber(eventKey);
                 }}
             >
-                <Dropdown.Item eventKey="1">1</Dropdown.Item>
-                <Dropdown.Item eventKey="2">2</Dropdown.Item>
-                <Dropdown.Item eventKey="3">3</Dropdown.Item>
-                <Dropdown.Item eventKey="4">4</Dropdown.Item>
-                <Dropdown.Item eventKey="5">5</Dropdown.Item>
-                <Dropdown.Item eventKey="6">6</Dropdown.Item>
-                <Dropdown.Divider />
-                <Dropdown.Item eventKey="Zero">Zero</Dropdown.Item>
                 <Dropdown.Item eventKey="Infinity">Infinity</Dropdown.Item>
+                <Dropdown.Item eventKey="Zero">Zero</Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item eventKey="6">6</Dropdown.Item>
+                <Dropdown.Item eventKey="5">5</Dropdown.Item>
+                <Dropdown.Item eventKey="4">4</Dropdown.Item>
+                <Dropdown.Item eventKey="3">3</Dropdown.Item>
+                <Dropdown.Item eventKey="2">2</Dropdown.Item>
+                <Dropdown.Item eventKey="1">1</Dropdown.Item>
             </DropdownButton>
             <Button variant="outline-secondary" id="submit-clue-button">Submit</Button>
         </>
