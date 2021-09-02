@@ -9,7 +9,7 @@ function GameBoard(props) {
   return (
     <Row className="game-board justify-content-center ms-auto me-auto">
       {words.map((word) => (
-        <GameBoardTile word={word} enabled={isEnabled} />))}
+        <GameBoardTile word={word} isEnabled={isEnabled} />))}
     </Row>
   );
 }
