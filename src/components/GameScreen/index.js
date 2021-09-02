@@ -86,7 +86,7 @@ function GameScreen() {
       <PlayerRoster players={players} />
       <Announcer message={temporaryMessages[0]} />
       <GameBoard words={words} enabled={false} />
-      <Footer isCodemaster={true} />
+      <Footer isCodemaster={false} />
     </Container>
   );
 }
