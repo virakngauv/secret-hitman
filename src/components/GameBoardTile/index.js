@@ -5,6 +5,7 @@ import "./index.css";
 
 function GameBoardTile(props) {
   const word = props.word;
+  // TODO: should use the "enabled" prop to init the state, which can then be changed on logic
 
   const [show, toggleShow] = useState(true);
 

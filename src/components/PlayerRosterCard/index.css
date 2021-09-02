@@ -8,14 +8,15 @@
   font-weight: bold;
   background-color: white;
   border-bottom: hidden;
-
-  /* Hide overflow text */
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .player-card > .card-body {
   padding: 0.3rem;
   padding-top: 3px;
+}
+
+.player-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
