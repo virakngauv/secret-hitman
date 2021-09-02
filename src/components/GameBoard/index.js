@@ -9,8 +9,6 @@ function GameBoard(props) {
 
   function updateWord(wordIndex) {
     if (words.length > wordIndex) {
-      // words[wordIndex] = {text: "chair", type: "civilian", claimer: "Alfred"};
-
       const newWords = [...words];
       newWords[wordIndex] = {text: "chair", type: "civilian", claimer: "Alfred"};
 
