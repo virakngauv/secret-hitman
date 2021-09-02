@@ -11,13 +11,17 @@ function GameBoardTile(props) {
   const initIsEnabled = props.isEnabled;
   const [isEnabled, setIsEnabled] = useState(initIsEnabled);
 
+  function handleTileClick () {
+    setIsEnabled(false);
+  }
+
   return (
     <Col>
       <Button
         className="game-board-tile"
         variant="outline-secondary"
         disabled={!isEnabled}
-        onClick={() => setIsEnabled(false)}
+        onClick={handleTileClick}
       >
         <div className="game-board-tile-text text-uppercase">{word}</div>
         {claimer && <div className="game-board-tile-claimer">{claimer}</div>}
