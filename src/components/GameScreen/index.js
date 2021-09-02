@@ -3,6 +3,7 @@ import Announcer from "../Announcer";
 import PlayerRoster from "../PlayerRoster";
 import GameBoard from "../GameBoard";
 import Footer from "../Footer"
+import { useState } from "react";
 
 // TODO: Make Status Enum and import
 
@@ -66,26 +67,28 @@ function GameScreen() {
     civilian: "civilian", 
     assassin: "assassin"
   };
-  const words = [
-    {text: "bermuda", type: Type.civilian}, 
-    {text: "casino", type: Type.target, claimer: "Tundra",}, 
+  const initWords = [
+    {text: "bermuda"},
+    {text: "casino", type: Type.target, claimer: "Tundra",},
     {text: "unicorn", type: Type.target, claimer: "Calphanlopos",}, 
     {text: "figure", type: Type.target, claimer: "Beth",}, 
-    {text: "mail", type: Type.target}, 
-    {text: "drop", type: Type.target,}, 
+    {text: "mail"}, 
+    {text: "drop"}, 
     {text: "microscope", type: Type.target, claimer: "Tundra",}, 
     {text: "watch", type: Type.target, claimer: "Alfred",}, 
-    {text: "atlantis", type: Type.assassin}, 
-    {text: "chair", type: Type.target}, 
-    {text: "bell", type: Type.target}, 
-    {text: "tick", type: Type.target}, 
+    {text: "atlantis", type: Type.assassin, claimer: "Dion"}, 
+    {text: "chair", type: Type.civilian, claimer: "Alfred"}, 
+    {text: "bell"}, 
+    {text: "tick"}, 
   ];
+
+  const [words, setWords] = useState(initWords);
 
   return (
     <Container className="screen">
       <PlayerRoster players={players} />
       <Announcer message={temporaryMessages[0]} />
-      <GameBoard words={words} isEnabled={true} />
+      <GameBoard words={words} setWords={setWords} isEnabled={true} />
       <Footer isCodemaster={false} />
     </Container>
   );

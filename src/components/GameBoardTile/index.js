@@ -11,15 +11,38 @@ function GameBoardTile(props) {
   const initIsEnabled = props.isEnabled;
   const [isEnabled, setIsEnabled] = useState(initIsEnabled);
 
+  const index = props.index;
+  const updateWord = props.updateWord;
+
+  // TODO: Import Type Enum after making it
+  const Type = {
+    target: "target", 
+    civilian: "civilian", 
+    assassin: "assassin"
+  };
+
+  let buttonVariant = "";
+  if (type === Type.target) {
+    buttonVariant = "success";
+  } else if (type === Type.civilian) {
+    buttonVariant = "light";
+  } else if (type === Type.assassin) {
+    buttonVariant = "dark";
+  } else {
+    buttonVariant = "outline-secondary";
+  }
+
   function handleTileClick () {
     setIsEnabled(false);
+
+    updateWord(index);
   }
 
   return (
     <Col>
       <Button
         className="game-board-tile"
-        variant="outline-secondary"
+        variant={buttonVariant}
         disabled={!isEnabled}
         onClick={handleTileClick}
       >
