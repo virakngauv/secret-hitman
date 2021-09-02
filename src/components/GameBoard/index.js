@@ -4,12 +4,12 @@ import "./index.css";
 
 function GameBoard(props) {
   const words = props.words;
-  const enabled = props.enabled;
+  const isEnabled = props.isEnabled;
 
   return (
     <Row className="game-board justify-content-center ms-auto me-auto">
       {words.map((word) => (
-        <GameBoardTile word={word} enabled={enabled} />))}
+        <GameBoardTile word={word} enabled={isEnabled} />))}
     </Row>
   );
 }

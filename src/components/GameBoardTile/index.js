@@ -4,20 +4,23 @@ import Col from "react-bootstrap/Col";
 import "./index.css";
 
 function GameBoardTile(props) {
-  const word = props.word;
-  // TODO: should use the "enabled" prop to init the state, which can then be changed on logic
+  const word = props.word.text;
+  const type = props.word.type;
+  const claimer = props.word.claimer;
 
-  const [show, toggleShow] = useState(true);
+  const initIsEnabled = props.isEnabled;
+  const [isEnabled, setIsEnabled] = useState(initIsEnabled);
 
   return (
     <Col>
       <Button
         className="game-board-tile"
         variant="outline-secondary"
-        onClick={() => toggleShow(!show)}
+        disabled={!isEnabled}
+        onClick={() => setIsEnabled(false)}
       >
-        <div className="game-board-tile-text text-uppercase">{word.text}</div>
-        {show && <div className="game-board-tile-claimer">{word.claimer}</div>}
+        <div className="game-board-tile-text text-uppercase">{word}</div>
+        {claimer && <div className="game-board-tile-claimer">{claimer}</div>}
       </Button>
     </Col>
   );
