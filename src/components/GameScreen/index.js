@@ -47,7 +47,7 @@ function GameScreen() {
   ];
 
   const codemasterMessages = [
-    "Write the hint below",
+    "Type your hint below",
   ];
   const guesserMessages = [
     "Calphanlopos is thinking..",
@@ -84,12 +84,30 @@ function GameScreen() {
 
   const [words, setWords] = useState(initWords);
 
+  const codemasterWords = [
+    {text: "bermuda", type: Type.civilian},
+    {text: "casino", type: Type.target},
+    {text: "unicorn", type: Type.target}, 
+    {text: "figure", type: Type.target}, 
+    {text: "mail", type: Type.civilian}, 
+    {text: "drop", type: Type.civilian}, 
+    {text: "microscope", type: Type.target}, 
+    {text: "watch", type: Type.target}, 
+    {text: "atlantis", type: Type.assassin}, 
+    {text: "chair", type: Type.civilian}, 
+    {text: "bell", type: Type.civilian}, 
+    {text: "tick", type: Type.civilian}, 
+  ];
+
+  // TODO: get value from server
+  const isCodemaster = false;
+
   return (
     <Container className="screen">
       <PlayerRoster players={players} />
-      <Announcer message={temporaryMessages[0]} />
-      <GameBoard words={words} setWords={setWords} isEnabled={true} />
-      <Footer isCodemaster={false} />
+      <Announcer message={isCodemaster ? codemasterMessages : guesserMessages[2]} />
+      <GameBoard words={isCodemaster ? codemasterWords : words} setWords={setWords} isForceDisabled={isCodemaster} />
+      <Footer isCodemaster={isCodemaster} />
     </Container>
   );
 }

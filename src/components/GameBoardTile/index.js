@@ -8,11 +8,18 @@ function GameBoardTile(props) {
   const type = props.word.type;
   const claimer = props.word.claimer;
 
-  const initIsEnabled = props.isEnabled;
-  const [isEnabled, setIsEnabled] = useState(initIsEnabled);
+  const isForceDisabled = props.isForceDisabled;
+  const [isDisabled, setIsDisabled] = useState(isForceDisabled);
 
-  const index = props.index;
-  const updateWord = props.updateWord;
+  // const index = props.index;
+  const updateThisWord = props.updateThisWord;
+
+  function handleTileClick () {
+    setIsDisabled(true);
+    
+    // "updateWord() will eventually make an API call"
+    updateThisWord();
+  }
 
   // TODO: Import Type Enum after making it
   const Type = {
@@ -20,6 +27,8 @@ function GameBoardTile(props) {
     civilian: "civilian", 
     assassin: "assassin"
   };
+
+  const tileClassName = isForceDisabled ? "game-board-tile game-board-tile-force-disabled" : "game-board-tile";
 
   let buttonVariant = "";
   if (type === Type.target) {
@@ -32,18 +41,12 @@ function GameBoardTile(props) {
     buttonVariant = "outline-secondary";
   }
 
-  function handleTileClick () {
-    setIsEnabled(false);
-
-    updateWord(index);
-  }
-
   return (
     <Col>
       <Button
-        className="game-board-tile"
+        className={tileClassName}
         variant={buttonVariant}
-        disabled={!isEnabled}
+        disabled={isDisabled || type}
         onClick={handleTileClick}
       >
         <div className="game-board-tile-text text-uppercase">{word}</div>

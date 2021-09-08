@@ -4,7 +4,7 @@ import "./index.css";
 
 function GameBoard(props) {
   const words = props.words;
-  const isEnabled = props.isEnabled;
+  const isForceDisabled = props.isForceDisabled;
   const setWords = props.setWords;
 
   function updateWord(wordIndex) {
@@ -19,8 +19,11 @@ function GameBoard(props) {
 
   return (
     <Row className="game-board justify-content-center ms-auto me-auto">
-      {words.map((word, index) => (
-        <GameBoardTile word={word} index={index} updateWord={updateWord} isEnabled={isEnabled} />))}
+      {words.map((word, index) => {
+        const updateThisWord = () => {updateWord(index)};
+
+        return <GameBoardTile word={word} updateThisWord={updateThisWord} isForceDisabled={isForceDisabled} />
+      })}
     </Row>
   );
 }

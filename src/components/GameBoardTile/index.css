@@ -12,6 +12,11 @@
   }
 }
 
+.game-board-tile.game-board-tile-force-disabled {
+  opacity: 1;
+  border: 1px solid #c3c3c3;
+}
+
 .game-board-tile-text {
   font-size: small;
   font-weight: bold;
