@@ -3,30 +3,27 @@ import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import "./index.css";
 
+import { Type } from "../../constants/type.js";
+
 function GameBoardTile(props) {
-  const word = props.word.text;
+  const word = props.tile.word;
   const type = props.word.type;
   const claimer = props.word.claimer;
 
   const isForceDisabled = props.isForceDisabled;
   const [isDisabled, setIsDisabled] = useState(isForceDisabled);
 
+  const isGameBoardDisabled = props.isGameBoardDisabled;
+
   // const index = props.index;
-  const updateThisWord = props.updateThisWord;
+  const updateThisTile = props.updateThisTile;
 
   function handleTileClick () {
     setIsDisabled(true);
     
     // "updateWord() will eventually make an API call"
-    updateThisWord();
-  }
-
-  // TODO: Import Type Enum after making it
-  const Type = {
-    target: "target", 
-    civilian: "civilian", 
-    assassin: "assassin"
-  };
+    updateThisTile();
+  } 
 
   const tileClassName = isForceDisabled ? "game-board-tile game-board-tile-force-disabled" : "game-board-tile";
 
@@ -46,7 +43,7 @@ function GameBoardTile(props) {
       <Button
         className={tileClassName}
         variant={buttonVariant}
-        disabled={isDisabled || type}
+        disabled={isGameBoardDisabled || isDisabled || claimer}
         onClick={handleTileClick}
       >
         <div className="game-board-tile-text text-uppercase">{word}</div>

@@ -4,45 +4,43 @@ import PlayerRoster from "../PlayerRoster";
 import GameBoard from "../GameBoard";
 import Footer from "../Footer"
 import { useState } from "react";
+import Type from "../../constants/type.js";
+import Status from "../../constants/status.js";
+import State from "../../constants/state.js";
 
 // TODO: Make Status Enum and import
 
 function GameScreen() {
-  const Status = {
-    active: "active",
-    inactive: "inactive", 
-    codemaster: "codemaster"
-  };
   const players = [
     {
       name: "Alfred", 
       score: 9, 
-      status: Status.active
+      status: Status.ACTIVE
     },
     {
       name: "Beth", 
       score: 13, 
-      status: Status.codemaster
+      status: Status.CODEMASTER
     },
     {
       name: "Crim", 
       score: 10, 
-      status: Status.active
+      status: Status.ACTIVE
     },
     {
       name: "Dion", 
       score: -2, 
-      status: Status.inactive
+      status: Status.INACTIVE
     },
     {
       name: "Calphanlopos", 
       score: 4, 
-      status: Status.inactive
+      status: Status.INACTIVE
     },
     {
       name: "Tundra", 
       score: 12, 
-      status: Status.active
+      status: Status.ACTIVE
     },
   ];
 
@@ -61,52 +59,48 @@ function GameScreen() {
     "Alfred hit a civilian!",
   ];
 
-  // TODO: Make Enum for word type
-  const Type = {
-    target: "target", 
-    civilian: "civilian", 
-    assassin: "assassin"
-  };
-  const initWords = [
-    {text: "bermuda"},
-    {text: "casino", type: Type.target, claimer: "Tundra",},
-    {text: "unicorn", type: Type.target, claimer: "Calphanlopos",}, 
-    {text: "figure", type: Type.target, claimer: "Beth",}, 
-    {text: "mail"}, 
-    {text: "drop"}, 
-    {text: "microscope", type: Type.target, claimer: "Tundra",}, 
-    {text: "watch", type: Type.target, claimer: "Alfred",}, 
-    {text: "atlantis", type: Type.assassin, claimer: "Dion"}, 
-    {text: "chair", type: Type.civilian, claimer: "Alfred"}, 
-    {text: "bell"}, 
-    {text: "tick"}, 
+  const initTiles = [
+    {word: "bermuda", state: State.ENABLED}, 
+    {word: "casino", type: Type.TARGET, claimer: "Tundra", state: State.ENABLED}, 
+    {word: "unicorn", type: Type.TARGET, claimer: "Calphanlopos", state: State.ENABLED}, 
+    {word: "figure", type: Type.TARGET, claimer: "Beth", state: State.ENABLED}, 
+    {word: "mail", state: State.ENABLED}, 
+    {word: "drop", state: State.ENABLED}, 
+    {word: "microscope", type: Type.TARGET, claimer: "Tundra", state: State.ENABLED}, 
+    {word: "watch", type: Type.TARGET, claimer: "Alfred", state: State.ENABLED}, 
+    {word: "atlantis", type: Type.ASSASSIN, claimer: "Dion", state: State.ENABLED}, 
+    {word: "chair", type: Type.CIVILIAN, claimer: "Alfred", state: State.ENABLED}, 
+    {word: "bell", state: State.ENABLED}, 
+    {word: "tick", state: State.ENABLED}, 
   ];
 
-  const [words, setWords] = useState(initWords);
+  const [tiles, setTiles] = useState(initTiles);
 
-  const codemasterWords = [
-    {text: "bermuda", type: Type.civilian},
-    {text: "casino", type: Type.target},
-    {text: "unicorn", type: Type.target}, 
-    {text: "figure", type: Type.target}, 
-    {text: "mail", type: Type.civilian}, 
-    {text: "drop", type: Type.civilian}, 
-    {text: "microscope", type: Type.target}, 
-    {text: "watch", type: Type.target}, 
-    {text: "atlantis", type: Type.assassin}, 
-    {text: "chair", type: Type.civilian}, 
-    {text: "bell", type: Type.civilian}, 
-    {text: "tick", type: Type.civilian}, 
+  const codemasterTiles = [
+    {word: "bermuda", type: Type.CIVILIAN, state: State.DISABLED_OPAQUE}, 
+    {word: "casino", type: Type.TARGET, state: State.DISABLED_OPAQUE}, 
+    {word: "unicorn", type: Type.TARGET, state: State.DISABLED_OPAQUE}, 
+    {word: "figure", type: Type.TARGET, state: State.DISABLED_OPAQUE}, 
+    {word: "mail", type: Type.CIVILIAN, state: State.DISABLED_OPAQUE}, 
+    {word: "drop", type: Type.CIVILIAN, state: State.DISABLED_OPAQUE}, 
+    {word: "microscope", type: Type.TARGET, state: State.DISABLED_OPAQUE}, 
+    {word: "watch", type: Type.TARGET, state: State.DISABLED_OPAQUE}, 
+    {word: "atlantis", type: Type.ASSASSIN, state: State.DISABLED_OPAQUE}, 
+    {word: "chair", type: Type.CIVILIAN, state: State.DISABLED_OPAQUE}, 
+    {word: "bell", type: Type.CIVILIAN, state: State.DISABLED_OPAQUE}, 
+    {word: "tick", type: Type.CIVILIAN, state: State.DISABLED_OPAQUE}, 
   ];
 
   // TODO: get value from server
   const isCodemaster = false;
 
+  const [isForceDisabled, setIsForceDisabled] = useState(isCodemaster);
+
   return (
     <Container className="screen">
       <PlayerRoster players={players} />
       <Announcer message={isCodemaster ? codemasterMessages : guesserMessages[2]} />
-      <GameBoard words={isCodemaster ? codemasterWords : words} setWords={setWords} isForceDisabled={isCodemaster} />
+      <GameBoard tiles={isCodemaster ? codemasterTiles : tiles} setTiles={setTiles} isForceDisabled={isForceDisabled} setIsForceDisabled={setIsForceDisabled} />
       <Footer isCodemaster={isCodemaster} />
     </Container>
   );
