@@ -50,7 +50,7 @@ function GameScreen() {
   const guesserMessages = [
     "Calphanlopos is thinking..",
     "Ready up!",
-    "salty ∞",
+    "Machine 5",
   ];
   const temporaryMessages = [
     "Dion hit the assassin!",
@@ -61,15 +61,15 @@ function GameScreen() {
 
   const initTiles = [
     {word: "bermuda", state: State.ENABLED}, 
-    {word: "casino", type: Type.TARGET, claimer: "Tundra", state: State.ENABLED}, 
-    {word: "unicorn", type: Type.TARGET, claimer: "Calphanlopos", state: State.ENABLED}, 
-    {word: "figure", type: Type.TARGET, claimer: "Beth", state: State.ENABLED}, 
+    {word: "casino", type: Type.TARGET, claimer: "Tundra", state: State.DISABLED_TRANSPARENT}, 
+    {word: "unicorn", type: Type.TARGET, claimer: "Calphanlopos", state: State.DISABLED_TRANSPARENT}, 
+    {word: "figure", type: Type.TARGET, claimer: "Beth", state: State.DISABLED_TRANSPARENT}, 
     {word: "mail", state: State.ENABLED}, 
     {word: "drop", state: State.ENABLED}, 
-    {word: "microscope", type: Type.TARGET, claimer: "Tundra", state: State.ENABLED}, 
-    {word: "watch", type: Type.TARGET, claimer: "Alfred", state: State.ENABLED}, 
-    {word: "atlantis", type: Type.ASSASSIN, claimer: "Dion", state: State.ENABLED}, 
-    {word: "chair", type: Type.CIVILIAN, claimer: "Alfred", state: State.ENABLED}, 
+    {word: "microscope", type: Type.TARGET, claimer: "Tundra", state: State.DISABLED_TRANSPARENT}, 
+    {word: "watch", type: Type.TARGET, claimer: "Alfred", state: State.DISABLED_OPAQUE}, 
+    {word: "atlantis", state: State.ENABLED}, 
+    {word: "chair", type: Type.CIVILIAN, claimer: "Tundra", state: State.DISABLED_TRANSPARENT}, 
     {word: "bell", state: State.ENABLED}, 
     {word: "tick", state: State.ENABLED}, 
   ];

@@ -2,36 +2,45 @@ import { useState } from "react";
 import Row from "react-bootstrap/Row";
 import GameBoardTile from "../GameBoardTile";
 import "./index.css";
+import Type from "../../constants/type.js";
+import State from "../../constants/state";
 
 function GameBoard(props) {
-  const words = props.words;
+  const tiles = props.tiles;
   const isForceDisabled = props.isForceDisabled;
-  const setWords = props.setWords;
+  const setTiles = props.setTiles;
   const setIsForceDisabled = props.setIsForceDisabled;
 
-  const [isGameBoardDisabled, setIsGameBoardDisabled] = useState(false);
+  // const [isGameBoardDisabled, setIsGameBoardDisabled] = useState(false);
 
-  function updateTile(wordIndex) {
-    if (words.length > wordIndex) {
-      const newWords = [...words];
+  function updateTile(tileIndex) {
+    if (tiles.length > tileIndex) {
+      let newTiles = [...tiles];
       
-      newWords[wordIndex].type = "target";
-      newWords[wordIndex].claimer = "Alfred";
+      newTiles[tileIndex].type = Type.CIVILIAN;
+      newTiles[tileIndex].claimer = "Alfred";
+      newTiles[tileIndex].state = State.DISABLED_OPAQUE;
 
-      setWords(newWords);
+      if ([Type.CIVILIAN, Type.ASSASSIN].includes(newTiles[tileIndex].type)) {
+        // setIsGameBoardDisabled(true);
 
-      if (["civilian", "assassin"].includes(newWords[wordIndex].type)) {
-        setIsGameBoardDisabled(true);
+        newTiles.forEach((tile) => {
+          if (tile.state === State.ENABLED) {
+            tile.state = State.DISABLED_TRANSPARENT;
+          }
+        })
       }
+
+      setTiles(newTiles);
     }
   }
 
   return (
     <Row className="game-board justify-content-center ms-auto me-auto">
-      {words.map((word, index) => {
+      {tiles.map((tile, index) => {
         const updateThisTile = () => {updateTile(index)};
 
-        return <GameBoardTile word={word} updateThisTile={updateThisTile} isForceDisabled={isForceDisabled} isGameBoardDisabled={isGameBoardDisabled} />
+        return <GameBoardTile tile={tile} updateThisTile={updateThisTile} />
       })}
     </Row>
   );

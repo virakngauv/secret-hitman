@@ -12,7 +12,7 @@
   }
 }
 
-.game-board-tile.game-board-tile-force-disabled {
+.game-board-tile.game-board-tile-disabled-opaque {
   opacity: 1;
   border: 1px solid #c3c3c3;
 }
