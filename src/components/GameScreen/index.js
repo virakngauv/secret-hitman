@@ -66,7 +66,7 @@ function GameScreen() {
     {word: "figure", type: Type.TARGET, claimer: "Beth", state: State.DISABLED_TRANSPARENT}, 
     {word: "mail", state: State.ENABLED}, 
     {word: "drop", state: State.ENABLED}, 
-    {word: "microscope", type: Type.TARGET, claimer: "Tundra", state: State.DISABLED_TRANSPARENT}, 
+    {word: "microscope", state: State.ENABLED}, 
     {word: "watch", type: Type.TARGET, claimer: "Alfred", state: State.DISABLED_OPAQUE}, 
     {word: "atlantis", state: State.ENABLED}, 
     {word: "chair", type: Type.CIVILIAN, claimer: "Tundra", state: State.DISABLED_TRANSPARENT}, 

@@ -1,5 +1,6 @@
 import "./index.css";
 import classNames from "classnames";
+import Status from "../../constants/status.js";
 
 function StatusIndicator(props) {
   if (!props.status || props.status === "Status") {
@@ -11,9 +12,9 @@ function StatusIndicator(props) {
   return (
     <div className={classNames(
       "status-indicator",
-      {"status-indicator--codemaster": props.status === "codemaster"},
-      {"status-indicator--active": props.status === "active"},
-      {"status-indicator--inactive": props.status === "inactive"},
+      {"status-indicator--codemaster": props.status === Status.CODEMASTER},
+      {"status-indicator--active": props.status === Status.ACTIVE},
+      {"status-indicator--inactive": props.status === Status.INACTIVE},
     )}>
     </div>
   );
