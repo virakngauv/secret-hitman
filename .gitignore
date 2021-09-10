@@ -135,3 +135,7 @@ dist
 *.ca-bundle
 *.key
 .ssl/
+
+# Random Stuff I don't want tracked
+build
+.vscode/*

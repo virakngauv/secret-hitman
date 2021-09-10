@@ -1,0 +1,27 @@
+.game-board-tile {
+  height: 80px;
+  width: 110px;
+  margin: 1px;
+  padding: 0px;
+  color: #000;
+}
+
+@media screen and (max-width: 320px) {
+  .game-board-tile {
+    width: 95px;
+  }
+}
+
+.game-board-tile.game-board-tile-disabled-opaque {
+  opacity: 1;
+  border: 1px solid #c3c3c3;
+}
+
+.game-board-tile-text {
+  font-size: small;
+  font-weight: bold;
+}
+
+.game-board-tile-claimer {
+  font-size: x-small;
+}
