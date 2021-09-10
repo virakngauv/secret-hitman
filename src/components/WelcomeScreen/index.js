@@ -1,10 +1,9 @@
 import Announcer from "../Announcer";
 
 function WelcomeScreen() {
-    return (
-        <Announcer />
+  return (
+      <Announcer />
     );
-  }
+}
   
-  export default WelcomeScreen;
-  
+export default WelcomeScreen;

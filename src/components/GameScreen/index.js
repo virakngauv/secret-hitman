@@ -8,8 +8,6 @@ import Type from "../../constants/type.js";
 import Status from "../../constants/status.js";
 import State from "../../constants/state.js";
 
-// TODO: Make Status Enum and import
-
 function GameScreen() {
   const players = [
     {
@@ -107,4 +105,3 @@ function GameScreen() {
 }
 
 export default GameScreen;
-  

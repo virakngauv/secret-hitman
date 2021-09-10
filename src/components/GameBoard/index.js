@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Row from "react-bootstrap/Row";
 import GameBoardTile from "../GameBoardTile";
 import "./index.css";
@@ -7,11 +6,7 @@ import State from "../../constants/state";
 
 function GameBoard(props) {
   const tiles = props.tiles;
-  const isForceDisabled = props.isForceDisabled;
   const setTiles = props.setTiles;
-  const setIsForceDisabled = props.setIsForceDisabled;
-
-  // const [isGameBoardDisabled, setIsGameBoardDisabled] = useState(false);
 
   function updateTile(tileIndex) {
     if (tiles.length > tileIndex) {
@@ -22,7 +17,6 @@ function GameBoard(props) {
       newTiles[tileIndex].state = State.DISABLED_OPAQUE;
 
       if ([Type.CIVILIAN, Type.ASSASSIN].includes(newTiles[tileIndex].type)) {
-        // setIsGameBoardDisabled(true);
 
         newTiles.forEach((tile) => {
           if (tile.state === State.ENABLED) {
@@ -47,4 +41,3 @@ function GameBoard(props) {
 }
 
 export default GameBoard;
-  

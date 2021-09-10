@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import "./index.css";
@@ -11,18 +10,10 @@ function GameBoardTile(props) {
   const type = props.tile.type;
   const claimer = props.tile.claimer;
   const state = props.tile.state;
-
-  // const isForceDisabled = props.isForceDisabled;
-  // const [isDisabled, setIsDisabled] = useState(isForceDisabled);
-
   const isGameBoardDisabled = props.isGameBoardDisabled;
-
-  // const index = props.index;
   const updateThisTile = props.updateThisTile;
 
   function handleTileClick () {
-    // setIsDisabled(true);
-    
     // "updateThisTile() will eventually make an API call"
     updateThisTile();
   } 
@@ -56,4 +47,3 @@ function GameBoardTile(props) {
 }
 
 export default GameBoardTile;
-  

@@ -1,8 +1,7 @@
 function EndScreen() {
-    return (
-        <div />
-    );
-  }
+  return (
+    <div />
+  );
+}
   
-  export default EndScreen;
-  
+export default EndScreen;

@@ -1,5 +1,4 @@
-import { Button, CardGroup } from "react-bootstrap";
-import Row from "react-bootstrap/Row";
+import CardGroup from "react-bootstrap/CardGroup";
 import PlayerRosterCard from "../PlayerRosterCard";
 import "./index.css"
 
@@ -16,6 +15,5 @@ function PlayerRoster(props) {
     </CardGroup>
   );
 }
-  
+
 export default PlayerRoster;
-  

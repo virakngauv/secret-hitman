@@ -10,5 +10,4 @@ function FooterGuesser() {
     );
   }
   
-  export default FooterGuesser;
-  
+export default FooterGuesser;
