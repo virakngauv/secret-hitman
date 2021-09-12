@@ -1,11 +1,11 @@
 import './App.css';
-import GameScreen from './components/GameScreen';
+import WelcomeScreen from './components/WelcomeScreen';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
-    <GameScreen />
+    <WelcomeScreen />
   );
 }
 
