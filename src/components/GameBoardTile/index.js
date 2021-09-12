@@ -24,7 +24,7 @@ function GameBoardTile(props) {
   if (type === Type.TARGET) {
     buttonVariant = "success";
   } else if (type === Type.CIVILIAN) {
-    buttonVariant = "light";
+    buttonVariant = "secondary";
   } else if (type === Type.ASSASSIN) {
     buttonVariant = "dark";
   } else {

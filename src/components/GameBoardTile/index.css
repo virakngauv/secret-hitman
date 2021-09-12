@@ -6,6 +6,10 @@
   color: #000;
 }
 
+.btn.game-board-tile {
+  border: 1px solid #dedede;
+}
+
 @media screen and (max-width: 320px) {
   .game-board-tile {
     width: 95px;
