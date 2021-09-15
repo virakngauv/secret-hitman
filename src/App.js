@@ -5,6 +5,7 @@ import GameScreen from './components/GameScreen';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Switch, Route, useParams } from 'react-router-dom';
 import AppFooter from './components/AppFooter';
+import RulesScreen from './components/RulesScreen';
 
 function App() {
 
@@ -19,7 +20,7 @@ function App() {
             join-game
           </Route>
           <Route path="/rules">
-            rules
+            <RulesScreen />
           </Route>
           <Route path="/:roomCode">
             <GameScreen />
