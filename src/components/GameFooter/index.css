@@ -1,14 +1,14 @@
-.footer {
+.game-footer {
   padding-top: 15px;
   width: 300px;
 }
 
 @media screen and (max-width: 320px) {
-  .footer {
+  .game-footer {
     width: 285px;
   }
 }
 
-.btn-footer {
+.btn-game-footer {
   color: #000;
 }

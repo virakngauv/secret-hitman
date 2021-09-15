@@ -1,7 +1,3 @@
-.welcome-screen-item-parent {
-  display: flex;
-}
-
 .welcome-screen-title {
   margin-top: 20%;
 }
@@ -13,12 +9,4 @@
 .welcome-screen-button {
   margin-bottom: 5px;
   width: 120px;
-}
-
-.welcome-screen-hr {
-  margin: 10%;
-}
-
-.welcome-screen-footer-text {
-  font-size: x-small;
 }

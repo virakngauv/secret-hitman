@@ -1,6 +1,7 @@
 import { Col, Container, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
-import { useHistory, useParams } from "react-router";
+import { useHistory } from "react-router";
+import AppFooter from "../AppFooter";
 
 import "./index.css"
 
@@ -12,50 +13,48 @@ function WelcomeScreen() {
     <>
       <Container>
         <Row>
-          <Col className="welcome-screen-item-parent">
+          <Col className="d-flex">
             <h1 className="welcome-screen-title ms-auto me-auto">
               Secret Hitman
             </h1>
           </Col>
         </Row>
         <Row>
-          <Col className="welcome-screen-item-parent">
+          <Col className="d-flex">
             <div className="welcome-screen-subtitle ms-auto me-auto">
             A fast-paced word game based on Codenames.
             </div>
           </Col>
         </Row>
-        <hr className="welcome-screen-hr" />
+        <hr className="app-hr" />
         <Row>
-          <Col className="welcome-screen-item-parent">
+          <Col className="d-flex">
             <Button onClick={navigateTo("/create-game")} variant="outline-secondary" className="welcome-screen-button ms-auto me-auto">
               New Game
             </Button>
           </Col>
         </Row>
         <Row>
-          <Col className="welcome-screen-item-parent">
+          <Col className="d-flex">
             <Button onClick={navigateTo("/join-game")} variant="outline-secondary" className="welcome-screen-button ms-auto me-auto">
               Join Game
             </Button>
           </Col>
         </Row>
         <Row>
-          <Col className="welcome-screen-item-parent">
+          <Col className="d-flex">
             <Button onClick={navigateTo("/rules")} variant="outline-secondary" className="welcome-screen-button ms-auto me-auto">
               How to Play
             </Button>
           </Col>
         </Row>
-        <hr className="welcome-screen-hr" />
         <Row>
-          <Col className="welcome-screen-item-parent">
-            <div className="welcome-screen-footer-text ms-auto me-auto">
-              Inspired by: <a href="https://spyfall.tannerkrewson.com/">Spyfall</a> | Consulting these fine <a href="/#">folks</a>.
-            </div>
+          <Col className="d-flex">
+            <Button onClick={navigateTo("/temp-mid-game")} variant="outline-secondary" className="welcome-screen-button ms-auto me-auto">
+              (temp) mid-game
+            </Button>
           </Col>
         </Row>
-
       </Container>
     </>
   );

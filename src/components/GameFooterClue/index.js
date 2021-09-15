@@ -2,7 +2,7 @@ import { DropdownButton, FormControl, Button, Dropdown, Form } from "react-boots
 import { useState } from "react";
 import InputGroup from "react-bootstrap/InputGroup";
 
-function FooterClue(props) {
+function GameFooterClue(props) {
   const [hint, setHint] = useState("");
   const [hintNumber, setHintNumber] = useState("#");
 
@@ -21,7 +21,7 @@ function FooterClue(props) {
 
   return (
     <Form onSubmit={handleSubmit}>
-      <InputGroup size="sm" className="footer ms-auto me-auto">
+      <InputGroup size="sm" className="game-footer ms-auto me-auto">
         <FormControl
           name="hint"
           placeholder="Type your hint.."
@@ -52,4 +52,4 @@ function FooterClue(props) {
   );
 }
 
-export default FooterClue;
+export default GameFooterClue;

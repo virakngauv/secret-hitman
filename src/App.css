@@ -8,6 +8,10 @@
   padding-bottom: 10px;
 }
 
+.app-hr {
+  margin: 10%;
+}
+
 /*Default CSS from react*/
 .App {
   text-align: center;
