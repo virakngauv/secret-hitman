@@ -7,6 +7,7 @@ import { useState } from "react";
 import Type from "../../constants/type.js";
 import Status from "../../constants/status.js";
 import State from "../../constants/state.js";
+import { useParams } from "react-router";
 
 function GameScreen() {
   const players = [
@@ -93,6 +94,9 @@ function GameScreen() {
   const isCodemaster = false;
 
   const [isForceDisabled, setIsForceDisabled] = useState(isCodemaster);
+
+  const { roomCode } = useParams();
+  console.log(roomCode);
 
   return (
     <Container className="screen">
