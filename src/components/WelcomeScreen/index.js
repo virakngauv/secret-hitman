@@ -18,14 +18,14 @@ function WelcomeScreen() {
       <Container>
         <Row>
           <Col className="d-flex">
-            <Button onClick={navigateTo("/create-game")} variant="outline-secondary" size="sm" className="welcome-screen-button ms-auto me-auto">
+            <Button onClick={navigateTo("/new")} variant="outline-secondary" size="sm" className="welcome-screen-button ms-auto me-auto">
               New Game
             </Button>
           </Col>
         </Row>
         <Row>
           <Col className="d-flex">
-            <Button onClick={navigateTo("/join-game")} variant="outline-secondary" size="sm" className="welcome-screen-button ms-auto me-auto">
+            <Button onClick={navigateTo("/join")} variant="outline-secondary" size="sm" className="welcome-screen-button ms-auto me-auto">
               Join Game
             </Button>
           </Col>
