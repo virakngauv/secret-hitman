@@ -1,10 +1,13 @@
-import { Button, Col, Container, Row, Table } from "react-bootstrap";
-import { useParams } from "react-router";
+import { Container } from "react-bootstrap";
+import { useParams } from "react-router-dom";
 import Status from "../../constants/status.js";
-import StatusIndicator from "../StatusIndicator";
+import LobbyFooter from "../LobbyFooter/index.js";
+import LobbyRoster from "../LobbyRoster/index.js";
+import RoomCode from "../RoomCode/index.js";
 
 function LobbyScreen() {
   const { roomCode } = useParams();
+
   const players = [
     {
       name: "Alfred", 
@@ -32,58 +35,11 @@ function LobbyScreen() {
     },
   ];
 
-  const markStatusReady = () => console.log("Status Ready!");
-  const startGame = () => console.log("Start Game!")
-  const areAllPlayersReady = false;
-
   return (
-    <Container>
-      <Row>
-        <Col className="d-flex">
-          <div className="fs-sm ms-auto me-auto">
-            <b>Room Code</b>
-          </div>
-        </Col>
-      </Row>
-      <Row className="mb-4">
-        <Col className="d-flex">
-          <div className="fs-sm ms-auto me-auto">
-            {roomCode}
-          </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col className="d-flex">
-          <Table borderless hover size="sm" className="fs-sm ms-auto me-auto">
-            <thead>
-              <tr>
-                <th className="text-center">Status</th>
-                <th>Name</th>
-              </tr>
-            </thead>
-            <tbody>
-              {players.map((player) => {
-                return (
-                  <tr>
-                    <td className="text-center"><StatusIndicator status={player.status} /></td>
-                    <td>{player.name}</td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </Table>
-        </Col>
-      </Row>
-      <Row>
-        <Col className="d-flex mt-4">
-          <Button onClick={markStatusReady} variant="outline-secondary" size="sm" className="ms-auto me-1">
-            I'm Ready!
-          </Button>
-          <Button disabled={!areAllPlayersReady} onClick={startGame} variant="outline-secondary" size="sm" className="ms-1 me-auto">
-            Start Game
-          </Button>
-        </Col>
-      </Row>
+    <Container className="screen">
+      <RoomCode roomCode={roomCode} />
+      <LobbyRoster players={players} />
+      <LobbyFooter />
     </Container>
   );
 }
