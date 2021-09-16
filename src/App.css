@@ -12,6 +12,10 @@
   margin: 10%;
 }
 
+.fs-sm {
+  font-size: small;
+}
+
 /*Default CSS from react*/
 .App {
   text-align: center;
