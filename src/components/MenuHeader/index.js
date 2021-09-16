@@ -7,23 +7,21 @@ function MenuHeader(props) {
 
   return (
     <>
-      <Container>
-        <Row>
-          <Col className="d-flex">
-            <h1 className="menu-header-title ms-auto me-auto">
-              {title}
-            </h1>
-          </Col>
-        </Row>
-        <Row>
-          <Col className="d-flex">
-            <div className="menu-header-subtitle ms-auto me-auto">
-            {subtitle}
-            </div>
-          </Col>
-        </Row>
-        <hr className="app-hr" />
-      </Container>
+      <Row>
+        <Col className="d-flex">
+          <h1 className="menu-header-title ms-auto me-auto">
+            {title}
+          </h1>
+        </Col>
+      </Row>
+      <Row>
+        <Col className="d-flex">
+          <div className="menu-header-subtitle ms-auto me-auto">
+          {subtitle}
+          </div>
+        </Col>
+      </Row>
+      <hr className="app-hr" />
     </>
   );
 }

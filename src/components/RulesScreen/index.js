@@ -15,8 +15,8 @@ function RulesScreen() {
 
   return (
     <>
-      <MenuHeader title={title} subtitle={subtitle} />
-      <Container>
+      <Container className="screen">
+        <MenuHeader title={title} subtitle={subtitle} />
         <Row>
           <Col className="rules-text">
             <Tabs defaultActiveKey="general" id="rules-nav" className="mb-3">
@@ -25,7 +25,8 @@ function RulesScreen() {
 
                 <b>Objective</b><br />
                 Get the most points by generating the best hints and by deciphering hints the quickest!<br /><br />
-
+              </Tab>
+              <Tab eventKey="roles" title="Roles">
                 <b>Roles</b><br />
                 As the Codemaster, you want to direct the hitmen to the Targets (green) while avoiding Civilians (gray) and the Assassin (black). 
                 You are allowed 1 hint for your turn consisting of a word and a number (e.g. "HOT 2"). You get 1 point for each correct target chosen

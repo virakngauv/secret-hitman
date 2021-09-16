@@ -14,8 +14,8 @@ function WelcomeScreen() {
 
   return (
     <>
-      <MenuHeader title={title} subtitle={subtitle} />
-      <Container>
+      <Container className="screen">
+        <MenuHeader title={title} subtitle={subtitle} />
         <Row>
           <Col className="d-flex">
             <Button onClick={navigateTo("/new")} variant="outline-secondary" size="sm" className="welcome-screen-button ms-auto me-auto">

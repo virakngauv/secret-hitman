@@ -16,8 +16,8 @@ function CreateGameScreen() {
 
   return (
     <>
-      <MenuHeader title={title} subtitle={subtitle} />
-      <Container>
+      <Container className="screen">
+        <MenuHeader title={title} subtitle={subtitle} />
         <Form>
           <Row className="mb-1">
             <Col className="d-flex">
