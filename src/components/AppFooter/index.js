@@ -8,7 +8,7 @@ function AppFooter() {
       <Row>
         <Col className="d-flex">
           <div className="app-footer-text ms-auto me-auto">
-            Inspired by: <a href="https://spyfall.tannerkrewson.com/">Spyfall</a> | With help from these fine <a href="/#">folks</a> | <a href="https://github.com/virakngauv/secret-hitman/"> Managed on GitHub</a>
+            Inspired by: <a href="https://spyfall.tannerkrewson.com/">Spyfall</a> | With help from these fine <a href="/#">folks</a> | Managed on <a href="https://github.com/virakngauv/secret-hitman/">GitHub</a>
           </div>
         </Col>
       </Row>
