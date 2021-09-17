@@ -9,6 +9,7 @@ import RulesScreen from './components/RulesScreen';
 import CreateGameScreen from './components/CreateGameScreen';
 import JoinGameScreen from './components/JoinGameScreen';
 import LobbyScreen from './components/LobbyScreen';
+import EndScreen from './components/EndScreen';
 
 function App() {
 
@@ -27,6 +28,9 @@ function App() {
           </Route>
           <Route path="/temp-mid-game">
             <GameScreen />
+          </Route>
+          <Route path="/temp-end-game">
+            <EndScreen />
           </Route>
           <Route path="/:roomCode">
             <LobbyScreen />

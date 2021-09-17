@@ -7,7 +7,8 @@ import { useState } from "react";
 import Type from "../../constants/type.js";
 import Status from "../../constants/status.js";
 import State from "../../constants/state.js";
-import { useParams } from "react-router";
+import { useHistory, useParams } from "react-router";
+import { Button, Col, Row } from "react-bootstrap";
 
 function GameScreen() {
   const players = [
@@ -98,12 +99,25 @@ function GameScreen() {
   const { roomCode } = useParams();
   console.log(roomCode);
 
+  const history = useHistory();
+
   return (
     <Container className="screen">
       <PlayerRoster players={players} />
       <Announcer message={isCodemaster ? codemasterMessages : guesserMessages[2]} />
       <GameBoard tiles={isCodemaster ? codemasterTiles : tiles} setTiles={setTiles} isForceDisabled={isForceDisabled} setIsForceDisabled={setIsForceDisabled} />
       <GameFooter isCodemaster={isCodemaster} />
+      {/* temp code below */}
+      <Row>
+        <Col className="d-flex mt-4">
+          <Button onClick={history.goBack} variant="outline-secondary" size="sm" className="ms-auto me-1">
+            (temp) back
+          </Button>
+          <Button type="submit" onClick={() => history.push("/temp-end-game")} variant="outline-secondary" size="sm" className="ms-1 me-auto">
+            (temp) end screen
+          </Button>
+        </Col>
+      </Row>
     </Container>
   );
 }
