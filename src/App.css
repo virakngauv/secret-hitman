@@ -3,9 +3,16 @@
   width: 315px;
 } */
 .screen {
-  font-family: Arial, sans-serif;
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+.app-hr {
+  margin: 10%;
+}
+
+.fs-sm {
+  font-size: small;
 }
 
 /*Default CSS from react*/

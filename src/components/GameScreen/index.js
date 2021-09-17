@@ -2,11 +2,12 @@ import Container from "react-bootstrap/Container";
 import Announcer from "../Announcer";
 import PlayerRoster from "../PlayerRoster";
 import GameBoard from "../GameBoard";
-import Footer from "../Footer"
+import GameFooter from "../GameFooter"
 import { useState } from "react";
 import Type from "../../constants/type.js";
 import Status from "../../constants/status.js";
 import State from "../../constants/state.js";
+import { useParams } from "react-router";
 
 function GameScreen() {
   const players = [
@@ -94,12 +95,15 @@ function GameScreen() {
 
   const [isForceDisabled, setIsForceDisabled] = useState(isCodemaster);
 
+  const { roomCode } = useParams();
+  console.log(roomCode);
+
   return (
     <Container className="screen">
       <PlayerRoster players={players} />
       <Announcer message={isCodemaster ? codemasterMessages : guesserMessages[2]} />
       <GameBoard tiles={isCodemaster ? codemasterTiles : tiles} setTiles={setTiles} isForceDisabled={isForceDisabled} setIsForceDisabled={setIsForceDisabled} />
-      <Footer isCodemaster={isCodemaster} />
+      <GameFooter isCodemaster={isCodemaster} />
     </Container>
   );
 }
