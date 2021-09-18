@@ -19,8 +19,8 @@ const app = express();
 const https = require('https');
 const { Server } = require("socket.io");
 
-const privateKey = fs.readFileSync('/etc/letsencrypt/live/codenames-hitman.com/privkey.pem');
-const certificate = fs.readFileSync('/etc/letsencrypt/live/codenames-hitman.com/fullchain.pem');
+const privateKey = fs.readFileSync('/etc/letsencrypt/live/secrethitman.com/privkey.pem');
+const certificate = fs.readFileSync('/etc/letsencrypt/live/secrethitman.com/fullchain.pem');
 
 const credentials = {
   key: privateKey,
