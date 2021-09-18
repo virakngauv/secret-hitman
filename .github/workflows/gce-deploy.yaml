@@ -63,7 +63,7 @@ jobs:
           --zone "$GCE_INSTANCE_ZONE" \
           --metadata=startup-script="#! /bin/bash
             docker image prune -af
-            curl --location --request GET 'domains.google.com/nic/update?hostname=codenames-hitman.com' \
+            curl --location --request GET 'domains.google.com/nic/update?hostname=secrethitman.com' \
               --header 'User-Agent: VM' \
               --header 'Authorization: Basic $DDNS_AUTH_STRING'"
 
