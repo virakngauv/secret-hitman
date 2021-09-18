@@ -1,8 +1,11 @@
 import { Container } from "react-bootstrap";
 import EndFooter from "../EndFooter/index.js";
 import EndRoster from "../EndRoster/index.js";
+import MenuHeader from "../MenuHeader/index.js";
 
 function EndScreen() {
+  const title = "Rankings";
+  const subtitle = "Hope you had fun! Come back soon!";
   const players = [
     {
       name: "Alfred", 
@@ -32,6 +35,7 @@ function EndScreen() {
 
   return (
     <Container className="screen">
+      <MenuHeader title={title} subtitle={subtitle} />
       <EndRoster players={players} />
       <EndFooter />
     </Container>

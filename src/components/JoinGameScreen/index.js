@@ -38,10 +38,10 @@ function JoinGameScreen() {
           </Row>
           <Row>
             <Col className="d-flex mt-4">
-              <Button onClick={goBack} variant="outline-secondary" size="sm" className="ms-auto me-1">
+              <Button onClick={goBack} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-1">
                 Back
               </Button>
-              <Button type="submit" onClick={() => {console.log("Join button has been clicked!")}} variant="outline-secondary" size="sm" className="ms-1 me-auto">
+              <Button type="submit" onClick={() => history.push("/guvole")} variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">
                 Join
               </Button>
             </Col>

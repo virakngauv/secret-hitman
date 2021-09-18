@@ -18,29 +18,22 @@ function WelcomeScreen() {
         <MenuHeader title={title} subtitle={subtitle} />
         <Row>
           <Col className="d-flex">
-            <Button onClick={navigateTo("/new")} variant="outline-secondary" size="sm" className="welcome-screen-button ms-auto me-auto">
+            <Button onClick={navigateTo("/new")} variant="outline-secondary" size="sm" className="btn-menu btn-welcome-screen ms-auto me-auto">
               New Game
             </Button>
           </Col>
         </Row>
         <Row>
           <Col className="d-flex">
-            <Button onClick={navigateTo("/join")} variant="outline-secondary" size="sm" className="welcome-screen-button ms-auto me-auto">
+            <Button onClick={navigateTo("/join")} variant="outline-secondary" size="sm" className="btn-menu btn-welcome-screen ms-auto me-auto">
               Join Game
             </Button>
           </Col>
         </Row>
         <Row>
           <Col className="d-flex">
-            <Button onClick={navigateTo("/rules")} variant="outline-secondary" size="sm" className="welcome-screen-button ms-auto me-auto">
+            <Button onClick={navigateTo("/rules")} variant="outline-secondary" size="sm" className="btn-menu btn-welcome-screen ms-auto me-auto">
               How to Play
-            </Button>
-          </Col>
-        </Row>
-        <Row>
-          <Col className="d-flex">
-            <Button onClick={navigateTo("/temp-mid-game")} variant="outline-secondary" size="sm" className="welcome-screen-button ms-auto me-auto">
-              (temp) mid-game
             </Button>
           </Col>
         </Row>

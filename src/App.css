@@ -5,14 +5,25 @@
 .screen {
   padding-top: 10px;
   padding-bottom: 10px;
+  max-width: 720px;
 }
 
 .app-hr {
-  margin: 50px;
+  margin: 25px;
 }
 
 .fs-sm {
   font-size: small;
+}
+
+.btn-menu {
+  color: #000;
+}
+
+/* Overrides */
+.form-control {
+  /* Copies the border of the secondary-outline type */
+  border: 1px solid #6c757d;
 }
 
 /*Default CSS from react*/

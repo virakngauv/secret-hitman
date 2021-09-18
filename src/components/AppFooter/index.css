@@ -1,5 +1,6 @@
 .app-footer {
-  padding-bottom: 10%
+  padding-bottom: 25px;
+  max-width: 720px;
 }
 
 .app-footer-text {

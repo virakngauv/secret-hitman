@@ -92,7 +92,7 @@ function GameScreen() {
   ];
 
   // TODO: get value from server
-  const isCodemaster = false;
+  const [isCodemaster, setIsCodemaster] = useState(false);
 
   const [isForceDisabled, setIsForceDisabled] = useState(isCodemaster);
 
@@ -108,6 +108,13 @@ function GameScreen() {
       <GameBoard tiles={isCodemaster ? codemasterTiles : tiles} setTiles={setTiles} isForceDisabled={isForceDisabled} setIsForceDisabled={setIsForceDisabled} />
       <GameFooter isCodemaster={isCodemaster} />
       {/* temp code below */}
+      <Row>
+        <Col className="d-flex mt-4">
+          <Button onClick={() => setIsCodemaster(!isCodemaster)} variant="outline-secondary" size="sm" className="ms-auto me-auto">
+            (temp) toggle codemaster
+          </Button>
+        </Col>
+      </Row>
       <Row>
         <Col className="d-flex mt-4">
           <Button onClick={history.goBack} variant="outline-secondary" size="sm" className="ms-auto me-1">

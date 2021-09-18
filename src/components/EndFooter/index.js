@@ -17,10 +17,10 @@ function EndFooter() {
     <>
       <Row>
         <Col className="d-flex mt-4">
-          <Button onClick={markPlayAgain} variant="outline-secondary" size="sm" className="ms-auto me-1">
+          <Button onClick={markPlayAgain} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-1">
             Play Again!
           </Button>
-          <Button onClick={leaveGame} variant="outline-secondary" size="sm" className="ms-1 me-auto">
+          <Button onClick={leaveGame} variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">
             Leave Game
           </Button>
         </Col>

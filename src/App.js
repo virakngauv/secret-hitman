@@ -10,12 +10,14 @@ import CreateGameScreen from './components/CreateGameScreen';
 import JoinGameScreen from './components/JoinGameScreen';
 import LobbyScreen from './components/LobbyScreen';
 import EndScreen from './components/EndScreen';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
 
   return (
     <>
       <BrowserRouter>
+        <ScrollToTop />
         <Switch>
           <Route path="/new">
             <CreateGameScreen />
