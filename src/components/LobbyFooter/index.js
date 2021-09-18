@@ -13,17 +13,17 @@ function LobbyFooter() {
     <>
       <Row>
         <Col className="d-flex mt-4">
-          <Button onClick={markStatusReady} variant="outline-secondary" size="sm" className="ms-auto me-1">
+          <Button onClick={markStatusReady} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-1">
             I'm Ready!
           </Button>
-          <Button disabled={!areAllPlayersReady} onClick={startGame} variant="outline-secondary" size="sm" className="ms-1 me-auto">
+          <Button disabled={!areAllPlayersReady} onClick={startGame} variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">
             Start Game
           </Button>
         </Col>
       </Row>
       <Row>
         <Col className="d-flex mt-3">
-          <Button onClick={goBack} variant="outline-secondary" size="sm" className="ms-auto me-auto">
+          <Button onClick={goBack} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-auto">
             Back
           </Button>
         </Col>

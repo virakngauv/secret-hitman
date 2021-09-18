@@ -68,7 +68,7 @@ function RulesScreen() {
         </Row>
         <Row>
           <Col className="d-flex mt-4">
-            <Button onClick={goBack} variant="outline-secondary" size="sm" className="ms-auto me-auto">
+            <Button onClick={goBack} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-auto">
               Back
             </Button>
           </Col>

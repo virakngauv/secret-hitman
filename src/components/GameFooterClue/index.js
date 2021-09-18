@@ -46,7 +46,7 @@ function GameFooterClue(props) {
           <Dropdown.Item eventKey="2">2</Dropdown.Item>
           <Dropdown.Item eventKey="1">1</Dropdown.Item>
         </DropdownButton>
-        <Button type="submit" variant="outline-secondary" id="submit-clue-button">Submit</Button>
+        <Button type="submit" variant="outline-secondary" id="submit-clue-button" className="btn-menu">Submit</Button>
       </InputGroup>
     </Form>
   );
