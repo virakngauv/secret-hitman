@@ -2,6 +2,7 @@ import { Col, Container, Form, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import { useHistory } from "react-router";
 import MenuHeader from "../MenuHeader";
+import { io } from "socket.io-client";
 
 function CreateGameScreen() {
   const history = useHistory();
@@ -13,6 +14,11 @@ function CreateGameScreen() {
 
   const title = createGameScreenTitle;
   const subtitle = createGameScreenSubtitle;
+
+  const socket = io();
+  const createRoom = () => {
+    socket.emit("createRoom", (roomCode) => history.push(`/${roomCode}`));
+  }
 
   return (
     <>
@@ -32,7 +38,7 @@ function CreateGameScreen() {
               <Button onClick={goBack} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-1">
                 Back
               </Button>
-              <Button type="submit" onClick={() => history.push("/guvole")} variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">
+              <Button onClick={createRoom} variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">
                 Create
               </Button>
             </Col>

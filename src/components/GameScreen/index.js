@@ -120,7 +120,7 @@ function GameScreen() {
           <Button onClick={history.goBack} variant="outline-secondary" size="sm" className="ms-auto me-1">
             (temp) back
           </Button>
-          <Button type="submit" onClick={() => history.push("/temp-end-game")} variant="outline-secondary" size="sm" className="ms-1 me-auto">
+          <Button onClick={() => history.push("/temp-end-game")} variant="outline-secondary" size="sm" className="ms-1 me-auto">
             (temp) end screen
           </Button>
         </Col>

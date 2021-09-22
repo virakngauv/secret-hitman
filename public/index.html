@@ -20,5 +20,39 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
+    <!-- <p>
+      Latency is:
+    </p>
+    <p id="latency">
+      INITIALIZING 
+    </p>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+      // // server-side
+      // socket.on("ping", (cb) => {
+      //   console.log("got a pingg, client code, socket.id is", socket.id);
+      //   if (typeof cb === "function") {
+      //     cb();
+      //   } else {
+      //     console.log(cb);
+      //   }
+      // });
+
+      // client-side
+      setInterval(() => {
+        const start = Date.now();
+
+        // volatile, so the packet will be discarded if the socket is not connected
+        socket.volatile.emit("ping", () => {
+          const latency = Date.now() - start;
+          console.log(latency + " ms");
+          // ...
+
+          const latencyText = document.querySelector('#latency');
+          latencyText.innerText = latency + " ms";
+        });
+      }, 5000);
+    </script> -->
   </body>
 </html>

@@ -48,7 +48,7 @@ function LobbyScreen() {
       <LobbyFooter />
       <Row>
         <Col className="d-flex mt-3">
-          <Button type="submit" onClick={() => history.push("/temp-mid-game")} variant="outline-secondary" size="sm" className="ms-auto me-auto">
+          <Button onClick={() => history.push("/temp-mid-game")} variant="outline-secondary" size="sm" className="ms-auto me-auto">
             (temp) mid-game
           </Button>
         </Col>
