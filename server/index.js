@@ -2,6 +2,7 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import GameStore from "./games.js";
+import { generateRandomId } from "./helpers/util/index.js"
 
 const app = express();
 const httpServer = createServer(app);
@@ -15,9 +16,19 @@ app.get("*", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("createRoom", (goToLobby) => {
-    const roomCode = gameStore.createRoom();
+  console.log("user has connected");
+
+  socket.on("createGame", (name, goToLobby) => {
+    const userID = generateRandomId();
+    const roomCode = gameStore.createGame(userID, name);
     goToLobby(roomCode);
+  });
+
+  socket.on("getPlayers", (roomCode, setPlayers) => {
+    if (gameStore.hasGame(roomCode)) {
+      const players = Array.from(gameStore.getGame(roomCode).players.values());
+      setPlayers(players);
+    }
   })
 });
 

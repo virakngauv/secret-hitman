@@ -1,10 +1,16 @@
 import { Col, Container, Form, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import { useHistory } from "react-router";
+import { useState } from "react";
 import MenuHeader from "../MenuHeader";
-import { io } from "socket.io-client";
+import { createGame } from "../../api"
+// import { io } from "socket.io-client";
 
 function CreateGameScreen() {
+  const [name, setName] = useState("");
+  const handleNameChange = (e) => {setName(e.target.value);};
+  console.log("name is ", name);
+
   const history = useHistory();
   const goBack = () => history.goBack();
 
@@ -15,9 +21,12 @@ function CreateGameScreen() {
   const title = createGameScreenTitle;
   const subtitle = createGameScreenSubtitle;
 
-  const socket = io();
-  const createRoom = () => {
-    socket.emit("createRoom", (roomCode) => history.push(`/${roomCode}`));
+  // const socket = io();
+  // const createRoom = (username) => {
+  //   socket.emit("createRoom", username, (roomCode) => history.push(`/${roomCode}`));
+  // }
+  function handleCreateGame() {
+    createGame(name, history);
   }
 
   return (
@@ -29,7 +38,7 @@ function CreateGameScreen() {
             <Col className="d-flex">
               <Form.Group controlId="playerName" className="ms-auto me-auto">
                 <Form.Label column="sm">Name</Form.Label>
-                <Form.Control size="sm" placeholder="Enter your name" />
+                <Form.Control value={name} onChange={handleNameChange} size="sm" placeholder="Enter your name" />
               </Form.Group>
             </Col>
           </Row>
@@ -38,7 +47,7 @@ function CreateGameScreen() {
               <Button onClick={goBack} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-1">
                 Back
               </Button>
-              <Button onClick={createRoom} variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">
+              <Button onClick={() => {handleCreateGame()}} variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">
                 Create
               </Button>
             </Col>

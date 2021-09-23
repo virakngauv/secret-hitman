@@ -4,6 +4,7 @@ import "./index.css";
 
 function LobbyRoster(props) {
   const players = props.players;
+  console.log("typeof client-players[0] is ", typeof players[0]);
 
   return (
     <Row>
