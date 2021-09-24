@@ -3,37 +3,43 @@ import Button from "react-bootstrap/Button";
 import { useHistory } from "react-router";
 import { useState } from "react";
 import MenuHeader from "../MenuHeader";
-import { createGame } from "../../api"
+import { createGame } from "../../api";
 // import { io } from "socket.io-client";
 
 function CreateGameScreen() {
   const [name, setName] = useState("");
   const handleNameChange = (e) => {setName(e.target.value);};
-  console.log("name is ", name);
+  // console.log("name is ", name);
 
   const history = useHistory();
   const goBack = () => history.goBack();
 
-  const createGameScreenTitle = "Create Game";
-  const createGameScreenSubtitle = "Pick a name!";
+  const title = "Create Game";
+  const subtitle = "Pick a name!";
   // Buttons: Back, Create->Uses API to make a new room and goes to that lobby
 
-  const title = createGameScreenTitle;
-  const subtitle = createGameScreenSubtitle;
+  function handleSubmit(e) {
+    e.preventDefault();
+    // e.stopPropagation();
+    createGame(name, history);
+  }
+
+  // const title = createGameScreenTitle;
+  // const subtitle = createGameScreenSubtitle;
 
   // const socket = io();
   // const createRoom = (username) => {
   //   socket.emit("createRoom", username, (roomCode) => history.push(`/${roomCode}`));
   // }
-  function handleCreateGame() {
-    createGame(name, history);
-  }
+  // function handleCreateGame() {
+  //   createGame(name, history);
+  // }
 
   return (
     <>
       <Container className="screen">
         <MenuHeader title={title} subtitle={subtitle} />
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <Row className="mb-1">
             <Col className="d-flex">
               <Form.Group controlId="playerName" className="ms-auto me-auto">
@@ -47,7 +53,7 @@ function CreateGameScreen() {
               <Button onClick={goBack} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-1">
                 Back
               </Button>
-              <Button onClick={() => {handleCreateGame()}} variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">
+              <Button type="submit" variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">
                 Create
               </Button>
             </Col>
