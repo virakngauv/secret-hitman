@@ -1,7 +1,6 @@
 import { original } from "./dictionaries/index.js";
 import { generateRandomRoomCode } from "./helpers/index.js";
 import { shuffledArray } from "./helpers/util/index.js";
-import { Server } from "socket.io";
 
 // TODO: Make enum for PlayerStatus, GameStatus
 const PlayerStatus = {
@@ -21,20 +20,13 @@ class GameStore {
     this.games = new Map();
   }
 
-  createGame(userID, name) {
+  createGame() {
     const roomCode = this.generateNewRoomCode();
 
     // const game = new Map();
     const game = {
       gameState: GameState.LOBBY,
-      players: new Map([
-        [userID, {
-          name: name,
-          status: PlayerStatus.INACTIVE,
-          oldScore: 0,
-          newScore: 0,
-        }]
-      ]),
+      players: new Map(),
       hint: "",
       tiles: [],
       turnStatus: null,
@@ -58,7 +50,7 @@ class GameStore {
 
     this.games.set(roomCode, game);
 
-    console.log("game is ", game);
+    // console.log("game is ", game);
 
     return roomCode
   }
@@ -79,6 +71,17 @@ class GameStore {
     }
   
     return roomCode;
+  }
+
+  addNewPlayerToGame(userID, name, roomCode) {
+    const player = {
+      name: name,
+      status: PlayerStatus.INACTIVE,
+      oldScore: 0,
+      newScore: 0,
+    }
+
+    this.games.get(roomCode).players.set(userID, player);
   }
 }
 

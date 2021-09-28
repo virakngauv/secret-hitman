@@ -1,14 +1,17 @@
 import { Col, Container, Form, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
-import { useHistory } from "react-router";
+import { useHistory, useParams } from "react-router";
 import MenuHeader from "../MenuHeader";
 import { joinGame } from "../../api";
 
 function JoinGameScreen() {
+  const initialRoomCode = useParams().roomCode;
+  const hasInitialRoomCode = initialRoomCode ? true : false;
+
   const [name, setName] = useState("");
   const handleNameChange = (e) => {setName(e.target.value);};
-  const [roomCode, setRoomCode] = useState("");
+  const [roomCode, setRoomCode] = useState(initialRoomCode);
   const handleRoomCodeChange = (e) => {setRoomCode(e.target.value);};
 
   const history = useHistory();
@@ -20,6 +23,7 @@ function JoinGameScreen() {
 
   function handleSubmit(e) {
     e.preventDefault();
+    e.stopPropagation();
     joinGame(name, roomCode, history);
   }
 
@@ -39,7 +43,7 @@ function JoinGameScreen() {
             <Col className="d-flex">
               <Form.Group controlId="roomCode" className="ms-auto me-auto">
                 <Form.Label column="sm">Room Code</Form.Label>
-                <Form.Control value={roomCode} onChange={handleRoomCodeChange} size="sm" placeholder="Enter a room code" />
+                <Form.Control value={roomCode} onChange={handleRoomCodeChange} size="sm" placeholder="Enter a room code" plaintext={hasInitialRoomCode} readOnly={hasInitialRoomCode} />
               </Form.Group>
             </Col>
           </Row>

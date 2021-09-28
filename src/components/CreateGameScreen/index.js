@@ -20,7 +20,7 @@ function CreateGameScreen() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    // e.stopPropagation();
+    e.stopPropagation();
     createGame(name, history);
   }
 

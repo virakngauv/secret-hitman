@@ -5,7 +5,7 @@ import LobbyFooter from "../LobbyFooter/index.js";
 import LobbyRoster from "../LobbyRoster/index.js";
 import MenuHeader from "../MenuHeader/index.js";
 import RoomCode from "../RoomCode/index.js";
-import { getPlayers } from "../../api";
+import { getPlayers, registerListener } from "../../api";
 
 function LobbyScreen() {
   const { roomCode } = useParams();
@@ -13,7 +13,12 @@ function LobbyScreen() {
 
   useEffect(() => {
     getPlayers(roomCode, setPlayers);
+
+    const event = "playerChange";
+    const callback = () => getPlayers(roomCode, setPlayers);
+    registerListener(event, callback);
   }, [roomCode]);
+
 
   // // TODO: still a risk for infinite loop, reliant on how api is configured
   // if (players.length === 0) {
