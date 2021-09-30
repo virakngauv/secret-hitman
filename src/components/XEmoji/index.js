@@ -1,6 +1,15 @@
-function XEmoji() {
+function XEmoji(props) {
+  const kickPlayer = props.kickPlayer;
+
+  function handleClick(e) {
+    console.log("I was clicked!");
+    e.preventDefault();
+    e.stopPropagation();
+    kickPlayer();
+  }
+  
   return (
-    <span role="img" aria-label="cross-mark">❌</span>
+    <span onClick={handleClick} role="button" aria-label="cross-mark">❌</span>
   )
 }
 

@@ -1,6 +1,7 @@
 import { original } from "./dictionaries/index.js";
 import { generateRandomRoomCode } from "./helpers/index.js";
 import { shuffledArray } from "./helpers/util/index.js";
+import UserStore from "./UserStore.js";
 
 // TODO: Make enum for PlayerStatus, GameStatus
 const PlayerStatus = {
@@ -13,7 +14,7 @@ const GameState = {
   LOBBY: "lobby",
   GAME: "game",
   END: "end",
-}
+};
 
 class GameStore {
   constructor() {
@@ -73,15 +74,25 @@ class GameStore {
     return roomCode;
   }
 
-  addNewPlayerToGame(userID, name, roomCode) {
-    const player = {
-      name: name,
-      status: PlayerStatus.INACTIVE,
-      oldScore: 0,
-      newScore: 0,
+  addNewPlayerToGame(userID, name, playerID, roomCode) {
+    if (this.games.has(roomCode)) {
+      const player = {
+        name,
+        id: playerID,
+        status: PlayerStatus.INACTIVE,
+        oldScore: 0,
+        newScore: 0,
+      };
+  
+      this.games.get(roomCode).players.set(userID, player);
     }
+  }
 
-    this.games.get(roomCode).players.set(userID, player);
+  removePlayerFromGame(userID, roomCode) {
+    console.log(`removing ${userID} from game ${roomCode}`);
+    if (this.games.has(roomCode)) {
+      this.games.get(roomCode).players.delete(userID);
+    }
   }
 }
 

@@ -1,10 +1,19 @@
 import { Col, Row, Table } from "react-bootstrap";
+import { useHistory } from "react-router";
 import StatusIndicator from "../StatusIndicator";
+import XEmoji from "../XEmoji";
 import "./index.css";
+import { kickPlayer } from "../../api";
 
 function LobbyRoster(props) {
+  const roomCode = props.roomCode;
   const players = props.players;
-  console.log("typeof client-players[0] is ", typeof players[0]);
+  const playerID = sessionStorage.getItem("playerID");
+
+  function handleKickPlayer(roomCode, playerID) {
+    console.log("I am in handleKickPlayer");
+    kickPlayer(roomCode, playerID);
+  }
 
   return (
     <Row>
@@ -12,8 +21,9 @@ function LobbyRoster(props) {
         <Table borderless hover size="sm" className="fs-sm ms-auto me-auto lobby-roster">
           <thead>
             <tr>
-              <th className="text-center col-6">Status</th>
-              <th className="col-6">Name</th>
+              <th className="text-center col-3">Status</th>
+              <th className="text-center col-6">Name</th>
+              <th className="text-center col-3">Kick</th>
             </tr>
           </thead>
           <tbody>
@@ -21,7 +31,10 @@ function LobbyRoster(props) {
               return (
                 <tr>
                   <td className="text-center"><StatusIndicator status={player.status} /></td>
-                  <td>{player.name}</td>
+                  <td className="text-center">{player.name}</td>
+                  <td className="text-center">
+                    {playerID === player.id || <XEmoji kickPlayer={() => handleKickPlayer(roomCode, player.id)} />}
+                  </td>
                 </tr>
               )
             })}

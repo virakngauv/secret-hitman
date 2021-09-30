@@ -5,29 +5,37 @@ import LobbyFooter from "../LobbyFooter/index.js";
 import LobbyRoster from "../LobbyRoster/index.js";
 import MenuHeader from "../MenuHeader/index.js";
 import RoomCode from "../RoomCode/index.js";
-import { getPlayers, registerListener } from "../../api";
+import { getPlayers, leaveRoom, registerListener } from "../../api";
 
 function LobbyScreen() {
   const { roomCode } = useParams();
   const [players, setPlayers] = useState([]);
+  const history = useHistory();
 
   useEffect(() => {
     getPlayers(roomCode, setPlayers);
 
-    const event = "playerChange";
-    const callback = () => getPlayers(roomCode, setPlayers);
-    registerListener(event, callback);
-  }, [roomCode]);
+    registerListener("playerChange", () => getPlayers(roomCode, setPlayers));
+    registerListener("playerKicked", (kickedPlayerID) => {
+      const playerID = sessionStorage.getItem("playerID");
+      if (playerID === kickedPlayerID) {
+        history.push("/");
+        leaveRoom(roomCode);
+      } else {
+        console.log("getPlayers cause you weren't kicked but someone else was..")
+        getPlayers(roomCode, setPlayers);
+      }
+    });
+  }, [roomCode, history]);
 
 
-  // // TODO: still a risk for infinite loop, reliant on how api is configured
   // if (players.length === 0) {
   //   getPlayers(roomCode, setPlayers);
   // }
   // console.log("just got players on lobby screen");
   // console.log("players is ", players);
 
-  const history = useHistory();
+  
 
   const title = "Lobby";
   const subtitle = "Share your room code below to add more players!";
@@ -62,7 +70,7 @@ function LobbyScreen() {
     <Container className="screen">
       <MenuHeader title={title} subtitle={subtitle} />
       <RoomCode roomCode={roomCode} />
-      <LobbyRoster players={players} />
+      <LobbyRoster roomCode={roomCode} players={players} />
       <LobbyFooter />
       <Row>
         <Col className="d-flex mt-3">

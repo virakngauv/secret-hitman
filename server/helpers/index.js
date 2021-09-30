@@ -1,4 +1,5 @@
 export function generateRandomRoomCode() {
+  // TODO: filter against a bad word filter
   const allowed = "bcdfghkpqrstvz";
   const vowels = "aeiou";
   const lastCharacter = "23456789y";
