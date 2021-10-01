@@ -11,6 +11,7 @@ import JoinGameScreen from './components/JoinGameScreen';
 import LobbyScreen from './components/LobbyScreen';
 import EndScreen from './components/EndScreen';
 import ScrollToTop from './components/ScrollToTop';
+import RoomContainer from './components/RoomContainer';
 
 function App() {
 
@@ -38,7 +39,7 @@ function App() {
             <EndScreen />
           </Route>
           <Route path="/:roomCode">
-            <LobbyScreen />
+            <RoomContainer />
           </Route>
           <Route path="/">
             <WelcomeScreen />

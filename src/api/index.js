@@ -29,12 +29,24 @@ export function joinGame(name, roomCode, history) {
   socket.emit("joinGame", name, roomCode, (roomCode) => history.push(`/${roomCode}`));
 }
 
+export function getGameState(roomCode, setGameState) {
+  socket.emit("getGameState", roomCode, (gameState) => setGameState(gameState));
+}
+
 export function getPlayers(roomCode, setPlayers) {
   socket.emit("getPlayers", roomCode, (players) => setPlayers(players));
 }
 
 export function markPlayerStatus(roomCode, status) {
   socket.emit("markPlayerStatus", roomCode, status);
+}
+
+export function startGame(roomCode) {
+  // TODO: should have more failure modes that tell the user that something has failed
+
+  console.log("Inside api's startgame");
+
+  socket.emit("startGame", roomCode);
 }
 
 export function kickPlayer(roomCode, playerID,) {

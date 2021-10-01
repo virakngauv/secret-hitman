@@ -79,6 +79,14 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("getGameState", (roomCode, setGameState) => {
+    if (gameStore.hasGame(roomCode)) {
+      const gameState = gameStore.getGame(roomCode).gameState;
+      console.log(`getGameState's gameState is ${gameState}`);
+      setGameState(gameState);
+    }
+  })
+
   socket.on("getPlayers", (roomCode, setPlayers) => {
     if (gameStore.hasGame(roomCode)) {
       const players = Array.from(gameStore.getGame(roomCode).players.values());
@@ -93,23 +101,42 @@ io.on("connection", (socket) => {
     if (game && game.gameState === GameState.LOBBY) {
       const userID = socket.userID;
       const player = game.players.get(userID);
-      console.log(`markPlayerStatus's player is ${JSON.stringify(player, null, 2)}`);
+      // console.log(`markPlayerStatus's player is ${JSON.stringify(player, null, 2)}`);
       player.status = status === PlayerStatus.ACTIVE ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
-      console.log("inside markPlayerStatus if statement");
-      console.log(`markPlayerStatus's player is nowww ${JSON.stringify(player, null, 2)}`);
-      console.log("markPlayerStatus's players is ", JSON.stringify(Array.from(game.players.values()), null, 2))
+      // console.log("inside markPlayerStatus if statement");
+      // console.log(`markPlayerStatus's player is nowww ${JSON.stringify(player, null, 2)}`);
+      // console.log("markPlayerStatus's players is ", JSON.stringify(Array.from(game.players.values()), null, 2))
       io.to(roomCode).emit("playerChange");
     }
     console.log("outside markplayerstatus if statement");
+  });
+
+  socket.on("startGame", (roomCode) => {
+    console.log("Inside startGame(server)")
+    console.log(`roomCode is ${roomCode}`);
+
+
+    const game = gameStore.getGame(roomCode);
+    console.log(`game is ${game}`);
+    const isInLobby = game && game.gameState === GameState.LOBBY;
+    const allPlayersReady = game && Array.from(game.players.values()).reduce(
+      (readyStatusSoFar, currentPlayer) => {
+        return readyStatusSoFar && currentPlayer.status === PlayerStatus.ACTIVE
+      }, true);
+    console.log(`isInLobby is ${isInLobby} and allPlayersReady is ${allPlayersReady}`);
+    if (isInLobby && allPlayersReady) {
+      game.gameState = GameState.GAME;
+      io.to(roomCode).emit("gameChange");
+    }
   })
 
   socket.on("kickPlayer", (roomCode, playerID) => {
     console.log(`kickPlayer(server) has roomCode ${roomCode}, playerID ${playerID}`);
 
     const userID = userStore.getUserID(playerID);
-    console.log("userID in kickPlayer(server) is ", userID);
+    // console.log("userID in kickPlayer(server) is ", userID);
     userStore.deleteUser(userID);
-    console.log("userID in kickPlayer(server) is ", userID);
+    // console.log("userID in kickPlayer(server) is ", userID);
 
     gameStore.removePlayerFromGame(userID, roomCode);
 

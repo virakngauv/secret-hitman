@@ -1,6 +1,6 @@
 import { Button, Col, Row } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
-import { markPlayerStatus } from "../../api";
+import { markPlayerStatus, startGame } from "../../api";
 
 function LobbyFooter(props) {
   console.log("LOBBY FOOTER WAS LOADED");
@@ -30,9 +30,16 @@ function LobbyFooter(props) {
     }
   }
 
-  const markStatusReady = () => console.log("Status Ready!");
-  const startGame = () => console.log("Start Game!")
-  const areAllPlayersReady = false;
+  function handleStartGame() {
+    console.log("inside handleStartGame")
+    startGame(roomCode);
+  }
+
+  // const startGame = () => console.log("Start Game!")
+  const allPlayersReady = players.reduce(
+    (readyStatusSoFar, currentPlayer) => {
+      return readyStatusSoFar && currentPlayer.status === PlayerStatus.ACTIVE
+    }, true);
 
   return (
     <>
@@ -41,7 +48,7 @@ function LobbyFooter(props) {
           <Button onClick={toggleReadyStatus} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-1">
             {!isReady ? "I'm Ready!" : "Not Ready"}
           </Button>
-          <Button disabled={!areAllPlayersReady} onClick={startGame} variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">
+          <Button disabled={!allPlayersReady} onClick={handleStartGame} variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">
             Start Game
           </Button>
         </Col>
