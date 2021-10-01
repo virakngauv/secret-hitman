@@ -12,6 +12,19 @@ const io = new Server(httpServer);
 const gameStore = new GameStore();
 const userStore = new UserStore();
 
+// TODO: make enum for GameState and PlayerStatus
+const GameState = {
+  LOBBY: "lobby",
+  GAME: "game",
+  END: "end",
+};
+
+const PlayerStatus = {
+  ACTIVE: "active", 
+  INACTIVE: "inactive", 
+  CODEMASTER: "codemaster",
+}
+
 app.use(express.static("./build"));
 app.get("*", (req, res) => {
   res.sendFile("index.html", { root: "./build" });
@@ -74,6 +87,21 @@ io.on("connection", (socket) => {
       console.log("getPlayers's players is ", JSON.stringify(players, null, 2))
     }
   });
+
+  socket.on("markPlayerStatus", (roomCode, status) => {
+    const game = gameStore.getGame(roomCode);
+    if (game && game.gameState === GameState.LOBBY) {
+      const userID = socket.userID;
+      const player = game.players.get(userID);
+      console.log(`markPlayerStatus's player is ${JSON.stringify(player, null, 2)}`);
+      player.status = status === PlayerStatus.ACTIVE ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
+      console.log("inside markPlayerStatus if statement");
+      console.log(`markPlayerStatus's player is nowww ${JSON.stringify(player, null, 2)}`);
+      console.log("markPlayerStatus's players is ", JSON.stringify(Array.from(game.players.values()), null, 2))
+      io.to(roomCode).emit("playerChange");
+    }
+    console.log("outside markplayerstatus if statement");
+  })
 
   socket.on("kickPlayer", (roomCode, playerID) => {
     console.log(`kickPlayer(server) has roomCode ${roomCode}, playerID ${playerID}`);

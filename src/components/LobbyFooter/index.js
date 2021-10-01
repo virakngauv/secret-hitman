@@ -1,9 +1,34 @@
 import { Button, Col, Row } from "react-bootstrap";
-import { useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom";
+import { markPlayerStatus } from "../../api";
 
-function LobbyFooter() {
+function LobbyFooter(props) {
+  console.log("LOBBY FOOTER WAS LOADED");
+
+  const PlayerStatus = {
+    ACTIVE: "active",
+    INACTIVE: "inactive",
+    CODEMASTER: "codemaster",
+  }
+
+  const roomCode = props.roomCode;
+  const players = props.players;
+  const playerID = sessionStorage.getItem("playerID");
+  console.log(`players is ${JSON.stringify(players, null, 2)}`);
+  console.log(`playerID is ${playerID}`);
+  const self = players.find(player => player.id === playerID);
+  const isReady = self?.status === PlayerStatus.ACTIVE ? true : false;
+
   const history = useHistory();
   const goBack = () => history.goBack();
+
+  function toggleReadyStatus() {
+    if (isReady) {
+      markPlayerStatus(roomCode, PlayerStatus.INACTIVE);
+    } else if (!isReady) {
+      markPlayerStatus(roomCode, PlayerStatus.ACTIVE);
+    }
+  }
 
   const markStatusReady = () => console.log("Status Ready!");
   const startGame = () => console.log("Start Game!")
@@ -13,8 +38,8 @@ function LobbyFooter() {
     <>
       <Row>
         <Col className="d-flex mt-4">
-          <Button onClick={markStatusReady} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-1">
-            I'm Ready!
+          <Button onClick={toggleReadyStatus} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-1">
+            {!isReady ? "I'm Ready!" : "Not Ready"}
           </Button>
           <Button disabled={!areAllPlayersReady} onClick={startGame} variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">
             Start Game

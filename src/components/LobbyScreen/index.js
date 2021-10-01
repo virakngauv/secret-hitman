@@ -15,6 +15,7 @@ function LobbyScreen() {
   useEffect(() => {
     getPlayers(roomCode, setPlayers);
 
+    // TODO: maybe pull these into API? depends on rest of structure of code
     registerListener("playerChange", () => getPlayers(roomCode, setPlayers));
     registerListener("playerKicked", (kickedPlayerID) => {
       const playerID = sessionStorage.getItem("playerID");
@@ -71,7 +72,7 @@ function LobbyScreen() {
       <MenuHeader title={title} subtitle={subtitle} />
       <RoomCode roomCode={roomCode} />
       <LobbyRoster roomCode={roomCode} players={players} />
-      <LobbyFooter />
+      <LobbyFooter roomCode={roomCode} players={players} />
       <Row>
         <Col className="d-flex mt-3">
           <Button onClick={() => history.push("/temp-mid-game")} variant="outline-secondary" size="sm" className="ms-auto me-auto">

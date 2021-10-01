@@ -1,5 +1,4 @@
 import { Col, Row, Table } from "react-bootstrap";
-import { useHistory } from "react-router";
 import StatusIndicator from "../StatusIndicator";
 import XEmoji from "../XEmoji";
 import "./index.css";

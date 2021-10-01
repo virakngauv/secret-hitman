@@ -33,6 +33,10 @@ export function getPlayers(roomCode, setPlayers) {
   socket.emit("getPlayers", roomCode, (players) => setPlayers(players));
 }
 
+export function markPlayerStatus(roomCode, status) {
+  socket.emit("markPlayerStatus", roomCode, status);
+}
+
 export function kickPlayer(roomCode, playerID,) {
   console.log("I am in kickPlayer in the api");
 
