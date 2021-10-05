@@ -37,6 +37,14 @@ export function getPlayers(roomCode, setPlayers) {
   socket.emit("getPlayers", roomCode, (players) => setPlayers(players));
 }
 
+export function getTiles(roomCode, setTiles) {
+  socket.emit("getTiles", roomCode, (tiles) => setTiles(tiles));
+}
+
+export function getHint(roomCode, setHint) {
+  socket.emit("getHint", roomCode, (hint) => setHint(hint));
+}
+
 export function markPlayerStatus(roomCode, status) {
   socket.emit("markPlayerStatus", roomCode, status);
 }

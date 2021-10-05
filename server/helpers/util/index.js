@@ -1,6 +1,8 @@
 import crypto from "crypto";
 
-export function shuffledArray(array) {
+export function shuffledArray(oldArray) {
+  const array = Array.from(oldArray);
+
   for (let i = 0; i < array.length; i++) {
     let randomIndex = Math.floor(Math.random() * (i + 1));
 

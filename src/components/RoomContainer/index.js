@@ -6,6 +6,7 @@ import GameScreen from "../GameScreen/index.js";
 import EndScreen from "../EndScreen/index.js";
 
 function RoomContainer() {
+  // TODO: make GameState enum
   const GameState = {
     LOBBY: "lobby",
     GAME: "game",
@@ -20,7 +21,7 @@ function RoomContainer() {
     getGameState(roomCode, setGameState)
 
     // TODO: maybe pull these into API? depends on rest of structure of code
-    registerListener("gameChange", () => getGameState(roomCode, setGameState));
+    registerListener("gameStateChange", () => getGameState(roomCode, setGameState));
   }, [roomCode]);
 
   switch (gameState) {

@@ -1,16 +1,20 @@
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import GameStore from "./GameStore.js";
+// import GameStore from "./GameStore.js";
+import gameStore from "./GameStore.js";
 import { generateRandomId } from "./helpers/util/index.js"
-import UserStore from "./UserStore.js";
+import GameService from "./services/GameService.js";
+// import UserStore from "./UserStore.js";
+import userStore from "./UserStore.js";
 
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
 
-const gameStore = new GameStore();
-const userStore = new UserStore();
+// const gameStore = new GameStore();
+// const userStore = new UserStore();
+const gameService = new GameService();
 
 // TODO: make enum for GameState and PlayerStatus
 const GameState = {
@@ -47,6 +51,7 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
+  // TODO: refactor so that socket.on() call other functions instead of all logic being in index.js
   console.log(`user ${socket.id} has connected`);
 
   socket.emit("newSession", {
@@ -96,6 +101,20 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("getTiles", (roomCode, setTiles) => {
+    if (gameStore.hasGame(roomCode)) {
+      const tiles = gameStore.getGame(roomCode).tiles;
+      setTiles(tiles);
+    }
+  });
+
+  socket.on("getHint", (roomCode, setHint) => {
+    if (gameStore.hasGame(roomCode)) {
+      const hint = gameStore.getGame(roomCode).hint;
+      setHint(hint);
+    }
+  });
+
   socket.on("markPlayerStatus", (roomCode, status) => {
     const game = gameStore.getGame(roomCode);
     if (game && game.gameState === GameState.LOBBY) {
@@ -115,7 +134,6 @@ io.on("connection", (socket) => {
     console.log("Inside startGame(server)")
     console.log(`roomCode is ${roomCode}`);
 
-
     const game = gameStore.getGame(roomCode);
     console.log(`game is ${game}`);
     const isInLobby = game && game.gameState === GameState.LOBBY;
@@ -125,8 +143,9 @@ io.on("connection", (socket) => {
       }, true);
     console.log(`isInLobby is ${isInLobby} and allPlayersReady is ${allPlayersReady}`);
     if (isInLobby && allPlayersReady) {
-      game.gameState = GameState.GAME;
-      io.to(roomCode).emit("gameChange");
+      gameService.initializeGame(roomCode, socket);
+
+      io.to(roomCode).emit("gameStateChange");
     }
   })
 

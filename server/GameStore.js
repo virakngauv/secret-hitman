@@ -28,6 +28,9 @@ class GameStore {
     const game = {
       gameState: GameState.LOBBY,
       players: new Map(),
+      playerArchive: [],
+      currentCodemasterIndex: null,
+      roundNumber: 0,
       hint: "",
       tiles: [],
       turnStatus: null,
@@ -75,7 +78,7 @@ class GameStore {
   }
 
   addNewPlayerToGame(userID, name, playerID, roomCode) {
-    if (this.games.has(roomCode)) {
+    if (this.hasGame(roomCode)) {
       const player = {
         name,
         id: playerID,
@@ -83,8 +86,9 @@ class GameStore {
         oldScore: 0,
         newScore: 0,
       };
-  
-      this.games.get(roomCode).players.set(userID, player);
+
+      this.getGame(roomCode).players.set(userID, player);
+      this.getGame(roomCode).playerArchive.push(userID);
     }
   }
 
@@ -96,4 +100,7 @@ class GameStore {
   }
 }
 
-export default GameStore;
+// export default GameStore;
+// export default new GameStore();
+const gameStore = new GameStore();
+export default gameStore;
