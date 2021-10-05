@@ -21,15 +21,32 @@ function GameBoardTile(props) {
   const tileClassName = state === State.DISABLED_OPAQUE ? "game-board-tile game-board-tile-disabled-opaque" : "game-board-tile";
 
   let buttonVariant = "";
-  if (type === Type.TARGET) {
-    buttonVariant = "success";
-  } else if (type === Type.CIVILIAN) {
-    buttonVariant = "secondary";
-  } else if (type === Type.ASSASSIN) {
-    buttonVariant = "dark";
-  } else {
-    buttonVariant = "outline-secondary";
+  switch (type) {
+    case Type.TARGET:
+      buttonVariant = "success";
+      break;
+    case Type.CIVILIAN:
+      if (state === State.DISABLED_OPAQUE) {
+        buttonVariant = "light";
+      } else {
+        buttonVariant = "secondary";
+      }
+      break;
+    case Type.ASSASSIN:
+      buttonVariant = "dark";
+      break;
+    default:
+      buttonVariant = "outline-secondary";
   }
+  // if (type === Type.TARGET) {
+  //   buttonVariant = "success";
+  // } else if (type === Type.CIVILIAN) {
+  //   buttonVariant = "secondary";
+  // } else if (type === Type.ASSASSIN) {
+  //   buttonVariant = "dark";
+  // } else {
+  //   buttonVariant = "outline-secondary";
+  // }
 
   return (
     <Col>

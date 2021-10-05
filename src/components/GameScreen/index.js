@@ -107,7 +107,13 @@ function GameScreen() {
   const playerID = sessionStorage.getItem("playerID");
   const player = players.find((player) => player.id === playerID)
   const isCodemaster = player && player.status === PlayerStatus.CODEMASTER;
-  const [isForceDisabled, setIsForceDisabled] = useState(isCodemaster);
+  // const [isForceDisabled, setIsForceDisabled] = useState(false);
+  // setIsForceDisabled(isCodemaster);
+
+  console.log(`playerID is ${playerID}`);
+  console.log(`player is ${JSON.stringify(player, null, 2)}`);
+  console.log(`isCodemaster is ${isCodemaster}`);
+  // console.log(`isForceDisabled is ${isForceDisabled}`);
 
   const [tiles, setTiles] = useState([]);
   const [hint, setHint] = useState("");
@@ -134,7 +140,7 @@ function GameScreen() {
     <Container className="screen">
       <PlayerRoster players={players} />
       <Announcer message={hint} />
-      <GameBoard tiles={tiles} setTiles={setTiles} isForceDisabled={isForceDisabled} setIsForceDisabled={setIsForceDisabled} />
+      <GameBoard tiles={tiles} setTiles={setTiles} isCodemaster={isCodemaster} />
       <GameFooter isCodemaster={isCodemaster} />
     </Container>
   );

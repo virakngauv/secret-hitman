@@ -7,6 +7,14 @@ import State from "../../constants/state";
 function GameBoard(props) {
   const tiles = props.tiles;
   const setTiles = props.setTiles;
+  const isCodemaster = props.isCodemaster;
+
+  // Format tiles
+  if (isCodemaster) {
+    tiles.forEach(tile => {
+      tile.state = State.DISABLED_OPAQUE;
+    })
+  }
 
   function updateTile(tileIndex) {
     if (tiles.length > tileIndex) {
