@@ -39,7 +39,7 @@ class GameService {
     const game = gameStore.getGame(roomCode);
 
     this.updateGameState(game, GameState.GAME);
-    this.markAllPlayersInactive(game);
+    // this.markAllPlayersInactive(game);
     this.assignNextCodemaster(game, socket);
     this.setupNewTiles(game);
   }

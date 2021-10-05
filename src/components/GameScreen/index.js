@@ -118,6 +118,9 @@ function GameScreen() {
   const [tiles, setTiles] = useState([]);
   const [hint, setHint] = useState("");
 
+  const initialMessage = isCodemaster ? "type your hint below" : "codemaster is thinking.."
+  const message = hint === "" ? initialMessage : hint;
+
   useEffect(() => {
     getPlayers(roomCode, setPlayers);
     getTiles(roomCode, setTiles);
@@ -139,7 +142,7 @@ function GameScreen() {
   return (
     <Container className="screen">
       <PlayerRoster players={players} />
-      <Announcer message={hint} />
+      <Announcer message={message} />
       <GameBoard tiles={tiles} setTiles={setTiles} isCodemaster={isCodemaster} />
       <GameFooter isCodemaster={isCodemaster} />
     </Container>
