@@ -23,9 +23,9 @@ function App() {
           <Route path="/new">
             <CreateGameScreen />
           </Route>
-          <Route path="/:roomCode/join">
+          {/* <Route path="/:roomCode/join">
             <JoinGameScreen />
-          </Route>
+          </Route> */}
           <Route path="/join">
             <JoinGameScreen />
           </Route>

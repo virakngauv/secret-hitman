@@ -1,7 +1,8 @@
 import gameStore from "../GameStore.js";
 import { shuffledArray } from "../helpers/util/index.js";
+import userStore from "../UserStore.js";
 
-// TODO: make enum for GameState and PlayerStatus
+// TODO: make enum for GameState, PlayerStatus, TileType, TileState
 const GameState = {
   LOBBY: "lobby",
   GAME: "game", 
@@ -18,7 +19,13 @@ const TileType = {
   TARGET: "target", 
   CIVILIAN: "civilian",
   ASSASSIN: "assassin",
-}
+};
+
+const TileState = {
+  ENABLED: "enabled",
+  DISABLED_OPAQUE: "disabled-opaque",
+  DISABLED_TRANSPARENT: "disabled-transparent"
+};
 
 class GameService {
   constructor() {
@@ -117,7 +124,69 @@ class GameService {
       word: null,
       type,
       claimer: null,
+      claimerID: null,
+      state: null,
     }));
+  }
+
+  getTilesForUser(game, userID) {
+    // const tiles = [...game.tiles]; 
+    const tilesCopy = game.tiles.map(tile => {return {...tile}});
+    const playerID = userStore.getPlayerID(userID);
+    const playerStatus = this.getPlayerStatus(game, playerID);
+
+
+    if (playerStatus === PlayerStatus.CODEMASTER) {
+      tilesCopy.forEach((tile) => {
+        delete tile.claimerID;
+        tile.state = TileState.DISABLED_OPAQUE;
+      });
+
+      return tilesCopy;
+    }
+
+    tilesCopy.forEach((tile) => {
+      const tileType = tile.type;
+      const claimerID = tile.claimerID;
+      delete tile.claimerID;
+
+      switch (claimerID) {
+        case playerID:
+          tile.state = TileState.DISABLED_OPAQUE;
+          break;
+        case null:
+          tile.type = null;
+
+          if (playerStatus === PlayerStatus.ACTIVE) {
+            tile.state = TileState.ENABLED;
+          } else if (playerStatus === PlayerStatus.INACTIVE) {
+            tile.state = TileState.DISABLED_TRANSPARENT;
+          } else {
+            // Should not be reachable
+            console.warn(`Possible Error: playerStatus is ${playerStatus}`);
+          }
+          break;
+        // Default case reached if claimed by another player:
+        default:
+          if (tileType === TileType.ASSASSIN && playerStatus === PlayerStatus.ACTIVE) {
+            tile.claimer = null;
+            tile.type = null;
+            tile.state = TileState.ENABLED;
+          } else {
+            tile.state = TileState.DISABLED_TRANSPARENT
+          }
+      }
+    });
+
+    return tilesCopy;
+  }
+
+  getPlayerStatus(game, playerID) {
+    const userID = userStore.getUserID(playerID);
+    const player = game.players.get(userID);
+    if (player) {
+      return player.status
+    }
   }
 }
 

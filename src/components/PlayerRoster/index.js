@@ -4,7 +4,7 @@ import "./index.css"
 
 function PlayerRoster(props) {
   const players = props.players;
-  const playerCardHeadings = {status: "Status", name: "Name", score: "Score"}
+  const playerCardHeadings = {status: "Status", name: "Name", oldScore: "Score", newScore: ""}
 
   return (
     <CardGroup className="player-roster">

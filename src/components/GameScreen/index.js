@@ -118,7 +118,7 @@ function GameScreen() {
   const [tiles, setTiles] = useState([]);
   const [hint, setHint] = useState("");
 
-  const initialMessage = isCodemaster ? "type your hint below" : "codemaster is thinking.."
+  const initialMessage = isCodemaster ? "type your hint below" : "hint pending..";
   const message = hint === "" ? initialMessage : hint;
 
   useEffect(() => {

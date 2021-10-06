@@ -76,6 +76,12 @@ io.on("connection", (socket) => {
       // const userID = generateRandomId();
       const userID = socket.userID;
       const playerID = socket.playerID;
+
+
+      // // TODO: what if existing user joins same game in different tab or
+      // if (gameService.checkIfRoomAlreadyHasUser(roomCode, userID)) {
+      //   gameService.loadGameDataForUser(roomCode, userID);
+      // };
       userStore.setPlayerID(userID, playerID);
       gameStore.addNewPlayerToGame(userID, name, playerID, roomCode);
       socket.join(roomCode);
@@ -101,9 +107,23 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("getTiles", (roomCode, setTiles) => {
+  socket.on("getIsUserInRoom", (roomCode, setIsUserInRoom) => {
+    const userID = socket.userID;
     if (gameStore.hasGame(roomCode)) {
-      const tiles = gameStore.getGame(roomCode).tiles;
+      const players = gameStore.getGame(roomCode).players;
+      const isUserInRoom = players.get(userID) ? true : false;
+      setIsUserInRoom(isUserInRoom);
+    }
+  });
+
+  socket.on("getTiles", (roomCode, setTiles) => {
+    const userID = socket.userID;
+    if (gameStore.hasGame(roomCode) && userID) {
+      const game = gameStore.getGame(roomCode);
+      const tiles = gameService.getTilesForUser(game, userID);
+      
+      console.log(`tiles is ${JSON.stringify(tiles, null, 2)}`);
+
       setTiles(tiles);
     }
   });
@@ -131,17 +151,17 @@ io.on("connection", (socket) => {
   });
 
   socket.on("startGame", (roomCode) => {
-    console.log("Inside startGame(server)")
-    console.log(`roomCode is ${roomCode}`);
+    // console.log("Inside startGame(server)")
+    // console.log(`roomCode is ${roomCode}`);
 
     const game = gameStore.getGame(roomCode);
-    console.log(`game is ${game}`);
+    // console.log(`game is ${game}`);
     const isInLobby = game && game.gameState === GameState.LOBBY;
     const allPlayersReady = game && Array.from(game.players.values()).reduce(
       (readyStatusSoFar, currentPlayer) => {
         return readyStatusSoFar && currentPlayer.status === PlayerStatus.ACTIVE
       }, true);
-    console.log(`isInLobby is ${isInLobby} and allPlayersReady is ${allPlayersReady}`);
+    // console.log(`isInLobby is ${isInLobby} and allPlayersReady is ${allPlayersReady}`);
     if (isInLobby && allPlayersReady) {
       gameService.initializeGame(roomCode, socket);
 

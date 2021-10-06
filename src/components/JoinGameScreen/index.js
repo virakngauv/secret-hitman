@@ -5,8 +5,9 @@ import { useHistory, useParams } from "react-router";
 import MenuHeader from "../MenuHeader";
 import { joinGame } from "../../api";
 
-function JoinGameScreen() {
-  const initialRoomCode = useParams().roomCode;
+function JoinGameScreen(props) {
+  // const initialRoomCode = useParams().roomCode;
+  const initialRoomCode = props.roomCode;
   const hasInitialRoomCode = initialRoomCode ? true : false;
 
   const [name, setName] = useState("");

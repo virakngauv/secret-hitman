@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { getGameState, registerListener } from "../../api";
+import { getGameState, getIsUserInRoom, registerListener } from "../../api";
 import LobbyScreen from "../LobbyScreen/index.js";
 import GameScreen from "../GameScreen/index.js";
 import EndScreen from "../EndScreen/index.js";
+import JoinGameScreen from "../JoinGameScreen";
 
 function RoomContainer() {
   // TODO: make GameState enum
@@ -14,15 +15,22 @@ function RoomContainer() {
   }
 
   const { roomCode } = useParams();
-  const [gameState, setGameState] = useState(GameState.LOBBY);
-  const history = useHistory();
+  const [isUserInRoom, setIsUserInRoom] = useState();
+  const [gameState, setGameState] = useState();
+  // const history = useHistory();
 
   useEffect(() => {
-    getGameState(roomCode, setGameState)
+    getGameState(roomCode, setGameState);
+    getIsUserInRoom(roomCode, setIsUserInRoom);
 
     // TODO: maybe pull these into API? depends on rest of structure of code
     registerListener("gameStateChange", () => getGameState(roomCode, setGameState));
   }, [roomCode]);
+
+  // const isUserInRoom = checkIfRoomHasUser(roomCode, reportIfRoomHasUser);
+  if (!isUserInRoom) {
+    return <JoinGameScreen roomCode={roomCode} />
+  }
 
   switch (gameState) {
     case GameState.LOBBY:
@@ -32,7 +40,7 @@ function RoomContainer() {
     case GameState.END:
       return <EndScreen />
     default:
-      history.push("/");
+      return null
   }
 }
 

@@ -11,7 +11,7 @@ function PlayerRosterCard(props) {
         <StatusIndicator status={player.status} />
         <div className="player-name">{player.name}</div>
       </Card.Header>
-      <Card.Body>{player.score}</Card.Body>
+      <Card.Body>{player.oldScore + player.newScore}</Card.Body>
     </Card>
   );
 }
