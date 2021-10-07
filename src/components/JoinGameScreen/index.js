@@ -25,7 +25,14 @@ function JoinGameScreen(props) {
   function handleSubmit(e) {
     e.preventDefault();
     e.stopPropagation();
-    joinGame(name, roomCode, history);
+
+    if (hasInitialRoomCode) {
+      joinGame(name, roomCode, () => history.go(0));
+    } else {
+      joinGame(name, roomCode, () => history.push(`/${roomCode}`));
+    }
+
+    
   }
 
   // const title = joinGameScreenTitle;

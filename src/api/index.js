@@ -22,11 +22,11 @@ export function createGame(name, history) {
   socket.emit("createGame", name, (roomCode) => history.push(`/${roomCode}`));
 }
 
-export function joinGame(name, roomCode, history) {
+export function joinGame(name, roomCode, goToRoom) {
   // TODO: should fail for no room or name taken
   // orr.. join is an easter egg way to create a room if it doesn't exist? 
   // and maybe names can be duplicated to create confusing fun? (self-regulation principle)
-  socket.emit("joinGame", name, roomCode, (roomCode) => history.push(`/${roomCode}`));
+  socket.emit("joinGame", name, roomCode, goToRoom);
 }
 
 export function getGameState(roomCode, setGameState) {

@@ -71,7 +71,7 @@ io.on("connection", (socket) => {
     goToLobby(roomCode);
   });
 
-  socket.on("joinGame", (name, roomCode, goToLobby) => {
+  socket.on("joinGame", (name, roomCode, goToRoom) => {
     if (gameStore.hasGame(roomCode)) {
       // const userID = generateRandomId();
       const userID = socket.userID;
@@ -86,7 +86,7 @@ io.on("connection", (socket) => {
       gameStore.addNewPlayerToGame(userID, name, playerID, roomCode);
       socket.join(roomCode);
       socket.broadcast.to(roomCode).emit("playerChange");
-      goToLobby(roomCode);
+      goToRoom();
     }
   });
 
@@ -96,7 +96,7 @@ io.on("connection", (socket) => {
       console.log(`getGameState's gameState is ${gameState}`);
       setGameState(gameState);
     }
-  })
+  });
 
   socket.on("getPlayers", (roomCode, setPlayers) => {
     if (gameStore.hasGame(roomCode)) {
