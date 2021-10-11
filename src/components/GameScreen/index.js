@@ -110,9 +110,6 @@ function GameScreen() {
   // const [isForceDisabled, setIsForceDisabled] = useState(false);
   // setIsForceDisabled(isCodemaster);
 
-  console.log(`playerID is ${playerID}`);
-  console.log(`player is ${JSON.stringify(player, null, 2)}`);
-  console.log(`isCodemaster is ${isCodemaster}`);
   // console.log(`isForceDisabled is ${isForceDisabled}`);
 
   const [tiles, setTiles] = useState([]);
@@ -129,14 +126,6 @@ function GameScreen() {
     registerListener("playerChange", () => getPlayers(roomCode, setPlayers));
     registerListener("tileChange", () => getTiles(roomCode, setTiles));
     registerListener("hintChange", () => getHint(roomCode, setHint));
-    
-
-    /* 
-      Fetch players data
-      fetch game tile data
-      hint data
-
-    */ 
   }, [roomCode]);
 
   return (
@@ -144,7 +133,7 @@ function GameScreen() {
       <PlayerRoster players={players} />
       <Announcer message={message} />
       <GameBoard tiles={tiles} setTiles={setTiles} isCodemaster={isCodemaster} />
-      <GameFooter isCodemaster={isCodemaster} />
+      <GameFooter isCodemaster={isCodemaster} hint={hint} />
     </Container>
   );
 }

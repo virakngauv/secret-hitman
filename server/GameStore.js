@@ -79,16 +79,20 @@ class GameStore {
 
   addNewPlayerToGame(userID, name, playerID, roomCode) {
     if (this.hasGame(roomCode)) {
+      const game = this.getGame(roomCode);
+      const gameState = game.gameState;
+      const playerStatus = gameState === GameState.GAME ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
+
       const player = {
         name,
         id: playerID,
-        status: PlayerStatus.INACTIVE,
+        status: playerStatus,
         oldScore: 0,
         newScore: 0,
       };
 
-      this.getGame(roomCode).players.set(userID, player);
-      this.getGame(roomCode).playerArchive.push(userID);
+      game.players.set(userID, player);
+      game.playerArchive.push(userID);
     }
   }
 

@@ -18,6 +18,10 @@ socket.on("newSession", ({ userID, playerID }) => {
 });
 
 
+export function joinRoom(roomCode) {
+  socket.emit("joinRoom", roomCode);
+}
+
 export function createGame(name, history) {
   socket.emit("createGame", name, (roomCode) => history.push(`/${roomCode}`));
 }

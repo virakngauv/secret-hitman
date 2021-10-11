@@ -52,12 +52,20 @@ io.use((socket, next) => {
 
 io.on("connection", (socket) => {
   // TODO: refactor so that socket.on() call other functions instead of all logic being in index.js
+
+  // TODO: controller should not interact with data access layer at all, should be via the service layer
   console.log(`user ${socket.id} has connected`);
 
   socket.emit("newSession", {
     userID: socket.userID,
     playerID: socket.playerID,
   });
+
+  socket.on("joinRoom", (roomCode) => {
+    if (gameStore.hasGame(roomCode)) {
+      socket.join(roomCode);
+    }
+  })
 
   socket.on("createGame", (name, goToLobby) => {
     // const userID = generateRandomId();
@@ -102,8 +110,6 @@ io.on("connection", (socket) => {
     if (gameStore.hasGame(roomCode)) {
       const players = Array.from(gameStore.getGame(roomCode).players.values());
       setPlayers(players);
-      console.log("socket.playerID is", socket.playerID);
-      console.log("getPlayers's players is ", JSON.stringify(players, null, 2))
     }
   });
 
@@ -147,7 +153,6 @@ io.on("connection", (socket) => {
       // console.log("markPlayerStatus's players is ", JSON.stringify(Array.from(game.players.values()), null, 2))
       io.to(roomCode).emit("playerChange");
     }
-    console.log("outside markplayerstatus if statement");
   });
 
   socket.on("startGame", (roomCode) => {

@@ -14,8 +14,8 @@ function LobbyFooter(props) {
   const roomCode = props.roomCode;
   const players = props.players;
   const playerID = sessionStorage.getItem("playerID");
-  console.log(`players is ${JSON.stringify(players, null, 2)}`);
-  console.log(`playerID is ${playerID}`);
+  // console.log(`players is ${JSON.stringify(players, null, 2)}`);
+  // console.log(`playerID is ${playerID}`);
   const self = players.find(player => player.id === playerID);
   const isReady = self?.status === PlayerStatus.ACTIVE ? true : false;
 

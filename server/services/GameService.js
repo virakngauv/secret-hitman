@@ -46,6 +46,7 @@ class GameService {
     const game = gameStore.getGame(roomCode);
 
     this.updateGameState(game, GameState.GAME);
+    // Tiles will be active, which is funny if people want to select tiles before the hint is revealed
     // this.markAllPlayersInactive(game);
     this.assignNextCodemaster(game, socket);
     this.setupNewTiles(game);

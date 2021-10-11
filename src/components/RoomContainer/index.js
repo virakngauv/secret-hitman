@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { getGameState, getIsUserInRoom, registerListener } from "../../api";
+import { getGameState, getIsUserInRoom, registerListener, joinRoom } from "../../api";
 import LobbyScreen from "../LobbyScreen/index.js";
 import GameScreen from "../GameScreen/index.js";
 import EndScreen from "../EndScreen/index.js";
@@ -31,6 +31,8 @@ function RoomContainer() {
   if (!isUserInRoom) {
     return <JoinGameScreen roomCode={roomCode} />
   }
+
+  joinRoom(roomCode);
 
   switch (gameState) {
     case GameState.LOBBY:
