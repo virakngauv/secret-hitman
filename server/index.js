@@ -141,6 +141,21 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("submitHint", (roomCode, hint) => {
+    console.log(`submitHint(server)'s hint is ${hint}`);
+
+    const userID = socket.userID;
+    if (gameStore.hasGame(roomCode)) {
+      const game = gameStore.getGame(roomCode);
+      const playerStatus = game.players.get(userID)?.status;
+      if (playerStatus === PlayerStatus.CODEMASTER) {
+        gameService.setHint(game, hint);
+
+        io.to(roomCode).emit("hintChange");
+      }
+    }
+  })
+
   socket.on("markPlayerStatus", (roomCode, status) => {
     const game = gameStore.getGame(roomCode);
     if (game && game.gameState === GameState.LOBBY) {

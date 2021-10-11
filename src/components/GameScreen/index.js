@@ -133,7 +133,7 @@ function GameScreen() {
       <PlayerRoster players={players} />
       <Announcer message={message} />
       <GameBoard tiles={tiles} setTiles={setTiles} isCodemaster={isCodemaster} />
-      <GameFooter isCodemaster={isCodemaster} hint={hint} />
+      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} hint={hint} />
     </Container>
   );
 }

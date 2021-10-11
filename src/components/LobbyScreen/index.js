@@ -5,7 +5,7 @@ import LobbyFooter from "../LobbyFooter/index.js";
 import LobbyRoster from "../LobbyRoster/index.js";
 import MenuHeader from "../MenuHeader/index.js";
 import RoomCode from "../RoomCode/index.js";
-import { getPlayers, leaveRoom, registerListener, listListeners, joinRoom } from "../../api";
+import { getPlayers, leaveRoom, registerListener } from "../../api";
 
 function LobbyScreen() {
   const { roomCode } = useParams();
@@ -16,13 +16,8 @@ function LobbyScreen() {
     getPlayers(roomCode, setPlayers);
 
     // TODO: maybe pull these into API? depends on rest of structure of code
-    console.log("ABOUT TO LISTEN TO THE playerChange EVENT");
-    // registerListener("playerChange", () => getPlayers(roomCode, setPlayers));
     registerListener("playerChange", () => {
-      console.log("yoooo can you like, get players please?");
-      console.log(`roomCode is ${roomCode}`);
       getPlayers(roomCode, setPlayers);
-      console.log("after getPlayers apparently");
     });
     registerListener("playerKicked", (kickedPlayerID) => {
       const playerID = sessionStorage.getItem("playerID");
@@ -34,10 +29,6 @@ function LobbyScreen() {
         getPlayers(roomCode, setPlayers);
       }
     });
-
-    console.log(`Callbacks for event "playerChange" ${JSON.stringify(listListeners("playerChange"), null, 2)}`);
-
-    console.log(`Lobby Screen's useEffect's roomCode is ${roomCode}`);
   }, [roomCode, history]);
 
 

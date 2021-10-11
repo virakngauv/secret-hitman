@@ -20,7 +20,7 @@ body {
   font-size: small;
 }
 
-.btn-menu {
+.btn-menu, button#hint-number-dropdown {
   color: #000;
 }
 

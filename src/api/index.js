@@ -53,6 +53,11 @@ export function getHint(roomCode, setHint) {
   socket.emit("getHint", roomCode, (hint) => setHint(hint));
 }
 
+export function submitHint(roomCode, hint) {
+  socket.emit("submitHint", roomCode, hint);
+  console.log(`submitHint(client)'s hint is ${hint}`);
+}
+
 export function markPlayerStatus(roomCode, status) {
   socket.emit("markPlayerStatus", roomCode, status);
 }

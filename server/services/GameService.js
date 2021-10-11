@@ -182,6 +182,11 @@ class GameService {
     return tilesCopy;
   }
 
+  setHint(game, hint) {
+    console.log(`setHint(server)'s hint is ${hint}`);
+    game.hint = hint;
+  }
+
   getPlayerStatus(game, playerID) {
     const userID = userStore.getUserID(playerID);
     const player = game.players.get(userID);
