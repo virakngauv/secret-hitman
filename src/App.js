@@ -3,14 +3,14 @@ import WelcomeScreen from './components/WelcomeScreen';
 import GameScreen from './components/GameScreen';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter, Switch, Route, useParams } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import AppFooter from './components/AppFooter';
 import RulesScreen from './components/RulesScreen';
 import CreateGameScreen from './components/CreateGameScreen';
 import JoinGameScreen from './components/JoinGameScreen';
-import LobbyScreen from './components/LobbyScreen';
 import EndScreen from './components/EndScreen';
 import ScrollToTop from './components/ScrollToTop';
+import RoomContainer from './components/RoomContainer';
 
 function App() {
 
@@ -22,6 +22,9 @@ function App() {
           <Route path="/new">
             <CreateGameScreen />
           </Route>
+          {/* <Route path="/:roomCode/join">
+            <JoinGameScreen />
+          </Route> */}
           <Route path="/join">
             <JoinGameScreen />
           </Route>
@@ -35,7 +38,7 @@ function App() {
             <EndScreen />
           </Route>
           <Route path="/:roomCode">
-            <LobbyScreen />
+            <RoomContainer />
           </Route>
           <Route path="/">
             <WelcomeScreen />

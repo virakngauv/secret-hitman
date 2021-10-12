@@ -2,6 +2,10 @@
 /* .screen {
   width: 315px;
 } */
+body {
+  max-width: 100%;
+}
+
 .screen {
   padding-top: 10px;
   padding-bottom: 10px;
@@ -16,7 +20,7 @@
   font-size: small;
 }
 
-.btn-menu {
+.btn-menu, button#hint-number-dropdown {
   color: #000;
 }
 
