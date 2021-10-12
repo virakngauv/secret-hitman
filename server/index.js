@@ -1,20 +1,13 @@
 import express from "express";
-import { createServer } from "http";
+import fs from "fs";
+import http from "http";
+import https from "https";
 import { Server } from "socket.io";
-// import GameStore from "./GameStore.js";
+
 import gameStore from "./GameStore.js";
 import { generateRandomId } from "./helpers/util/index.js"
 import GameService from "./services/GameService.js";
-// import UserStore from "./UserStore.js";
 import userStore from "./UserStore.js";
-
-const app = express();
-const httpServer = createServer(app);
-const io = new Server(httpServer);
-
-// const gameStore = new GameStore();
-// const userStore = new UserStore();
-const gameService = new GameService();
 
 // TODO: make enum for GameState and PlayerStatus
 const GameState = {
@@ -27,12 +20,32 @@ const PlayerStatus = {
   ACTIVE: "active", 
   INACTIVE: "inactive", 
   CODEMASTER: "codemaster",
-}
+};
+
+const app = express();
+const httpServer = http.createServer(app);
+const io = new Server(httpServer);
+httpServer.listen(80);
 
 app.use(express.static("./build"));
 app.get("*", (req, res) => {
   res.sendFile("index.html", { root: "./build" });
 });
+
+try {
+  const credentials = {
+    key: fs.readFileSync('/etc/letsencrypt/live/secrethitman.com/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/secrethitman.com/fullchain.pem')
+  }
+
+  const httpsServer = https.createServer(credentials, app);
+  io.attach(httpsServer);
+  httpsServer.listen(443);
+} catch (e) {
+  console.error(`Error: ${e}`);
+}
+
+const gameService = new GameService();
 
 io.use((socket, next) => {
   const userID = socket.handshake.auth.userID;
