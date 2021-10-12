@@ -3,4 +3,5 @@
   flex-direction: row;
   flex-wrap: nowrap;
   overflow: auto;
+  max-width: 350px;;
 }

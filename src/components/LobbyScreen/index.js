@@ -75,13 +75,6 @@ function LobbyScreen() {
       <RoomCode roomCode={roomCode} />
       <LobbyRoster roomCode={roomCode} players={players} />
       <LobbyFooter roomCode={roomCode} players={players} />
-      <Row>
-        <Col className="d-flex mt-3">
-          <Button onClick={() => history.push("/temp-mid-game")} variant="outline-secondary" size="sm" className="ms-auto me-auto">
-            (temp) mid-game
-          </Button>
-        </Col>
-      </Row>
     </Container>
   );
 }
