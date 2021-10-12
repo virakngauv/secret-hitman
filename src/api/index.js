@@ -49,6 +49,10 @@ export function getTiles(roomCode, setTiles) {
   socket.emit("getTiles", roomCode, (tiles) => setTiles(tiles));
 }
 
+export function claimTile(roomCode, tileIndex) {
+  socket.emit("claimTile", roomCode, tileIndex);
+}
+
 export function getHint(roomCode, setHint) {
   socket.emit("getHint", roomCode, (hint) => setHint(hint));
 }

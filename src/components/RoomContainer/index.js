@@ -15,7 +15,7 @@ function RoomContainer() {
   }
 
   const { roomCode } = useParams();
-  const [isUserInRoom, setIsUserInRoom] = useState();
+  const [isUserInRoom, setIsUserInRoom] = useState(null);
   const [gameState, setGameState] = useState();
   // const history = useHistory();
 
@@ -26,6 +26,11 @@ function RoomContainer() {
     // TODO: maybe pull these into API? depends on rest of structure of code
     registerListener("gameStateChange", () => getGameState(roomCode, setGameState));
   }, [roomCode]);
+
+  if (isUserInRoom === null) {
+    // Display nothing if server has not responded yet.
+    return null;
+  }
 
   // const isUserInRoom = checkIfRoomHasUser(roomCode, reportIfRoomHasUser);
   if (!isUserInRoom) {

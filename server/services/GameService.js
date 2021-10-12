@@ -75,6 +75,7 @@ class GameService {
       
       if (nextPossibleCodemaster) {
         nextPossibleCodemaster.status = PlayerStatus.CODEMASTER;
+        game.currentCodemasterIndex = nextCodemasterIndex;
         break;
       }
 
@@ -192,6 +193,60 @@ class GameService {
     const player = game.players.get(userID);
     if (player) {
       return player.status
+    }
+  }
+
+  markPlayerStatus(game, playerID, playerStatus) {
+    const userID = userStore.getUserID(playerID);
+    const player = game.players.get(userID);
+    player.status = playerStatus;
+  }
+
+  incrementCodemasterScore(game, scoreChange) {
+    const codemasterIndex = game.currentCodemasterIndex;
+    const userID = game.playerArchive[codemasterIndex];
+    const codemaster = game.players.get(userID);
+
+    console.log(`codemasterIndex is ${codemasterIndex}`);
+    console.log(`userID is ${userID}`);
+    console.log(`codemaster is ${codemaster}`);
+
+    // Checking to see if codemaster is still in the game (possibly kicked)
+    if (codemaster) {
+      codemaster.newScore += scoreChange;
+    }
+  }
+
+  incrementUserScore(game, scoreChange, userID) {
+    const player = game.players.get(userID);
+    player.newScore += scoreChange;
+  }
+
+  claimTile(game, userID, tileIndex) {
+    const tile = game.tiles[tileIndex];
+    const playerName = game.players.get(userID).name;
+    const playerID = userStore.getPlayerID(userID);
+
+    if (tile.claimer === null) {
+      tile.claimer = playerName;
+      tile.claimerID = playerID;
+
+      switch (tile.type) {
+        case TileType.ASSASSIN:
+          this.incrementCodemasterScore(game, -1);
+          this.incrementUserScore(game, -1, userID);
+          this.markPlayerStatus(game, playerID, PlayerStatus.INACTIVE);
+          break;
+        case TileType.TARGET:
+          this.incrementCodemasterScore(game, 1);
+          this.incrementUserScore(game, 1, userID);
+          break;
+        case TileType.CIVILIAN:
+          this.markPlayerStatus(game, playerID, PlayerStatus.INACTIVE);
+          break;
+        default:
+          console.warn(`Tile Type was not assassin, target, or civilian`);
+      }
     }
   }
 }

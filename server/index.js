@@ -134,6 +134,24 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("claimTile", (roomCode, tileIndex) => {
+    const userID = socket.userID;
+
+    if (gameStore.hasGame(roomCode)) {
+      const game = gameStore.getGame(roomCode);
+      const playerStatus = game.players.get(userID)?.status;
+      if (playerStatus === PlayerStatus.ACTIVE) {
+        gameService.claimTile(game, userID, tileIndex);
+
+        // TODO: maybe change below to: 
+        //   io.to(userID).emit("tileChange", newTiles);
+        // if 2x RTT is too slow
+        io.to(roomCode).emit("tileChange");
+        io.to(roomCode).emit("playerChange");
+      }
+    }
+  })
+
   socket.on("getHint", (roomCode, setHint) => {
     if (gameStore.hasGame(roomCode)) {
       const hint = gameStore.getGame(roomCode).hint;
@@ -142,9 +160,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("submitHint", (roomCode, hint) => {
-    console.log(`submitHint(server)'s hint is ${hint}`);
-
     const userID = socket.userID;
+
     if (gameStore.hasGame(roomCode)) {
       const game = gameStore.getGame(roomCode);
       const playerStatus = game.players.get(userID)?.status;
