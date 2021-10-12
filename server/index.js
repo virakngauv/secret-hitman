@@ -247,5 +247,3 @@ io.on("connection", (socket) => {
   //  https://socket.io/docs/v4/server-socket-instance/#disconnect
 
 });
-
-httpServer.listen(80);
