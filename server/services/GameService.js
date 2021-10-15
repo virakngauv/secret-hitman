@@ -24,8 +24,14 @@ const TileType = {
 const TileState = {
   ENABLED: "enabled",
   DISABLED_OPAQUE: "disabled-opaque",
-  DISABLED_TRANSPARENT: "disabled-transparent"
+  DISABLED_TRANSPARENT: "disabled-transparent",
 };
+
+const TurnStatus = {
+  STARTED: "started",
+  PAUSED: "paused",
+  ENDED: "ended",
+}
 
 class GameService {
   constructor() {
@@ -46,6 +52,7 @@ class GameService {
     const game = gameStore.getGame(roomCode);
 
     this.updateGameState(game, GameState.GAME);
+    this.updateTurnStatus(game, TurnStatus.STARTED);
     // Tiles will be active, which is funny if people want to select tiles before the hint is revealed
     // this.markAllPlayersInactive(game);
     this.assignNextCodemaster(game, socket);
@@ -54,6 +61,10 @@ class GameService {
 
   updateGameState(game, gameState) {
     game.gameState = gameState;
+  }
+
+  updateTurnStatus(game, turnStatus) {
+    game.turnStatus = turnStatus;
   }
 
   markAllPlayersInactive(game) {
@@ -180,7 +191,29 @@ class GameService {
       }
     });
 
+    const turnStatus = game.turnStatus;
+    if (turnStatus === TurnStatus.PAUSED) {
+      tilesCopy.forEach((tile) => {
+        const tileState = tile.state;
+        if (tileState === TileState.ENABLED) {
+          tile.state = TileState.DISABLED_TRANSPARENT;
+        }
+      })
+    }
+
     return tilesCopy;
+  }
+
+  getHint(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    const turnStatus = game.turnStatus;
+
+    if (turnStatus === TurnStatus.PAUSED) {
+      const turnPausedMessage = "hint marked as invalid, pending codemaster..";
+      return turnPausedMessage
+    } else {
+      return game.hint;
+    }
   }
 
   setHint(game, hint) {
@@ -188,11 +221,16 @@ class GameService {
     game.hint = hint;
   }
 
+  invalidateHint(game) {
+    // TODO: rename to pauseTurn()
+    game.turnStatus = TurnStatus.PAUSED;
+  }
+
   getPlayerStatus(game, playerID) {
     const userID = userStore.getUserID(playerID);
     const player = game.players.get(userID);
     if (player) {
-      return player.status
+      return player.status;
     }
   }
 
@@ -247,6 +285,51 @@ class GameService {
         default:
           console.warn(`Tile Type was not assassin, target, or civilian`);
       }
+    }
+  }
+
+  getTurnStatus(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    const turnStatus = game.turnStatus;
+
+    return turnStatus;
+  }
+
+  resetTurn(roomCode) {
+    const game = gameStore.getGame(roomCode);
+
+    game.turnStatus = TurnStatus.STARTED;
+    game.players.forEach((player) => { 
+      player.newScore = 0;
+      if (player.status === PlayerStatus.INACTIVE) {
+        player.status = PlayerStatus.ACTIVE;
+      }
+    });
+    game.hint = "";
+    this.setupNewTiles(game);
+  }
+
+  unpauseTurn(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    game.turnStatus = TurnStatus.STARTED;
+  }
+
+  isValidRoomAndUser(roomCode, userID) {
+    const game = gameStore.getGame(roomCode);
+    const player = game && game.players.get(userID);
+    
+    return player ? true : false;
+  }
+
+  isValidRoomAndCodemaster(roomCode, userID) {
+    const game = gameStore.getGame(roomCode);
+    const player = game && game.players.get(userID);
+    const playerStatus = player && player.status;
+
+    if (playerStatus === PlayerStatus.CODEMASTER) {
+      return true;
+    } else {
+      return false;
     }
   }
 }

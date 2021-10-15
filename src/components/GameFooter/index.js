@@ -1,5 +1,5 @@
-import GameFooterClue from "../GameFooterClue";
-import GameFooterGuesser from "../GameFooterGuesser";
+import GameFooterCodemaster from "../GameFooterCodemaster";
+import GameFooterHitman from "../GameFooterHitman";
 import "./index.css";
 
 function GameFooter(props) {
@@ -8,7 +8,7 @@ function GameFooter(props) {
   const hint = props.hint;
 
   return (
-    isCodemaster ? <GameFooterClue roomCode={roomCode} hint={hint} /> : <GameFooterGuesser hint={hint} />
+    isCodemaster ? <GameFooterCodemaster roomCode={roomCode} hint={hint} /> : <GameFooterHitman hint={hint} />
   );
 }
 

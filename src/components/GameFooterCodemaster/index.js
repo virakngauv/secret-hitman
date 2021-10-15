@@ -4,13 +4,17 @@ import InputGroup from "react-bootstrap/InputGroup";
 import { submitHint } from "../../api";
 import "./index.css";
 
-function GameFooterClue(props) {
+function GameFooterCodemaster(props) {
+  // Should I store these in a constant file?
+  const defaultHint = "";
+  const defaultHintNumber = "#";
+
   const roomCode = props.roomCode;
-  const initialHint = props.hint ?? "";
+  const initialHint = props.hint ?? defaultHint;
   const hasInitialHint = props.hint ? true : false;
 
   const [hint, setHint] = useState(initialHint);
-  const [hintNumber, setHintNumber] = useState("#");
+  const [hintNumber, setHintNumber] = useState(defaultHintNumber);
 
   const handleHintChange = (e) => {setHint(e.target.value);};
   const handleHintNumberChange = (hintNumber) => {setHintNumber(hintNumber);};
@@ -25,11 +29,17 @@ function GameFooterClue(props) {
     e.preventDefault();
     e.stopPropagation();
 
+    // TODO: maybe send as an array do to server side validations
     const fullHint = `${hint} ${hintNumber}`;
-    console.log(`fullHint is ${fullHint}`);
+
+    setHint(defaultHint);
+    setHintNumber(defaultHintNumber);
 
     submitHint(roomCode, fullHint);
   }
+
+  const isHintDefault = hint === defaultHint;
+  const isHintNumberDefault = hintNumber === defaultHintNumber;
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -40,6 +50,7 @@ function GameFooterClue(props) {
           onChange={handleHintChange}
           readOnly={hasInitialHint}
           className={hasInitialHint && "hint-form-disabled"}
+          value={hint}
         />
         <DropdownButton
           name="hintNumber"
@@ -62,10 +73,10 @@ function GameFooterClue(props) {
           <Dropdown.Item eventKey="2">2</Dropdown.Item>
           <Dropdown.Item eventKey="1">1</Dropdown.Item>
         </DropdownButton>
-        <Button type="submit" variant="outline-secondary" id="submit-clue-button" className="btn-menu" disabled={hasInitialHint}>Submit</Button>
+        <Button type="submit" variant="outline-secondary" id="submit-clue-button" className="btn-menu" disabled={hasInitialHint || isHintDefault || isHintNumberDefault}>Submit</Button>
       </InputGroup>
     </Form>
   );
 }
 
-export default GameFooterClue;
+export default GameFooterCodemaster;

@@ -4,11 +4,17 @@ const socket = io();
 console.log("Maybe new socket from io() from socket.io-client was made?")
 const userID = sessionStorage.getItem("userID");
 const playerID = sessionStorage.getItem("playerID");
+const roomCode = sessionStorage.getItem("roomCode");
 
 if (userID && playerID) {
   console.log("(client) userID is ", userID);
   console.log("(client) playerID is ", playerID);
   socket.auth = { userID, playerID };
+}
+
+if (roomCode) {
+  console.log("(client) roomCode is ", roomCode);
+  socket.auth = {...socket.auth, roomCode}
 }
 
 socket.on("newSession", ({ userID, playerID }) => {
@@ -20,10 +26,12 @@ socket.on("newSession", ({ userID, playerID }) => {
 
 export function joinRoom(roomCode) {
   socket.emit("joinRoom", roomCode);
+  sessionStorage.setItem("roomCode", roomCode);
 }
 
 export function createGame(name, history) {
   socket.emit("createGame", name, (roomCode) => history.push(`/${roomCode}`));
+  sessionStorage.setItem("roomCode", roomCode);
 }
 
 export function joinGame(name, roomCode, goToRoom) {
@@ -31,6 +39,7 @@ export function joinGame(name, roomCode, goToRoom) {
   // orr.. join is an easter egg way to create a room if it doesn't exist? 
   // and maybe names can be duplicated to create confusing fun? (self-regulation principle)
   socket.emit("joinGame", name, roomCode, goToRoom);
+  sessionStorage.setItem("roomCode", roomCode);
 }
 
 export function getGameState(roomCode, setGameState) {
@@ -53,13 +62,29 @@ export function claimTile(roomCode, tileIndex) {
   socket.emit("claimTile", roomCode, tileIndex);
 }
 
-export function getHint(roomCode, setHint) {
-  socket.emit("getHint", roomCode, (hint) => setHint(hint));
+export function getHint(setHint) {
+  socket.emit("getHint", (hint) => setHint(hint));
 }
 
 export function submitHint(roomCode, hint) {
   socket.emit("submitHint", roomCode, hint);
   console.log(`submitHint(client)'s hint is ${hint}`);
+}
+
+export function invalidateHint() {
+  socket.emit("invalidateHint");
+}
+
+export function discardHint() {
+  socket.emit("discardHint");
+}
+
+export function keepHint() {
+  socket.emit("keepHint");
+}
+
+export function getTurnStatus(setTurnStatus) {
+  socket.emit("getTurnStatus", setTurnStatus);
 }
 
 export function markPlayerStatus(roomCode, status) {
