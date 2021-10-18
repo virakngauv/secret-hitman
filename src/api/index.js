@@ -17,6 +17,11 @@ if (roomCode) {
   socket.auth = {...socket.auth, roomCode}
 }
 
+socket.on("connect", () => {
+  const roomCode = sessionStorage.getItem("roomCode");
+  joinRoom(roomCode);
+})
+
 socket.on("newSession", ({ userID, playerID }) => {
   socket.auth = { userID, playerID };
   sessionStorage.setItem("userID", userID);
@@ -25,8 +30,8 @@ socket.on("newSession", ({ userID, playerID }) => {
 
 
 export function joinRoom(roomCode) {
-  socket.emit("joinRoom", roomCode);
   sessionStorage.setItem("roomCode", roomCode);
+  socket.emit("joinRoom", roomCode);
 }
 
 export function createGame(name, history) {
