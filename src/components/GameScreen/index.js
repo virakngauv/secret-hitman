@@ -9,7 +9,7 @@ import Status from "../../constants/status.js";
 import State from "../../constants/state.js";
 import { useHistory, useParams } from "react-router";
 import { Button, ButtonGroup, Col, Modal, Row } from "react-bootstrap";
-import { getPlayers, getTiles, getHint, getTurnStatus, discardHint, keepHint, registerListener } from "../../api";
+import { getPlayers, getTiles, getHint, getTurnStatus, getPlayerCanSeeBoard, discardHint, keepHint, registerListener } from "../../api";
 
 const PlayerStatus = {
   ACTIVE: "active",
@@ -111,8 +111,11 @@ function GameScreen() {
   const [players, setPlayers] = useState([]);
   // const [isCodemaster, setIsCodemaster] = useState(false);
   const playerID = sessionStorage.getItem("playerID");
-  const player = players.find((player) => player.id === playerID)
+  const player = players.find((player) => player.id === playerID);
+  // TODO: should not be passing 3 separate booleans for 1 player status
   const isCodemaster = player && player.status === PlayerStatus.CODEMASTER;
+  const isInactive = player && player.status === PlayerStatus.INACTIVE;
+  const isActive = player && player.status === PlayerStatus.ACTIVE;
   // const [isForceDisabled, setIsForceDisabled] = useState(false);
   // setIsForceDisabled(isCodemaster);
 
@@ -121,22 +124,31 @@ function GameScreen() {
   const [tiles, setTiles] = useState([]);
   const [hint, setHint] = useState("");
   const [turnStatus, setTurnStatus] = useState();
+  const [playerCanSeeBoard, setPlayerCanSeeBoard] = useState(false);
 
+  console.log(`tiles.areRevealed is ${tiles.areRevealed}`);
+
+  // TODO: format this on the server side like the game tiles
   const initialMessage = isCodemaster ? "type your hint below" : "hint pending..";
   const message = hint === "" ? initialMessage : hint;
 
+  const isTurnEnded = turnStatus === TurnStatus.ENDED;
+
   useEffect(() => {
     getPlayers(roomCode, setPlayers);
-    getTiles(roomCode, setTiles);
+    getTiles(setTiles);
     getHint(setHint);
     getTurnStatus(setTurnStatus);
+    getPlayerCanSeeBoard(setPlayerCanSeeBoard);
 
     registerListener("playerChange", () => getPlayers(roomCode, setPlayers));
-    registerListener("tileChange", () => getTiles(roomCode, setTiles));
+    registerListener("tileChange", () => getTiles(setTiles));
     registerListener("hintChange", () => getHint(setHint));
     registerListener("turnStatusChange", () => getTurnStatus(setTurnStatus));
+    registerListener("canSeeBoardChange", () => getPlayerCanSeeBoard(setPlayerCanSeeBoard));
   }, [roomCode]);
 
+  // TODO: Move Modal code to Codemaster Footer
   const isPaused = turnStatus === TurnStatus.PAUSED;
   const [show, setShow] = useState(isPaused);
   const handleClose = () => setShow(false);
@@ -165,8 +177,8 @@ function GameScreen() {
     <Container className="screen">
       <PlayerRoster players={players} />
       <Announcer message={message} />
-      <GameBoard roomCode={roomCode} tiles={tiles} />
-      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} hint={hint} />
+      <GameBoard tiles={tiles} />
+      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} players={players} />
 
       <Modal show={isPaused && isCodemaster} onHide={handleClose}>
         <Modal.Header closeButton>

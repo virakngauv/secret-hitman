@@ -144,35 +144,73 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("getTiles", (roomCode, setTiles) => {
+  socket.on("getTiles", (setTiles) => {
+    const roomCode = socket.roomCode;
     const userID = socket.userID;
-    if (gameStore.hasGame(roomCode) && userID) {
-      const game = gameStore.getGame(roomCode);
-      const tiles = gameService.getTilesForUser(game, userID);
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const tiles = gameService.getTilesForUser(roomCode, userID);
       
-      console.log(`tiles is ${JSON.stringify(tiles, null, 2)}`);
+      // console.log(`tiles is ${JSON.stringify(tiles, null, 2)}`);
 
       setTiles(tiles);
     }
   });
 
-  socket.on("claimTile", (roomCode, tileIndex) => {
+  socket.on("claimTile", (tileIndex) => {
+    const roomCode = socket.roomCode;
     const userID = socket.userID;
 
-    if (gameStore.hasGame(roomCode)) {
-      const game = gameStore.getGame(roomCode);
-      const playerStatus = game.players.get(userID)?.status;
-      if (playerStatus === PlayerStatus.ACTIVE) {
-        gameService.claimTile(game, userID, tileIndex);
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      gameService.claimTile(roomCode, userID, tileIndex);
 
-        // TODO: maybe change below to: 
-        //   io.to(userID).emit("tileChange", newTiles);
-        // if 2x RTT is too slow
-        io.to(roomCode).emit("tileChange");
-        io.to(roomCode).emit("playerChange");
+      
+
+      // TODO: if 2x RTT is too slow maybe change below to: 
+      //   io.to(userID).emit("tileChange", newTiles);
+      io.to(roomCode).emit("tileChange");
+      io.to(roomCode).emit("playerChange");
+
+
+
+      // check to see if turn should end
+      gameService.checkAndEndTurnIfTurnShouldEnd(roomCode);
+
+
+
+
+
+
+
+      // TODO: bug
+      // undesirable effect, when turn ends b/c last player clicks on a tile
+      //   then the screen doesn't properly go to how I want the end screen to look like
+      const turnIsEnded = gameService.checkIfTurnIsEnded(roomCode);
+      if (turnIsEnded) {
+        io.to(roomCode).emit("turnStatusChange");
+        // io.to(roomCode).emit("tileChange");
+        // io.to(roomCode).emit("playerChange");
+        io.to(roomCode).emit("hintChange");
       }
     }
-  })
+  });
+
+  socket.on("revealBoard", (setTiles) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const turnIsEnded = gameService.checkIfTurnIsEnded(roomCode);
+
+      console.log(`revealBoard's turnIsEnded is ${turnIsEnded}`);
+
+      if (turnIsEnded) {
+        gameService.markPlayerCanSeeBoard(roomCode, userID);
+        const tiles = gameService.getTilesForUser(roomCode, userID);
+        setTiles(tiles)
+      }
+    }
+  });
 
   socket.on("getHint", (setHint) => {
     const roomCode = socket.roomCode;
@@ -265,17 +303,61 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("markPlayerStatus", (roomCode, status) => {
-    const game = gameStore.getGame(roomCode);
-    if (game && game.gameState === GameState.LOBBY) {
-      const userID = socket.userID;
-      const player = game.players.get(userID);
-      // console.log(`markPlayerStatus's player is ${JSON.stringify(player, null, 2)}`);
-      player.status = status === PlayerStatus.ACTIVE ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
-      // console.log("inside markPlayerStatus if statement");
-      // console.log(`markPlayerStatus's player is nowww ${JSON.stringify(player, null, 2)}`);
-      // console.log("markPlayerStatus's players is ", JSON.stringify(Array.from(game.players.values()), null, 2))
+  socket.on("markPlayerStatus", (status) => {
+    //   const game = gameStore.getGame(roomCode);
+    //   if (game && game.gameState === GameState.LOBBY) {
+    //     const userID = socket.userID;
+    //     const player = game.players.get(userID);
+    //     // console.log(`markPlayerStatus's player is ${JSON.stringify(player, null, 2)}`);
+    //     player.status = status === PlayerStatus.ACTIVE ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
+    //     // console.log("inside markPlayerStatus if statement");
+    //     // console.log(`markPlayerStatus's player is nowww ${JSON.stringify(player, null, 2)}`);
+    //     // console.log("markPlayerStatus's players is ", JSON.stringify(Array.from(game.players.values()), null, 2))
+    //     io.to(roomCode).emit("playerChange");
+    //   }
+    // });
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    console.log(`markPlayerStatus's roomCode is ${roomCode} and userID is ${userID}`);
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      gameService.markPlayerStatus(roomCode, userID, status);
+
       io.to(roomCode).emit("playerChange");
+    }
+    // START TEMP CODE
+    const players = gameStore.getGame(roomCode).players.values();
+    console.log(`markPlayerStatus's players is ${JSON.stringify(players, null, 2)}`);
+    // END TEMP CODE
+  });
+
+  socket.on("getPlayerCanSeeBoard", (setPlayerCanSeeBoard) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const playerCanSeeBoard = gameService.getPlayerCanSeeBoard(roomCode, userID);
+      setPlayerCanSeeBoard(playerCanSeeBoard);
+    }
+  })
+
+  socket.on("endPlayerTurn", (setTiles) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      // gameService.endPlayerTurn(roomCode, userID);
+      gameService.markPlayerStatus(roomCode, userID, PlayerStatus.INACTIVE);
+
+      gameService.checkAndEndTurnIfTurnShouldEnd(roomCode);
+
+      const tiles = gameService.getTilesForUser(roomCode, userID);
+      setTiles(tiles);
+
+      io.to(roomCode).emit("turnStatusChange");
+      io.to(roomCode).emit("playerChange");
+      io.to(roomCode).emit("hintChange");
     }
   });
 

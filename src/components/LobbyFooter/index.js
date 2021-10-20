@@ -24,9 +24,9 @@ function LobbyFooter(props) {
 
   function toggleReadyStatus() {
     if (isReady) {
-      markPlayerStatus(roomCode, PlayerStatus.INACTIVE);
+      markPlayerStatus(PlayerStatus.INACTIVE);
     } else if (!isReady) {
-      markPlayerStatus(roomCode, PlayerStatus.ACTIVE);
+      markPlayerStatus(PlayerStatus.ACTIVE);
     }
   }
 

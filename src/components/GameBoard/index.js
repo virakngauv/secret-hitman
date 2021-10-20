@@ -5,7 +5,6 @@ import Type from "../../constants/type.js";
 import State from "../../constants/state";
 
 function GameBoard(props) {
-  const roomCode = props.roomCode;
   const tiles = props.tiles;
 
   // // Now down in the server
@@ -42,7 +41,7 @@ function GameBoard(props) {
       {tiles.map((tile, index) => {
         // const updateThisTile = () => {updateTile(index)};
 
-        return <GameBoardTile roomCode={roomCode} tile={tile} tileIndex={index} />
+        return <GameBoardTile tile={tile} tileIndex={index} />
       })}
     </Row>
   );

@@ -6,16 +6,15 @@ import { claimTile } from "../../api";
 import "./index.css";
 
 function GameBoardTile(props) {
-  const roomCode = props.roomCode;
   const word = props.tile.word;
   const type = props.tile.type;
-  const claimer = props.tile.claimer;
+  const claimers = props.tile.claimers.join(", ");
   const state = props.tile.state;
   const tileIndex = props.tileIndex;
 
   function handleTileClick () {
     // "updateThisTile() will eventually make an API call"
-    claimTile(roomCode, tileIndex);
+    claimTile(tileIndex);
   } 
 
   const tileClassName = state === State.DISABLED_OPAQUE ? "game-board-tile game-board-tile-disabled-opaque" : "game-board-tile";
@@ -57,7 +56,7 @@ function GameBoardTile(props) {
         onClick={handleTileClick}
       >
         <div className="game-board-tile-text text-uppercase">{word}</div>
-        {claimer && <div className="game-board-tile-claimer">{claimer}</div>}
+        {claimers && <div className="game-board-tile-claimer">{claimers}</div>}
       </Button>
     </Col>
   );

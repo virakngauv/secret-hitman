@@ -86,6 +86,7 @@ class GameService {
       
       if (nextPossibleCodemaster) {
         nextPossibleCodemaster.status = PlayerStatus.CODEMASTER;
+        nextPossibleCodemaster.canSeeBoard = true;
         game.currentCodemasterIndex = nextCodemasterIndex;
         break;
       }
@@ -136,22 +137,25 @@ class GameService {
     return Array.from({ length: number }, () => ({
       word: null,
       type,
-      claimer: null,
-      claimerID: null,
+      claimers: [],
+      claimerIDs: [],
       state: null,
     }));
   }
 
-  getTilesForUser(game, userID) {
+  getTilesForUser(roomCode, userID) {
     // const tiles = [...game.tiles]; 
+    const game = gameStore.getGame(roomCode);
     const tilesCopy = game.tiles.map(tile => {return {...tile}});
     const playerID = userStore.getPlayerID(userID);
     const playerStatus = this.getPlayerStatus(game, playerID);
+    const playerCanSeeBoard = this.getPlayerCanSeeBoard(roomCode, userID);
+    const turnStatus = game.turnStatus;
 
 
-    if (playerStatus === PlayerStatus.CODEMASTER) {
+    if (playerStatus === PlayerStatus.CODEMASTER || playerCanSeeBoard) {
       tilesCopy.forEach((tile) => {
-        delete tile.claimerID;
+        delete tile.claimerIDs;
         tile.state = TileState.DISABLED_OPAQUE;
       });
 
@@ -160,38 +164,79 @@ class GameService {
 
     tilesCopy.forEach((tile) => {
       const tileType = tile.type;
-      const claimerID = tile.claimerID;
-      delete tile.claimerID;
+      const claimerIDs = tile.claimerIDs;
+      delete tile.claimerIDs;
 
-      switch (claimerID) {
-        case playerID:
-          tile.state = TileState.DISABLED_OPAQUE;
-          break;
-        case null:
+      if (claimerIDs.includes(playerID)) {
+        tile.state = TileState.DISABLED_OPAQUE;
+      } else if (claimerIDs.length === 0) {
+        tile.type = null;
+
+        if (playerStatus === PlayerStatus.ACTIVE) {
+          tile.state = TileState.ENABLED;
+        } else if (playerStatus === PlayerStatus.INACTIVE) {
+          tile.state = TileState.DISABLED_TRANSPARENT;
+        } else {
+          // Should not be reachable
+          console.warn(`Possible Error: playerStatus is ${playerStatus}`);
+        }
+      } else {
+        // Else branch reached if claimed by another player:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+        if (tileType === TileType.ASSASSIN ) {
+          tile.claimers = [];
           tile.type = null;
-
-          if (playerStatus === PlayerStatus.ACTIVE) {
-            tile.state = TileState.ENABLED;
-          } else if (playerStatus === PlayerStatus.INACTIVE) {
-            tile.state = TileState.DISABLED_TRANSPARENT;
-          } else {
-            // Should not be reachable
-            console.warn(`Possible Error: playerStatus is ${playerStatus}`);
-          }
-          break;
-        // Default case reached if claimed by another player:
-        default:
-          if (tileType === TileType.ASSASSIN && playerStatus === PlayerStatus.ACTIVE) {
-            tile.claimer = null;
-            tile.type = null;
-            tile.state = TileState.ENABLED;
-          } else {
-            tile.state = TileState.DISABLED_TRANSPARENT
-          }
+          tile.state = playerStatus === PlayerStatus.ACTIVE ? TileState.ENABLED : TileState.DISABLED_TRANSPARENT;
+        } else {
+          tile.state = TileState.DISABLED_TRANSPARENT
+        }
       }
+
+      // switch (claimerID) {
+      //   case playerID:
+      //     tile.state = TileState.DISABLED_OPAQUE;
+      //     break;
+      //   case null:
+      //     tile.type = null;
+
+      //     if (playerStatus === PlayerStatus.ACTIVE) {
+      //       tile.state = TileState.ENABLED;
+      //     } else if (playerStatus === PlayerStatus.INACTIVE) {
+      //       tile.state = TileState.DISABLED_TRANSPARENT;
+      //     } else {
+      //       // Should not be reachable
+      //       console.warn(`Possible Error: playerStatus is ${playerStatus}`);
+      //     }
+      //     break;
+      //   // Default case reached if claimed by another player:
+      //   default:
+      //     if (tileType === TileType.ASSASSIN && playerStatus === PlayerStatus.ACTIVE) {
+      //       tile.claimer = null;
+      //       tile.type = null;
+      //       tile.state = TileState.ENABLED;
+      //     } else {
+      //       tile.state = TileState.DISABLED_TRANSPARENT
+      //     }
+      // }
     });
 
-    const turnStatus = game.turnStatus;
     if (turnStatus === TurnStatus.PAUSED) {
       tilesCopy.forEach((tile) => {
         const tileState = tile.state;
@@ -211,6 +256,10 @@ class GameService {
     if (turnStatus === TurnStatus.PAUSED) {
       const turnPausedMessage = "hint marked as invalid, pending codemaster..";
       return turnPausedMessage
+    } else if (turnStatus === TurnStatus.ENDED) {
+      const turnEndedMessage = `turn ended
+      ${game.hint}`;
+      return turnEndedMessage;
     } else {
       return game.hint;
     }
@@ -234,10 +283,64 @@ class GameService {
     }
   }
 
-  markPlayerStatus(game, playerID, playerStatus) {
-    const userID = userStore.getUserID(playerID);
+  markPlayerStatus(roomCode, userID, playerStatus) {
+    const game = gameStore.getGame(roomCode);
     const player = game.players.get(userID);
     player.status = playerStatus;
+
+    // if (playerStatus === PlayerStatus.INACTIVE) {
+    //   this.endPlayerTurn(roomCode, userID);
+    // }
+
+    // console.log(`GameService's markPlayerStatus's player is ${JSON.stringify(player, null, 2)} and playerStatus is ${playerStatus}`);
+  }
+
+  getPlayerCanSeeBoard(roomCode, userID) {
+    const game = gameStore.getGame(roomCode);
+    const player = game.players.get(userID);
+    
+    return player.canSeeBoard;
+  }
+
+  markPlayerCanSeeBoard(roomCode, userID) {
+    const game = gameStore.getGame(roomCode);
+    const player = game.players.get(userID);
+    player.canSeeBoard = true;
+  }
+
+  checkAndEndTurnIfTurnShouldEnd(roomCode) {
+    // this.markPlayerStatus(roomCode, userID, PlayerStatus.INACTIVE);
+
+    const game = gameStore.getGame(roomCode);
+
+    const players = game.players;
+    const noPlayersActive = Array.from(players.values()).reduce(
+      (readyStatusSoFar, currentPlayer) => {
+        return readyStatusSoFar && currentPlayer.status !== PlayerStatus.ACTIVE
+      }, true);
+    
+    if (noPlayersActive) {
+      game.turnStatus = TurnStatus.ENDED;
+    }
+  }
+
+  // checkIfTurnShouldEnd(game) {
+  //   // const players = game.players;
+  //   // const noPlayersActive = Array.from(players.values()).reduce(
+  //   //   (readyStatusSoFar, currentPlayer) => {
+  //   //     return readyStatusSoFar && currentPlayer.status !== PlayerStatus.ACTIVE
+  //   //   }, true);
+  //   // return noPlayersActive;
+  // }
+
+  // endTurn(game) {
+  //   // game.turnStatus = TurnStatus.ENDED;
+  //   // // make everyone inactive
+  // }
+
+  checkIfTurnIsEnded(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    return game.turnStatus === TurnStatus.ENDED;
   }
 
   incrementCodemasterScore(game, scoreChange) {
@@ -260,27 +363,42 @@ class GameService {
     player.newScore += scoreChange;
   }
 
-  claimTile(game, userID, tileIndex) {
+  claimTile(roomCode, userID, tileIndex) {
+    const game = gameStore.getGame(roomCode);
     const tile = game.tiles[tileIndex];
     const playerName = game.players.get(userID).name;
+    const playerStatus = game.players.get(userID).status;
     const playerID = userStore.getPlayerID(userID);
 
-    if (tile.claimer === null) {
-      tile.claimer = playerName;
-      tile.claimerID = playerID;
+    // turn is started ||
+    // tile is assassin
+
+    const turnIsNotStarted = game.turnStatus !== TurnStatus.STARTED;
+    const playerIsNotActive = playerStatus !== PlayerStatus.ACTIVE;
+    if (turnIsNotStarted || playerIsNotActive) {
+      return;
+    }
+
+    if (tile.type === TileType.ASSASSIN) {
+        tile.claimers.push(playerName);
+        tile.claimerIDs.push(playerID);
+
+        this.incrementCodemasterScore(game, -1);
+        this.incrementUserScore(game, -1, userID);
+        this.markPlayerStatus(roomCode, userID, PlayerStatus.INACTIVE);
+    }
+
+    if (tile.claimers.length === 0) {
+      tile.claimers.push(playerName);
+      tile.claimerIDs.push(playerID);
 
       switch (tile.type) {
-        case TileType.ASSASSIN:
-          this.incrementCodemasterScore(game, -1);
-          this.incrementUserScore(game, -1, userID);
-          this.markPlayerStatus(game, playerID, PlayerStatus.INACTIVE);
-          break;
         case TileType.TARGET:
           this.incrementCodemasterScore(game, 1);
           this.incrementUserScore(game, 1, userID);
           break;
         case TileType.CIVILIAN:
-          this.markPlayerStatus(game, playerID, PlayerStatus.INACTIVE);
+          this.markPlayerStatus(roomCode, userID, PlayerStatus.INACTIVE);
           break;
         default:
           console.warn(`Tile Type was not assassin, target, or civilian`);

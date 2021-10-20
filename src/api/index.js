@@ -59,12 +59,16 @@ export function getIsUserInRoom(roomCode, setIsUserInRoom) {
   socket.emit("getIsUserInRoom", roomCode, (isUserInRoom) => setIsUserInRoom(isUserInRoom));
 }
 
-export function getTiles(roomCode, setTiles) {
-  socket.emit("getTiles", roomCode, (tiles) => setTiles(tiles));
+export function getTiles(setTiles) {
+  socket.emit("getTiles", (tiles) => setTiles(tiles));
 }
 
-export function claimTile(roomCode, tileIndex) {
-  socket.emit("claimTile", roomCode, tileIndex);
+export function claimTile(tileIndex) {
+  socket.emit("claimTile", tileIndex);
+}
+
+export function revealBoard(setTiles) {
+  socket.emit("revealBoard", (tiles) => setTiles(tiles));
 }
 
 export function getHint(setHint) {
@@ -92,8 +96,20 @@ export function getTurnStatus(setTurnStatus) {
   socket.emit("getTurnStatus", setTurnStatus);
 }
 
-export function markPlayerStatus(roomCode, status) {
-  socket.emit("markPlayerStatus", roomCode, status);
+export function markPlayerStatus(status) {
+  socket.emit("markPlayerStatus", status);
+}
+
+export function getPlayerCanSeeBoard(setPlayerCanSeeBoard) {
+  socket.emit("getPlayerCanSeeBoard", setPlayerCanSeeBoard);
+}
+
+// export function markPlayerCanSeeBoard(canSeeBoard, setTiles) {
+//   socket.emit("markPlayerCanSeeBoard", canSeeBoard);
+// }
+
+export function endPlayerTurn(setTiles) {
+  socket.emit("endPlayerTurn", (tiles) => setTiles(tiles));
 }
 
 export function startGame(roomCode) {

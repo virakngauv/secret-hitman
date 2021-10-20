@@ -16,6 +16,12 @@ const GameState = {
   END: "end",
 };
 
+const TurnStatus = {
+  STARTED: "started",
+  PAUSED: "paused",
+  ENDED: "ended",
+}
+
 class GameStore {
   constructor() {
     this.games = new Map();
@@ -81,7 +87,10 @@ class GameStore {
     if (this.hasGame(roomCode)) {
       const game = this.getGame(roomCode);
       const gameState = game.gameState;
-      const playerStatus = gameState === GameState.GAME ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
+      const turnStatus = game.turnStatus;
+      // TODO: probably add an && turnStatus !== TurnStatus.ENDED to the playerStatus initial value logic
+      const playerStatus = gameState === GameState.GAME && turnStatus !== TurnStatus.ENDED ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
+      const playerCanSeeBoard = turnStatus === TurnStatus.ENDED ? true : false;
 
       const player = {
         name,
@@ -89,6 +98,7 @@ class GameStore {
         status: playerStatus,
         oldScore: 0,
         newScore: 0,
+        canSeeBoard: playerCanSeeBoard,
       };
 
       game.players.set(userID, player);
