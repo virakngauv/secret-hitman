@@ -6,6 +6,7 @@ import "./index.css";
 
 function PlayerRosterCard(props) {
   const player = props.player;
+  const playerID = sessionStorage.getItem("playerID");
 
   function handleKickPlayer() {
     kickPlayer(player.id);
@@ -19,21 +20,30 @@ function PlayerRosterCard(props) {
         </Button>
       </Popover.Body>
     </Popover>
-  )
-
-  return (
-    // <Card border="light" className="player-card text-center">
-    <OverlayTrigger trigger="click" rootClose placement="bottom" overlay={kickPopover}>
-      <Card className="player-card text-center shadow-sm">
-        <Card.Header>
-          <StatusIndicator status={player.status} />
-          <div className="player-name">{player.name}</div>
-        </Card.Header>
-        <Card.Body>{player.oldScore + player.newScore}</Card.Body>
-      </Card>
-    </OverlayTrigger>
-
   );
+
+  const playerRosterCard = (
+    <Card className="player-card text-center shadow-sm">
+      <Card.Header>
+        <StatusIndicator status={player.status} />
+        <div className="player-name">{player.name}</div>
+      </Card.Header>
+      <Card.Body>{player.oldScore + player.newScore}</Card.Body>
+    </Card>
+  );
+
+  if (player.id === playerID) {
+    return (
+      playerRosterCard
+    )
+  } else {
+    return (
+      <OverlayTrigger trigger="click" rootClose placement="bottom" overlay={kickPopover}>
+        {playerRosterCard}
+      </OverlayTrigger>
+    )
+
+  }
 }
 
 export default PlayerRosterCard;
