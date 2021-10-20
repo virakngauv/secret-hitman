@@ -83,6 +83,7 @@ class GameStore {
     return roomCode;
   }
 
+  // TODO: move adding players and removing players to the game service class 
   addNewPlayerToGame(userID, name, playerID, roomCode) {
     if (this.hasGame(roomCode)) {
       const game = this.getGame(roomCode);
@@ -106,12 +107,12 @@ class GameStore {
     }
   }
 
-  removePlayerFromGame(userID, roomCode) {
-    console.log(`removing ${userID} from game ${roomCode}`);
-    if (this.games.has(roomCode)) {
-      this.games.get(roomCode).players.delete(userID);
-    }
-  }
+  // removePlayerFromGame(userID, roomCode) {
+  //   console.log(`removing ${userID} from game ${roomCode}`);
+  //   if (this.games.has(roomCode)) {
+  //     this.games.get(roomCode).players.delete(userID);
+  //   }
+  // }
 }
 
 // export default GameStore;

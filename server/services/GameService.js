@@ -449,6 +449,25 @@ class GameService {
       return false;
     }
   }
+
+  kickPlayer(roomCode, playerIDToKick) {
+    const game = gameStore.getGame(roomCode);
+    const userID = userStore.getUserID(playerIDToKick);
+
+    if (this.isValidRoomAndUser(roomCode, userID)) {
+      userStore.deleteUser(userID);
+      // gameStore.removePlayerFromGame(userID, roomCode);
+  
+      game.players.delete(userID);
+      // console.log(`game.players is ${JSON.stringify(Array.from(game.players.values()), null, 2)}`)
+  
+      // if (this.games.has(roomCode)) {
+      //   this.games.get(roomCode).players.delete(userID);
+      // }
+    }
+
+
+  }
 }
 
 export default GameService;

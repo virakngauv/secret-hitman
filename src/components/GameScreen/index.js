@@ -9,7 +9,7 @@ import Status from "../../constants/status.js";
 import State from "../../constants/state.js";
 import { useHistory, useParams } from "react-router";
 import { Button, ButtonGroup, Col, Modal, Row } from "react-bootstrap";
-import { getPlayers, getTiles, getHint, getTurnStatus, getPlayerCanSeeBoard, discardHint, keepHint, registerListener } from "../../api";
+import { getPlayers, getTiles, getHint, getTurnStatus, getPlayerCanSeeBoard, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
 
 const PlayerStatus = {
   ACTIVE: "active",
@@ -147,6 +147,17 @@ function GameScreen() {
     registerListener("hintChange", () => getHint(setHint));
     registerListener("turnStatusChange", () => getTurnStatus(setTurnStatus));
     registerListener("canSeeBoardChange", () => getPlayerCanSeeBoard(setPlayerCanSeeBoard));
+
+    registerListener("playerKicked", (kickedPlayerID) => {
+      const playerID = sessionStorage.getItem("playerID");
+      if (playerID === kickedPlayerID) {
+        history.push("/");
+        leaveRoom(roomCode);
+      } else {
+        console.log("getPlayers cause you weren't kicked but someone else was..")
+        getPlayers(roomCode, setPlayers);
+      }
+    });
   }, [roomCode]);
 
   // TODO: Move Modal code to Codemaster Footer

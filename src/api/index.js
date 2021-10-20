@@ -120,10 +120,10 @@ export function startGame(roomCode) {
   socket.emit("startGame", roomCode);
 }
 
-export function kickPlayer(roomCode, playerID,) {
+export function kickPlayer(playerIDToKick) {
   console.log("I am in kickPlayer in the api");
 
-  socket.emit("kickPlayer", roomCode, playerID);
+  socket.emit("kickPlayer", playerIDToKick);
 }
 
 export function leaveRoom(roomCode) {

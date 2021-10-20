@@ -11,7 +11,7 @@ function LobbyRoster(props) {
 
   function handleKickPlayer(roomCode, playerID) {
     console.log("I am in handleKickPlayer");
-    kickPlayer(roomCode, playerID);
+    kickPlayer(playerID);
   }
 
   return (

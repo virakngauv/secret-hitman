@@ -380,18 +380,17 @@ io.on("connection", (socket) => {
     }
   })
 
-  socket.on("kickPlayer", (roomCode, playerID) => {
-    console.log(`kickPlayer(server) has roomCode ${roomCode}, playerID ${playerID}`);
+  socket.on("kickPlayer", (playerIDToKick) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+    console.log(`kickPlayer(server) has roomCode ${roomCode}, playerIDToKick ${playerIDToKick}`);
 
-    const userID = userStore.getUserID(playerID);
-    // console.log("userID in kickPlayer(server) is ", userID);
-    userStore.deleteUser(userID);
-    // console.log("userID in kickPlayer(server) is ", userID);
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      gameService.kickPlayer(roomCode, playerIDToKick);
 
-    gameStore.removePlayerFromGame(userID, roomCode);
-
-    // maybe use io.to(...etc instead of socket.broadcast.to(...etc
-    io.to(roomCode).emit("playerKicked", playerID);
+      // TODO: check to see if event listener is still registered if a player joins mid-game (I think event listener is set on lobby screen which will have been skipped)
+      io.to(roomCode).emit("playerKicked", playerIDToKick);
+    }
   });
 
   socket.on("leaveRoom", (roomCode) => {
