@@ -12,10 +12,11 @@ function GameFooter(props) {
   const hint = props.hint;
   const setTiles = props.setTiles;
   const playerCanSeeBoard = props.playerCanSeeBoard;
+  const setPlayerCanSeeBoard = props.setPlayerCanSeeBoard;
   const players = props.players;
 
   if (isTurnEnded) {
-    return <GameFooterEnd isCodemaster={isCodemaster} isActive={isActive} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} players={players} />
+    return <GameFooterEnd isCodemaster={isCodemaster} isActive={isActive} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} />
   } else if (isCodemaster) {
     return <GameFooterCodemaster roomCode={roomCode} hint={hint} />
   } else {

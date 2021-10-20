@@ -1,6 +1,6 @@
 import { ButtonGroup } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
-import { markPlayerStatus, revealBoard } from "../../api";
+import { getPlayerCanSeeBoard, markPlayerStatus, revealBoard } from "../../api";
 
 // TODO: Make enum for PlayerStatus
 const PlayerStatus = {
@@ -14,6 +14,7 @@ function GameFooterEnd(props) {
   const isActive = props.isActive;
   const setTiles = props.setTiles;
   const playerCanSeeBoard = props.playerCanSeeBoard;
+  const setPlayerCanSeeBoard = props.setPlayerCanSeeBoard;
   const players = props.players;
   // const isInactive = props.isInactive;
   // const hint = props.hint;
@@ -21,6 +22,7 @@ function GameFooterEnd(props) {
 
   function handleRevealBoard() {
     revealBoard(setTiles);
+    getPlayerCanSeeBoard(setPlayerCanSeeBoard);
   }
 
   function toggleReadyStatus() {

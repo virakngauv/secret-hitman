@@ -124,6 +124,7 @@ function GameScreen() {
   const [tiles, setTiles] = useState([]);
   const [hint, setHint] = useState("");
   const [turnStatus, setTurnStatus] = useState();
+  // TODO: maybe move playerCanSeeBoard and associated API calls to a lower component if nothing else needs it
   const [playerCanSeeBoard, setPlayerCanSeeBoard] = useState(false);
 
   console.log(`tiles.areRevealed is ${tiles.areRevealed}`);
@@ -178,7 +179,7 @@ function GameScreen() {
       <PlayerRoster players={players} />
       <Announcer message={message} />
       <GameBoard tiles={tiles} />
-      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} players={players} />
+      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} />
 
       <Modal show={isPaused && isCodemaster} onHide={handleClose}>
         <Modal.Header closeButton>

@@ -257,8 +257,7 @@ class GameService {
       const turnPausedMessage = "hint marked as invalid, pending codemaster..";
       return turnPausedMessage
     } else if (turnStatus === TurnStatus.ENDED) {
-      const turnEndedMessage = `turn ended
-      ${game.hint}`;
+      const turnEndedMessage = `turn ended, hint: ${game.hint}`;
       return turnEndedMessage;
     } else {
       return game.hint;
@@ -320,7 +319,7 @@ class GameService {
       }, true);
     
     if (noPlayersActive) {
-      game.turnStatus = TurnStatus.ENDED;
+      this.endTurn(game);
     }
   }
 
@@ -333,10 +332,10 @@ class GameService {
   //   // return noPlayersActive;
   // }
 
-  // endTurn(game) {
-  //   // game.turnStatus = TurnStatus.ENDED;
-  //   // // make everyone inactive
-  // }
+  endTurn(game) {
+    game.turnStatus = TurnStatus.ENDED;
+    this.markAllPlayersInactive(game);
+  }
 
   checkIfTurnIsEnded(roomCode) {
     const game = gameStore.getGame(roomCode);
