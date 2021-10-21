@@ -302,6 +302,27 @@ class GameService {
     return tilesCopy;
   }
 
+  getMessageForUser(roomCode, userID) {
+    const game = gameStore.getGame(roomCode);
+    const playerIsCodemaster = game.players.get(userID).status === PlayerStatus.CODEMASTER;
+    const turnStatus = game.turnStatus;
+    const hint = game.hint;
+
+    if (turnStatus === TurnStatus.STARTED && hint === "") {
+      const turnStartedMessage = playerIsCodemaster ? "type your hint below" : "hint pending..";
+      return turnStartedMessage;
+    } else if (turnStatus === TurnStatus.PAUSED) {
+      const turnPausedMessage = "hint marked as invalid, pending codemaster..";
+      return turnPausedMessage
+    } else if (turnStatus === TurnStatus.ENDED) {
+      const turnEndedMessage = "ready for next turn?";
+      return turnEndedMessage;
+    } else {
+      console.warning("Possible error: Turn Status is not started, paused, or ended")
+      return "";
+    }
+  }
+
   getHint(roomCode) {
     const game = gameStore.getGame(roomCode);
     const turnStatus = game.turnStatus;

@@ -220,6 +220,16 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("getMessage", (setMessage) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const message = gameService.getMessageForUser(roomCode, userID);
+      setMessage(message);
+    }
+  })
+
   socket.on("getHint", (setHint) => {
     const roomCode = socket.roomCode;
     const userID = socket.userID;
