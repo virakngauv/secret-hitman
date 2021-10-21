@@ -116,11 +116,11 @@ function GameScreen() {
       <GameBoard tiles={tiles} />
       <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} />
 
-      <Modal show={isPaused && isCodemaster} onHide={handleClose}>
-        <Modal.Header closeButton>
+      <Modal show={isPaused && isCodemaster} centered>
+        <Modal.Header>
           <Modal.Title>Your hint was marked as invalid!</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Do you agree that your hint is invalid? (Discuss with the group first)</Modal.Body>
+        <Modal.Body>{`Do you agree that your hint "${hint}" is invalid? If you do, your hint will be discarded and you will get a new board.`}</Modal.Body>
         <Modal.Footer>
           <Button className="btn-menu ms-auto" size="sm" variant="outline-secondary" id="discard-hint-button" onClick={handleDiscardHint}>Discard the Hint</Button>
           <Button className="btn-menu me-auto" size="sm" variant="outline-secondary" id="keep-hint-button" onClick={handleKeepHint}>Keep the Hint</Button>
