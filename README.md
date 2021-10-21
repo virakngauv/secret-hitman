@@ -20,3 +20,4 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 * Make http redirect to https
 * Make subdomains redirect to secrethitman.com (e.g. www.secrethitman.com -> secrethitman.com)
 * Clean up project files (like unneeded react stuff)
+* Figure out how to make it more contributor friendly (maybe make a contributing.md or a dev guide)

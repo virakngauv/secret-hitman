@@ -1,5 +1,6 @@
 .game-board {
   width: 350px;
+  padding-top: 5px;
 }
 
 @media screen and (max-width: 320px) {
