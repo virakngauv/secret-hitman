@@ -15,3 +15,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 * Implement garbage collection for old games
 * Prevent making too many games or too many players in a game (thousands)
 * Fix keyboard navigation for codemaster hint submission
+* Add proper credits page
+* Add video recording of rules for how to play
+* Make http redirect to https
+* Make subdomains redirect to secrethitman.com (e.g. www.secrethitman.com -> secrethitman.com)
+* Clean up project files (like unneeded react stuff)

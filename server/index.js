@@ -298,6 +298,7 @@ io.on("connection", (socket) => {
 
       io.to(roomCode).emit("turnStatusChange");
       io.to(roomCode).emit("hintChange");
+      io.to(roomCode).emit("tileChange");
     }
   });
 
