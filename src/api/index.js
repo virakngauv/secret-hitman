@@ -71,6 +71,10 @@ export function revealBoard(setTiles) {
   socket.emit("revealBoard", (tiles) => setTiles(tiles));
 }
 
+export function getMessage(setMessage) {
+  socket.emit("getMessage", (message) => setMessage(message));
+}
+
 export function getHint(setHint) {
   socket.emit("getHint", (hint) => setHint(hint));
 }
