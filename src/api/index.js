@@ -96,6 +96,10 @@ export function getTurnStatus(setTurnStatus) {
   socket.emit("getTurnStatus", setTurnStatus);
 }
 
+export function startNextTurn() {
+  socket.emit("startNextTurn");
+}
+
 export function markPlayerStatus(status) {
   socket.emit("markPlayerStatus", status);
 }

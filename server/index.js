@@ -303,6 +303,21 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("startNextTurn", () => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      gameService.startNextTurn(roomCode);
+
+      io.to(roomCode).emit("gameStateChange");
+      io.to(roomCode).emit("turnStatusChange");
+      io.to(roomCode).emit("playerChange");
+      io.to(roomCode).emit("hintChange");
+      io.to(roomCode).emit("tileChange");
+    }
+  });
+
   socket.on("markPlayerStatus", (status) => {
     //   const game = gameStore.getGame(roomCode);
     //   if (game && game.gameState === GameState.LOBBY) {

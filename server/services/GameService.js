@@ -55,7 +55,7 @@ class GameService {
     this.updateTurnStatus(game, TurnStatus.STARTED);
     // Tiles will be active, which is funny if people want to select tiles before the hint is revealed
     // this.markAllPlayersInactive(game);
-    this.assignNextCodemaster(game, socket);
+    this.assignNextCodemaster(game);
     this.setupNewTiles(game);
   }
 
@@ -74,14 +74,42 @@ class GameService {
     });
   }
 
-  assignNextCodemaster(game, socket) {
+  preparePlayersForNextTurn(game) {
+    const players = game.players;
+    players.forEach((player) => {
+      player.oldScore += player.newScore;
+      player.newScore = 0;
+      player.canSeeBoard = false;
+    });
+  }
+
+  assignNextCodemaster(game) {
     const currentCodemasterIndex = game.currentCodemasterIndex;
     const players = game.players;
     const playerArchive = game.playerArchive;
     const roundNumber = game.roundNumber;
     
     let nextCodemasterIndex = currentCodemasterIndex === null ? 0 : currentCodemasterIndex + 1
+
+    if (nextCodemasterIndex === playerArchive.length) {
+      game.roundNumber = roundNumber + 1;
+      nextCodemasterIndex = 0;
+      // game.currentCodemasterIndex = 0;
+    }
+
+    console.log(`assignNextCodemaster's game.roundNumber is ${game.roundNumber}`);
+    
+    if (game.roundNumber > this.maxRounds) {
+      this.updateGameState(game, GameState.END);
+      return;
+    }
+
     while (nextCodemasterIndex < playerArchive.length) {
+      // // Prevent infinite loop
+      // if (nextCodemasterIndex === currentCodemasterIndex) {
+      //   break;
+      // }
+
       const nextPossibleCodemaster = players.get(playerArchive[nextCodemasterIndex]);
       
       if (nextPossibleCodemaster) {
@@ -92,16 +120,6 @@ class GameService {
       }
 
       nextCodemasterIndex = nextCodemasterIndex + 1;
-    }
-
-    if (nextCodemasterIndex === playerArchive.length) {
-      game.roundNumber = roundNumber + 1;
-      game.currentCodemasterIndex = 0;
-    }
-
-    if (game.roundNumber > this.maxRounds) {
-      this.updateGameState(game, GameState.END);
-      socket.emit("gameEnd");
     }
   }
 
@@ -269,9 +287,15 @@ class GameService {
     game.hint = hint;
   }
 
+  // TODO: rename to pauseTurn()
   invalidateHint(game) {
-    // TODO: rename to pauseTurn()
     game.turnStatus = TurnStatus.PAUSED;
+  }
+
+  resetHint(game) {
+    // TODO: make constant for default hint for use here and on init
+    const hint = "";
+    this.setHint(game, hint);
   }
 
   getPlayerStatus(game, playerID) {
@@ -410,6 +434,19 @@ class GameService {
     const turnStatus = game.turnStatus;
 
     return turnStatus;
+  }
+
+  startNextTurn(roomCode) {
+    const game = gameStore.getGame(roomCode);
+
+    // check turn is ended
+    // prepare for next turn
+    //    update game object
+    this.preparePlayersForNextTurn(game);
+    this.assignNextCodemaster(game);
+    this.resetHint(game);
+    this.setupNewTiles(game);
+    this.updateTurnStatus(game, TurnStatus.STARTED);
   }
 
   resetTurn(roomCode) {

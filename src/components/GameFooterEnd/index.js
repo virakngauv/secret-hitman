@@ -1,6 +1,6 @@
 import { ButtonGroup } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
-import { getPlayerCanSeeBoard, markPlayerStatus, revealBoard } from "../../api";
+import { getPlayerCanSeeBoard, markPlayerStatus, revealBoard, startNextTurn } from "../../api";
 
 // TODO: Make enum for PlayerStatus
 const PlayerStatus = {
@@ -34,7 +34,8 @@ function GameFooterEnd(props) {
   }
 
   function handleNextTurn() {
-    console.log(`Next Turn API Call~`)
+    console.log(`Next Turn API Call~`);
+    startNextTurn();
   }
 
   const allPlayersReady = players.reduce(
