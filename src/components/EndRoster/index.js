@@ -4,7 +4,8 @@ import "./index.css";
 
 function EndRoster(props) {
   const players = props.players;
-  players.sort((a, b) => b.score - a.score);
+  // TODO: move sorting and rank into utilities
+  players.sort((a, b) => b.oldScore - a.oldScore);
   console.log("Players should be ranked")
   console.log(JSON.stringify(players));
   
@@ -16,7 +17,7 @@ function EndRoster(props) {
   console.log(JSON.stringify(players));
 
   for (let i = 1; i < players.length; i++) {
-    if (players[i-1].score === players[i].score) {
+    if (players[i-1].oldScore === players[i].oldScore) {
       players[i].rank = players[i-1].rank;
     }
   }
@@ -41,7 +42,7 @@ function EndRoster(props) {
                 <tr>
                   <td className="text-center"><RankEmoji rank={player.rank} /></td>
                   <td>{player.name}</td>
-                  <td className="text-center">{player.score}</td>
+                  <td className="text-center">{player.oldScore}</td>
                 </tr>
               )
             })}

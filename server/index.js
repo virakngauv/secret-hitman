@@ -50,11 +50,19 @@ const gameService = new GameService();
 io.use((socket, next) => {
   const userID = socket.handshake.auth.userID;
   const playerID = socket.handshake.auth.playerID;
+  const roomCode = socket.handshake.auth.roomCode;
+
   if (userID && playerID) {
     console.log("(server) userID is ", userID);
     console.log("(server) playerID is ", playerID);
     socket.userID = userID;
     socket.playerID = playerID;
+
+    if (roomCode) {
+      console.log("(server) roomCode is ", roomCode);
+      socket.roomCode = roomCode;
+    }
+
     return next();
   } 
 
@@ -77,6 +85,7 @@ io.on("connection", (socket) => {
   socket.on("joinRoom", (roomCode) => {
     if (gameStore.hasGame(roomCode)) {
       socket.join(roomCode);
+      socket.roomCode = roomCode;
     }
   })
 
@@ -119,11 +128,19 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("getPlayers", (roomCode, setPlayers) => {
-    if (gameStore.hasGame(roomCode)) {
-      const players = Array.from(gameStore.getGame(roomCode).players.values());
+  socket.on("getPlayers", (setPlayers) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const players = gameService.getPlayers(roomCode);
       setPlayers(players);
     }
+
+    // if (gameStore.hasGame(roomCode)) {
+    //   const players = Array.from(gameStore.getGame(roomCode).players.values());
+    //   setPlayers(players);
+    // }
   });
 
   socket.on("getIsUserInRoom", (roomCode, setIsUserInRoom) => {
@@ -135,39 +152,80 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("getTiles", (roomCode, setTiles) => {
+  socket.on("getTiles", (setTiles) => {
+    const roomCode = socket.roomCode;
     const userID = socket.userID;
-    if (gameStore.hasGame(roomCode) && userID) {
-      const game = gameStore.getGame(roomCode);
-      const tiles = gameService.getTilesForUser(game, userID);
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const tiles = gameService.getTilesForUser(roomCode, userID);
       
-      console.log(`tiles is ${JSON.stringify(tiles, null, 2)}`);
+      // console.log(`tiles is ${JSON.stringify(tiles, null, 2)}`);
 
       setTiles(tiles);
     }
   });
 
-  socket.on("claimTile", (roomCode, tileIndex) => {
+  socket.on("claimTile", (tileIndex) => {
+    const roomCode = socket.roomCode;
     const userID = socket.userID;
 
-    if (gameStore.hasGame(roomCode)) {
-      const game = gameStore.getGame(roomCode);
-      const playerStatus = game.players.get(userID)?.status;
-      if (playerStatus === PlayerStatus.ACTIVE) {
-        gameService.claimTile(game, userID, tileIndex);
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      gameService.claimTile(roomCode, userID, tileIndex);
 
-        // TODO: maybe change below to: 
-        //   io.to(userID).emit("tileChange", newTiles);
-        // if 2x RTT is too slow
-        io.to(roomCode).emit("tileChange");
-        io.to(roomCode).emit("playerChange");
+      
+
+      // TODO: if 2x RTT is too slow maybe change below to: 
+      //   io.to(userID).emit("tileChange", newTiles);
+      io.to(roomCode).emit("tileChange");
+      io.to(roomCode).emit("playerChange");
+
+
+
+      // check to see if turn should end
+      gameService.checkAndEndTurnIfTurnShouldEnd(roomCode);
+
+
+
+
+
+
+
+      // TODO: bug
+      // undesirable effect, when turn ends b/c last player clicks on a tile
+      //   then the screen doesn't properly go to how I want the end screen to look like
+      const turnIsEnded = gameService.checkIfTurnIsEnded(roomCode);
+      if (turnIsEnded) {
+        io.to(roomCode).emit("turnStatusChange");
+        // io.to(roomCode).emit("tileChange");
+        // io.to(roomCode).emit("playerChange");
+        io.to(roomCode).emit("hintChange");
       }
     }
-  })
+  });
 
-  socket.on("getHint", (roomCode, setHint) => {
-    if (gameStore.hasGame(roomCode)) {
-      const hint = gameStore.getGame(roomCode).hint;
+  socket.on("revealBoard", (setTiles) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const turnIsEnded = gameService.checkIfTurnIsEnded(roomCode);
+
+      console.log(`revealBoard's turnIsEnded is ${turnIsEnded}`);
+
+      if (turnIsEnded) {
+        gameService.markPlayerCanSeeBoard(roomCode, userID);
+        const tiles = gameService.getTilesForUser(roomCode, userID);
+        setTiles(tiles)
+      }
+    }
+  });
+
+  socket.on("getHint", (setHint) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const hint = gameService.getHint(roomCode);
       setHint(hint);
     }
   });
@@ -184,19 +242,145 @@ io.on("connection", (socket) => {
         io.to(roomCode).emit("hintChange");
       }
     }
+  });
+
+  socket.on("invalidateHint", () => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameStore.hasGame(roomCode)) {
+      const game = gameStore.getGame(roomCode);
+      const player = game.players.get(userID);
+      if (player) {
+        // TODO: rewrite to markHintAsInvalid
+        gameService.invalidateHint(game);
+
+
+
+
+
+
+
+
+
+
+
+
+        // TODO: getHint listener should check turn status
+
+        io.to(roomCode).emit("turnStatusChange");
+        io.to(roomCode).emit("hintChange");
+        io.to(roomCode).emit("tileChange");
+      }
+    }
+  });
+
+  socket.on("discardHint", () => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndCodemaster(roomCode, userID)) {
+      gameService.resetTurn(roomCode);
+
+      io.to(roomCode).emit("turnStatusChange");
+      io.to(roomCode).emit("playerChange");
+      io.to(roomCode).emit("hintChange");
+      io.to(roomCode).emit("tileChange");
+    }
+  });
+
+  socket.on("keepHint", () => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndCodemaster(roomCode, userID)) {
+      gameService.unpauseTurn(roomCode);
+
+      io.to(roomCode).emit("turnStatusChange");
+      io.to(roomCode).emit("hintChange");
+    }
+  });
+
+  socket.on("getTurnStatus", (setTurnStatus) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const turnStatus = gameService.getTurnStatus(roomCode);
+      setTurnStatus(turnStatus);
+    }
+  });
+
+  socket.on("startNextTurn", () => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      gameService.startNextTurn(roomCode);
+
+      io.to(roomCode).emit("gameStateChange");
+      io.to(roomCode).emit("turnStatusChange");
+      io.to(roomCode).emit("playerChange");
+      io.to(roomCode).emit("hintChange");
+      io.to(roomCode).emit("tileChange");
+    }
+  });
+
+  socket.on("markPlayerStatus", (status) => {
+    //   const game = gameStore.getGame(roomCode);
+    //   if (game && game.gameState === GameState.LOBBY) {
+    //     const userID = socket.userID;
+    //     const player = game.players.get(userID);
+    //     // console.log(`markPlayerStatus's player is ${JSON.stringify(player, null, 2)}`);
+    //     player.status = status === PlayerStatus.ACTIVE ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
+    //     // console.log("inside markPlayerStatus if statement");
+    //     // console.log(`markPlayerStatus's player is nowww ${JSON.stringify(player, null, 2)}`);
+    //     // console.log("markPlayerStatus's players is ", JSON.stringify(Array.from(game.players.values()), null, 2))
+    //     io.to(roomCode).emit("playerChange");
+    //   }
+    // });
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    console.log(`markPlayerStatus's roomCode is ${roomCode} and userID is ${userID}`);
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      gameService.markPlayerStatus(roomCode, userID, status);
+
+      io.to(roomCode).emit("playerChange");
+    }
+    // START TEMP CODE
+    const players = gameStore.getGame(roomCode).players.values();
+    console.log(`markPlayerStatus's players is ${JSON.stringify(players, null, 2)}`);
+    // END TEMP CODE
+  });
+
+  socket.on("getPlayerCanSeeBoard", (setPlayerCanSeeBoard) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const playerCanSeeBoard = gameService.getPlayerCanSeeBoard(roomCode, userID);
+      setPlayerCanSeeBoard(playerCanSeeBoard);
+    }
   })
 
-  socket.on("markPlayerStatus", (roomCode, status) => {
-    const game = gameStore.getGame(roomCode);
-    if (game && game.gameState === GameState.LOBBY) {
-      const userID = socket.userID;
-      const player = game.players.get(userID);
-      // console.log(`markPlayerStatus's player is ${JSON.stringify(player, null, 2)}`);
-      player.status = status === PlayerStatus.ACTIVE ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
-      // console.log("inside markPlayerStatus if statement");
-      // console.log(`markPlayerStatus's player is nowww ${JSON.stringify(player, null, 2)}`);
-      // console.log("markPlayerStatus's players is ", JSON.stringify(Array.from(game.players.values()), null, 2))
+  socket.on("endPlayerTurn", (setTiles) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      // gameService.endPlayerTurn(roomCode, userID);
+      gameService.markPlayerStatus(roomCode, userID, PlayerStatus.INACTIVE);
+
+      gameService.checkAndEndTurnIfTurnShouldEnd(roomCode);
+
+      const tiles = gameService.getTilesForUser(roomCode, userID);
+      setTiles(tiles);
+
+      io.to(roomCode).emit("turnStatusChange");
       io.to(roomCode).emit("playerChange");
+      io.to(roomCode).emit("hintChange");
     }
   });
 
@@ -213,24 +397,43 @@ io.on("connection", (socket) => {
       }, true);
     // console.log(`isInLobby is ${isInLobby} and allPlayersReady is ${allPlayersReady}`);
     if (isInLobby && allPlayersReady) {
-      gameService.initializeGame(roomCode, socket);
+      gameService.initializeGame(roomCode);
 
       io.to(roomCode).emit("gameStateChange");
     }
+  });
+
+  socket.on("playAgain", (setGameState) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      gameService.resetGame(roomCode);
+      setGameState(GameState.LOBBY);
+
+
+      // const gameState = gameService.getGameState(roomCode);
+       
+
+      // gameService.markAllPlayersInactive(roomCode);
+      // gameService.updateGameState(roomCode, GameState.LOBBY);
+      
+      // // set to game state to lobby
+      // // force local game state to lobby
+    }
   })
 
-  socket.on("kickPlayer", (roomCode, playerID) => {
-    console.log(`kickPlayer(server) has roomCode ${roomCode}, playerID ${playerID}`);
+  socket.on("kickPlayer", (playerIDToKick) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+    console.log(`kickPlayer(server) has roomCode ${roomCode}, playerIDToKick ${playerIDToKick}`);
 
-    const userID = userStore.getUserID(playerID);
-    // console.log("userID in kickPlayer(server) is ", userID);
-    userStore.deleteUser(userID);
-    // console.log("userID in kickPlayer(server) is ", userID);
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      gameService.kickPlayer(roomCode, playerIDToKick);
 
-    gameStore.removePlayerFromGame(userID, roomCode);
-
-    // maybe use io.to(...etc instead of socket.broadcast.to(...etc
-    io.to(roomCode).emit("playerKicked", playerID);
+      // TODO: check to see if event listener is still registered if a player joins mid-game (I think event listener is set on lobby screen which will have been skipped)
+      io.to(roomCode).emit("playerKicked", playerIDToKick);
+    }
   });
 
   socket.on("leaveRoom", (roomCode) => {

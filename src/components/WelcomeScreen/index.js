@@ -33,7 +33,7 @@ function WelcomeScreen() {
         <Row>
           <Col className="d-flex">
             <Button onClick={navigateTo("/rules")} variant="outline-secondary" size="sm" className="btn-menu btn-welcome-screen ms-auto me-auto">
-              How to Play
+              Rules
             </Button>
           </Col>
         </Row>

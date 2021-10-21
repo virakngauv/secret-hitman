@@ -1,15 +1,22 @@
 import { Button, Col, Row } from "react-bootstrap";
-import { useHistory } from "react-router-dom"
+import { useHistory } from "react-router-dom";
+import { playAgain, kickPlayer } from "../../api";
 
-function EndFooter() {
+function EndFooter(props) {
+  const setGameState = props.setGameState;
+  const playerID = sessionStorage.getItem("playerID");
   const history = useHistory();
 
-  // Probably should put them back into lobby
-  const markPlayAgain = () => console.log("Wants to play again!");
+  // // Probably should put them back into lobby
+  // const markPlayAgain = () => console.log("Wants to play again!");
+  function handlePlayAgain () {
+    playAgain(setGameState);
+  }
 
-  // Should take them out of the game then move them to the welcome screen
+  // TODO: make into normal function
     const leaveGame = () => {
     console.log("Leaving game!");
+    kickPlayer(playerID);
     history.push("/");
   }
 
@@ -17,7 +24,7 @@ function EndFooter() {
     <>
       <Row>
         <Col className="d-flex mt-4">
-          <Button onClick={markPlayAgain} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-1">
+          <Button onClick={handlePlayAgain} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-1">
             Play Again!
           </Button>
           <Button onClick={leaveGame} variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">

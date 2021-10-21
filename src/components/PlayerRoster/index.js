@@ -6,10 +6,12 @@ import "./index.css"
 
 function PlayerRoster(props) {
   const players = props.players;
-  const playerCardHeadings = {status: "Status", name: "Name", oldScore: "Score", newScore: ""}
+  // Putting playerID into the heading is a hack to prevent trying to "kick" the heading card
+  const playerID = sessionStorage.getItem("playerID");
+  const playerCardHeadings = {id: playerID, status: "Status", name: "Name", oldScore: "Score", newScore: ""};
 
   return (
-    <CardGroup className="player-roster">
+    <CardGroup className="player-roster ms-auto me-auto">
       <PlayerRosterCard player={playerCardHeadings} />
       {players && players.map((player) => (
         <PlayerRosterCard player={player} />
