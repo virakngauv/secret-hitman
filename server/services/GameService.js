@@ -98,7 +98,7 @@ class GameService {
     }
 
     console.log(`assignNextCodemaster's game.roundNumber is ${game.roundNumber}`);
-    
+
     if (game.roundNumber > this.maxRounds) {
       this.updateGameState(game, GameState.END);
       return;
@@ -296,6 +296,13 @@ class GameService {
     // TODO: make constant for default hint for use here and on init
     const hint = "";
     this.setHint(game, hint);
+  }
+
+  getPlayers(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    const players = game.players;
+
+    return Array.from(players.values());
   }
 
   getPlayerStatus(game, playerID) {

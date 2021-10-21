@@ -13,11 +13,11 @@ function LobbyScreen() {
   const history = useHistory();
 
   useEffect(() => {
-    getPlayers(roomCode, setPlayers);
+    getPlayers(setPlayers);
 
     // TODO: maybe pull these into API? depends on rest of structure of code
     registerListener("playerChange", () => {
-      getPlayers(roomCode, setPlayers);
+      getPlayers(setPlayers);
     });
     registerListener("playerKicked", (kickedPlayerID) => {
       const playerID = sessionStorage.getItem("playerID");
@@ -26,7 +26,7 @@ function LobbyScreen() {
         leaveRoom(roomCode);
       } else {
         console.log("getPlayers cause you weren't kicked but someone else was..")
-        getPlayers(roomCode, setPlayers);
+        getPlayers(setPlayers);
       }
     });
   }, [roomCode, history]);

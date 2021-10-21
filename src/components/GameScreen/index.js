@@ -136,13 +136,13 @@ function GameScreen() {
   const isTurnEnded = turnStatus === TurnStatus.ENDED;
 
   useEffect(() => {
-    getPlayers(roomCode, setPlayers);
+    getPlayers(setPlayers);
     getTiles(setTiles);
     getHint(setHint);
     getTurnStatus(setTurnStatus);
     getPlayerCanSeeBoard(setPlayerCanSeeBoard);
 
-    registerListener("playerChange", () => getPlayers(roomCode, setPlayers));
+    registerListener("playerChange", () => getPlayers(setPlayers));
     registerListener("tileChange", () => getTiles(setTiles));
     registerListener("hintChange", () => getHint(setHint));
     registerListener("turnStatusChange", () => getTurnStatus(setTurnStatus));
@@ -155,7 +155,7 @@ function GameScreen() {
         leaveRoom(roomCode);
       } else {
         console.log("getPlayers cause you weren't kicked but someone else was..")
-        getPlayers(roomCode, setPlayers);
+        getPlayers(setPlayers);
       }
     });
   }, [roomCode]);

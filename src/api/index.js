@@ -51,8 +51,8 @@ export function getGameState(roomCode, setGameState) {
   socket.emit("getGameState", roomCode, (gameState) => setGameState(gameState));
 }
 
-export function getPlayers(roomCode, setPlayers) {
-  socket.emit("getPlayers", roomCode, (players) => setPlayers(players));
+export function getPlayers(setPlayers) {
+  socket.emit("getPlayers", (players) => setPlayers(players));
 }
 
 export function getIsUserInRoom(roomCode, setIsUserInRoom) {

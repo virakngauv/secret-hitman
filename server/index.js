@@ -128,11 +128,19 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("getPlayers", (roomCode, setPlayers) => {
-    if (gameStore.hasGame(roomCode)) {
-      const players = Array.from(gameStore.getGame(roomCode).players.values());
+  socket.on("getPlayers", (setPlayers) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const players = gameService.getPlayers(roomCode);
       setPlayers(players);
     }
+
+    // if (gameStore.hasGame(roomCode)) {
+    //   const players = Array.from(gameStore.getGame(roomCode).players.values());
+    //   setPlayers(players);
+    // }
   });
 
   socket.on("getIsUserInRoom", (roomCode, setIsUserInRoom) => {
