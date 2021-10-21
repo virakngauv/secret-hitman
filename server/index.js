@@ -198,6 +198,7 @@ io.on("connection", (socket) => {
         io.to(roomCode).emit("turnStatusChange");
         // io.to(roomCode).emit("tileChange");
         // io.to(roomCode).emit("playerChange");
+        io.to(roomCode).emit("messageChange");
         io.to(roomCode).emit("hintChange");
       }
     }
@@ -249,6 +250,7 @@ io.on("connection", (socket) => {
       if (playerStatus === PlayerStatus.CODEMASTER) {
         gameService.setHint(game, hint);
 
+        io.to(roomCode).emit("messageChange");
         io.to(roomCode).emit("hintChange");
       }
     }
@@ -279,7 +281,7 @@ io.on("connection", (socket) => {
         // TODO: getHint listener should check turn status
 
         io.to(roomCode).emit("turnStatusChange");
-        io.to(roomCode).emit("hintChange");
+        io.to(roomCode).emit("messageChange");
         io.to(roomCode).emit("tileChange");
       }
     }
@@ -294,6 +296,7 @@ io.on("connection", (socket) => {
 
       io.to(roomCode).emit("turnStatusChange");
       io.to(roomCode).emit("playerChange");
+      io.to(roomCode).emit("messageChange");
       io.to(roomCode).emit("hintChange");
       io.to(roomCode).emit("tileChange");
     }
@@ -307,6 +310,7 @@ io.on("connection", (socket) => {
       gameService.unpauseTurn(roomCode);
 
       io.to(roomCode).emit("turnStatusChange");
+      io.to(roomCode).emit("messageChange");
       io.to(roomCode).emit("hintChange");
       io.to(roomCode).emit("tileChange");
     }
@@ -332,6 +336,7 @@ io.on("connection", (socket) => {
       io.to(roomCode).emit("gameStateChange");
       io.to(roomCode).emit("turnStatusChange");
       io.to(roomCode).emit("playerChange");
+      io.to(roomCode).emit("messageChange");
       io.to(roomCode).emit("hintChange");
       io.to(roomCode).emit("tileChange");
     }
@@ -391,6 +396,7 @@ io.on("connection", (socket) => {
 
       io.to(roomCode).emit("turnStatusChange");
       io.to(roomCode).emit("playerChange");
+      io.to(roomCode).emit("messageChange");
       io.to(roomCode).emit("hintChange");
     }
   });

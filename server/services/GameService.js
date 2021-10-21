@@ -318,24 +318,14 @@ class GameService {
       const turnEndedMessage = "ready for next turn?";
       return turnEndedMessage;
     } else {
-      console.warning("Possible error: Turn Status is not started, paused, or ended")
       return "";
     }
   }
 
   getHint(roomCode) {
     const game = gameStore.getGame(roomCode);
-    const turnStatus = game.turnStatus;
 
-    if (turnStatus === TurnStatus.PAUSED) {
-      const turnPausedMessage = "hint marked as invalid, pending codemaster..";
-      return turnPausedMessage
-    } else if (turnStatus === TurnStatus.ENDED) {
-      const turnEndedMessage = `turn ended, hint: ${game.hint}`;
-      return turnEndedMessage;
-    } else {
-      return game.hint;
-    }
+    return game.hint;
   }
 
   setHint(game, hint) {
