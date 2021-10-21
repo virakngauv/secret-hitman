@@ -400,6 +400,7 @@ class GameService {
 
   endTurn(roomCode) {
     const game = gameStore.getGame(roomCode);
+
     game.turnStatus = TurnStatus.ENDED;
     this.markAllPlayersInactive(roomCode);
   }

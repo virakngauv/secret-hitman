@@ -14,3 +14,4 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 * Look into Joi for user input validation (room code (URL), player name, api calls)
 * Implement garbage collection for old games
 * Prevent making too many games or too many players in a game (thousands)
+* Fix keyboard navigation for codemaster hint submission

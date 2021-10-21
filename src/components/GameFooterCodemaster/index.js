@@ -10,19 +10,20 @@ function GameFooterCodemaster(props) {
   const defaultHintNumber = "#";
 
   const roomCode = props.roomCode;
-  const initialHint = props.hint ?? defaultHint;
+  // const initialHint = props.hint ?? defaultHint;
   const hasInitialHint = props.hint ? true : false;
 
-  const [hint, setHint] = useState(initialHint);
+  // const [hint, setHint] = useState(initialHint);
+  const [hint, setHint] = useState(defaultHint);
   const [hintNumber, setHintNumber] = useState(defaultHintNumber);
 
   const handleHintChange = (e) => {setHint(e.target.value);};
   const handleHintNumberChange = (hintNumber) => {setHintNumber(hintNumber);};
 
-  // This will eventually come from parent props
-  const submitClue = () => console.log(hint, hintNumber);
+  // // This will eventually come from parent props
+  // const submitClue = () => console.log(hint, hintNumber);
 
-  console.log(`hasInitialHint is ${hasInitialHint}`);
+  // console.log(`hasInitialHint is ${hasInitialHint}`);
 
 
   function handleSubmit(e) {
