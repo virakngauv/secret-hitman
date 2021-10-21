@@ -73,7 +73,7 @@ function LobbyScreen() {
     <Container className="screen">
       <MenuHeader title={title} subtitle={subtitle} />
       <RoomCode roomCode={roomCode} />
-      <LobbyRoster roomCode={roomCode} players={players} />
+      <LobbyRoster players={players} />
       <LobbyFooter roomCode={roomCode} players={players} />
     </Container>
   );

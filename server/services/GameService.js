@@ -39,7 +39,7 @@ class GameService {
     this.totalNumberOfTiles = 12;
   }
 
-  initializeGame(roomCode, socket) {
+  initializeGame(roomCode) {
     console.log(`Inside initializeGame with roomCode: ${roomCode}`);
 
     // TODO: init game
@@ -51,15 +51,48 @@ class GameService {
     */
     const game = gameStore.getGame(roomCode);
 
-    this.updateGameState(game, GameState.GAME);
+    this.updateGameState(roomCode, GameState.GAME);
     this.updateTurnStatus(game, TurnStatus.STARTED);
     // Tiles will be active, which is funny if people want to select tiles before the hint is revealed
     // this.markAllPlayersInactive(game);
-    this.assignNextCodemaster(game);
+    this.assignNextCodemaster(roomCode);
     this.setupNewTiles(game);
   }
 
-  updateGameState(game, gameState) {
+  resetGame(roomCode) {
+      // gameService.markAllPlayersInactive(roomCode);
+      // gameService.updateGameState(roomCode, GameState.LOBBY);
+    const gameState = this.getGameState(roomCode);
+    if (gameState !== GameState.LOBBY) {
+      const game = gameStore.getGame(roomCode);
+
+      this.updateGameState(roomCode, GameState.LOBBY);
+      this.resetPlayers(roomCode);
+      game.currentCodemasterIndex = null;
+      game.roundNumber = 0;
+      game.hint = "";
+    }
+  }
+
+  resetPlayers(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    const players = game.players;
+
+    this.markAllPlayersInactive(roomCode);
+    players.forEach((player) => {
+      player.oldScore = 0;
+      player.newScore = 0;
+      player.canSeeBoard = false;
+    });
+  }
+
+  getGameState(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    return game.gameState;
+  }
+
+  updateGameState(roomCode, gameState) {
+    const game = gameStore.getGame(roomCode);
     game.gameState = gameState;
   }
 
@@ -67,7 +100,8 @@ class GameService {
     game.turnStatus = turnStatus;
   }
 
-  markAllPlayersInactive(game) {
+  markAllPlayersInactive(roomCode) {
+    const game = gameStore.getGame(roomCode);
     const players = game.players;
     players.forEach((player) => {
       player.status = PlayerStatus.INACTIVE;
@@ -83,7 +117,8 @@ class GameService {
     });
   }
 
-  assignNextCodemaster(game) {
+  assignNextCodemaster(roomCode) {
+    const game = gameStore.getGame(roomCode);
     const currentCodemasterIndex = game.currentCodemasterIndex;
     const players = game.players;
     const playerArchive = game.playerArchive;
@@ -100,7 +135,7 @@ class GameService {
     console.log(`assignNextCodemaster's game.roundNumber is ${game.roundNumber}`);
 
     if (game.roundNumber > this.maxRounds) {
-      this.updateGameState(game, GameState.END);
+      this.updateGameState(roomCode, GameState.END);
       return;
     }
 
@@ -350,7 +385,7 @@ class GameService {
       }, true);
     
     if (noPlayersActive) {
-      this.endTurn(game);
+      this.endTurn(roomCode);
     }
   }
 
@@ -363,9 +398,10 @@ class GameService {
   //   // return noPlayersActive;
   // }
 
-  endTurn(game) {
+  endTurn(roomCode) {
+    const game = gameStore.getGame(roomCode);
     game.turnStatus = TurnStatus.ENDED;
-    this.markAllPlayersInactive(game);
+    this.markAllPlayersInactive(roomCode);
   }
 
   checkIfTurnIsEnded(roomCode) {
@@ -450,7 +486,7 @@ class GameService {
     // prepare for next turn
     //    update game object
     this.preparePlayersForNextTurn(game);
-    this.assignNextCodemaster(game);
+    this.assignNextCodemaster(roomCode);
     this.resetHint(game);
     this.setupNewTiles(game);
     this.updateTurnStatus(game, TurnStatus.STARTED);

@@ -5,7 +5,9 @@ import EndFooter from "../EndFooter";
 import EndRoster from "../EndRoster";
 import MenuHeader from "../MenuHeader";
 
-function EndScreen() {
+function EndScreen(props) {
+  const setGameState = props.setGameState;
+
   const title = "Rankings";
   const subtitle = "Hope you had fun! Come back soon!";
   // const players = [
@@ -46,7 +48,7 @@ function EndScreen() {
     <Container className="screen">
       <MenuHeader title={title} subtitle={subtitle} />
       <EndRoster players={players} />
-      <EndFooter />
+      <EndFooter setGameState={setGameState} />
     </Container>
   );
 }

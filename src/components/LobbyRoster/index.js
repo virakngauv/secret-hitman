@@ -5,11 +5,10 @@ import "./index.css";
 import { kickPlayer } from "../../api";
 
 function LobbyRoster(props) {
-  const roomCode = props.roomCode;
   const players = props.players;
   const playerID = sessionStorage.getItem("playerID");
 
-  function handleKickPlayer(roomCode, playerID) {
+  function handleKickPlayer(playerID) {
     console.log("I am in handleKickPlayer");
     kickPlayer(playerID);
   }
@@ -32,7 +31,7 @@ function LobbyRoster(props) {
                   <td className="text-center"><StatusIndicator status={player.status} /></td>
                   <td className="text-center">{player.name}</td>
                   <td className="text-center">
-                    {playerID === player.id || <XEmoji kickPlayer={() => handleKickPlayer(roomCode, player.id)} />}
+                    {playerID === player.id || <XEmoji kickPlayer={() => handleKickPlayer(player.id)} />}
                   </td>
                 </tr>
               )

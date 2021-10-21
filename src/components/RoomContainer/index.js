@@ -45,7 +45,7 @@ function RoomContainer() {
     case GameState.GAME:
       return <GameScreen />
     case GameState.END:
-      return <EndScreen />
+      return <EndScreen setGameState={setGameState} />
     default:
       return null
   }

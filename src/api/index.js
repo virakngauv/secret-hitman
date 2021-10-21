@@ -124,6 +124,10 @@ export function startGame(roomCode) {
   socket.emit("startGame", roomCode);
 }
 
+export function playAgain(setGameState) {
+  socket.emit("playAgain", (gameState) => setGameState(gameState));
+}
+
 export function kickPlayer(playerIDToKick) {
   console.log("I am in kickPlayer in the api");
 

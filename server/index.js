@@ -397,9 +397,29 @@ io.on("connection", (socket) => {
       }, true);
     // console.log(`isInLobby is ${isInLobby} and allPlayersReady is ${allPlayersReady}`);
     if (isInLobby && allPlayersReady) {
-      gameService.initializeGame(roomCode, socket);
+      gameService.initializeGame(roomCode);
 
       io.to(roomCode).emit("gameStateChange");
+    }
+  });
+
+  socket.on("playAgain", (setGameState) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      gameService.resetGame(roomCode);
+      setGameState(GameState.LOBBY);
+
+
+      // const gameState = gameService.getGameState(roomCode);
+       
+
+      // gameService.markAllPlayersInactive(roomCode);
+      // gameService.updateGameState(roomCode, GameState.LOBBY);
+      
+      // // set to game state to lobby
+      // // force local game state to lobby
     }
   })
 
