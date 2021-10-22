@@ -56,6 +56,7 @@ class GameService {
     // Tiles will be active, which is funny if people want to select tiles before the hint is revealed
     // this.markAllPlayersInactive(game);
     this.assignNextCodemaster(roomCode);
+    this.incrementRoundNumber(game);
     this.setupNewTiles(game);
   }
 
@@ -122,12 +123,12 @@ class GameService {
     const currentCodemasterIndex = game.currentCodemasterIndex;
     const players = game.players;
     const playerArchive = game.playerArchive;
-    const roundNumber = game.roundNumber;
     
     let nextCodemasterIndex = currentCodemasterIndex === null ? 0 : currentCodemasterIndex + 1
 
     if (nextCodemasterIndex === playerArchive.length) {
-      game.roundNumber = roundNumber + 1;
+      // game.roundNumber = roundNumber + 1;
+      this.incrementRoundNumber(game);
       nextCodemasterIndex = 0;
       // game.currentCodemasterIndex = 0;
     }
@@ -156,6 +157,10 @@ class GameService {
 
       nextCodemasterIndex = nextCodemasterIndex + 1;
     }
+  }
+
+  incrementRoundNumber(game) {
+    game.roundNumber += 1;
   }
 
   setupNewTiles(game) {
@@ -333,7 +338,7 @@ class GameService {
   }
 
   setHint(game, hint) {
-    console.log(`setHint(server)'s hint is ${hint}`);
+    // console.log(`setHint(server)'s hint is ${hint}`);
     game.hint = hint;
   }
 
