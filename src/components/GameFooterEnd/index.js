@@ -52,7 +52,7 @@ function GameFooterEnd(props) {
     return (
       <Row>
         <Col className="d-flex">
-          <Button className="btn-menu ms-auto me-auto" size="sm" variant="outline-secondary" id="reveal-board-button" onClick={handleRevealBoard}>
+          <Button className="btn-menu btn-game-footer ms-auto me-auto" size="sm" variant="outline-secondary" id="reveal-board-button" onClick={handleRevealBoard}>
             Reveal Tiles
           </Button>
         </Col>
@@ -62,7 +62,7 @@ function GameFooterEnd(props) {
     return (
       <Row>
         <Col className="d-flex">
-          <Button className="btn-menu ms-auto me-auto" size="sm" variant="outline-secondary" id="end-turn-button" onClick={toggleReadyStatus}>
+          <Button className="btn-menu btn-game-footer ms-auto me-auto" size="sm" variant="outline-secondary" id="end-turn-button" onClick={toggleReadyStatus}>
             I'm Ready!
           </Button>
         </Col>
@@ -72,8 +72,8 @@ function GameFooterEnd(props) {
     return (
       <Row>
         <Col className="d-flex">
-          <Button className="btn-menu ms-auto me-auto" size="sm" variant="outline-secondary" id="next-turn-button" onClick={handleNextTurn} disabled={!allPlayersReady}>
-            Next Turn
+          <Button className="btn-menu btn-game-footer ms-auto me-auto" size="sm" variant="outline-secondary" id="next-turn-button" onClick={handleNextTurn} disabled={!allPlayersReady}>
+            Let's Go!
           </Button>
         </Col>
       </Row>
