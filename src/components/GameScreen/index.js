@@ -111,9 +111,9 @@ function GameScreen() {
   return (
     <Container className="screen">
       <PlayerRoster players={players} />
-      {message && <Announcer message={message} />}
       {hint && <Announcer message={hint} />}
       <GameBoard tiles={tiles} />
+      {message && <Announcer message={message} />}
       <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} />
 
       <Modal show={isPaused && isCodemaster} centered>
