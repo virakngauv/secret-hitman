@@ -9,7 +9,7 @@ import Status from "../../constants/status.js";
 import State from "../../constants/state.js";
 import { useHistory, useParams } from "react-router";
 import { Button, ButtonGroup, Col, Modal, Row } from "react-bootstrap";
-import { getPlayers, getTiles, getMessage, getHint, getTurnStatus, getPlayerCanSeeBoard, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
+import { getPlayers, getTiles, getMessages, getHint, getTurnStatus, getPlayerCanSeeBoard, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
 
 const PlayerStatus = {
   ACTIVE: "active",
@@ -42,13 +42,15 @@ function GameScreen() {
   // console.log(`isForceDisabled is ${isForceDisabled}`);
 
   const [tiles, setTiles] = useState([]);
-  const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState(["", ""]);
   const [hint, setHint] = useState("");
   const [turnStatus, setTurnStatus] = useState();
   // TODO: maybe move playerCanSeeBoard and associated API calls to a lower component if nothing else needs it
   const [playerCanSeeBoard, setPlayerCanSeeBoard] = useState(false);
 
-  console.log(`tiles.areRevealed is ${tiles.areRevealed}`);
+  const [headerMessage, footerMessage] = messages;
+
+  // console.log(`tiles.areRevealed is ${tiles.areRevealed}`);
 
   // // TODO: format this on the server side like the game tiles
   // const initialMessage = isCodemaster ? "type your hint below" : "hint pending..";
@@ -59,14 +61,14 @@ function GameScreen() {
   useEffect(() => {
     getPlayers(setPlayers);
     getTiles(setTiles);
-    getMessage(setMessage);
+    getMessages(setMessages);
     getHint(setHint);
     getTurnStatus(setTurnStatus);
     getPlayerCanSeeBoard(setPlayerCanSeeBoard);
 
     registerListener("playerChange", () => getPlayers(setPlayers));
     registerListener("tileChange", () => getTiles(setTiles));
-    registerListener("messageChange", () => getMessage(setMessage));
+    registerListener("messagesChange", () => getMessages(setMessages));
     registerListener("hintChange", () => getHint(setHint));
     registerListener("turnStatusChange", () => getTurnStatus(setTurnStatus));
     registerListener("canSeeBoardChange", () => getPlayerCanSeeBoard(setPlayerCanSeeBoard));
@@ -111,9 +113,10 @@ function GameScreen() {
   return (
     <Container className="screen">
       <PlayerRoster players={players} />
+      {headerMessage && <Announcer message={headerMessage} />}
       {hint && <Announcer message={hint} />}
       <GameBoard tiles={tiles} />
-      {message && <Announcer message={message} />}
+      {footerMessage && <Announcer message={footerMessage} />}
       <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} />
 
       <Modal show={isPaused && isCodemaster} centered>

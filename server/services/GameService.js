@@ -302,30 +302,34 @@ class GameService {
     return tilesCopy;
   }
 
-  getMessageForUser(roomCode, userID) {
+  getMessagesForUser(roomCode, userID) {
     const game = gameStore.getGame(roomCode);
-    const playerIsCodemaster = game.players.get(userID).status === PlayerStatus.CODEMASTER;
     const turnStatus = game.turnStatus;
+    const playerIsCodemaster = game.players.get(userID).status === PlayerStatus.CODEMASTER;
     const hint = game.hint;
 
+    let headerMessage = "";
+    let footerMessage = "";
+
     if (turnStatus === TurnStatus.STARTED && hint === "") {
-      const turnStartedMessage = playerIsCodemaster ? "type your hint below" : "hint pending..";
-      return turnStartedMessage;
+      const preHintMessage = playerIsCodemaster ? "type your hint below" : "hint pending..";
+      headerMessage = preHintMessage;
     } else if (turnStatus === TurnStatus.PAUSED) {
       const turnPausedMessage = "hint marked as invalid, pending codemaster..";
-      return turnPausedMessage
+      headerMessage = turnPausedMessage;
     } else if (turnStatus === TurnStatus.ENDED) {
-      const turnEndedMessage = "ready for next turn?";
-      return turnEndedMessage;
-    } else {
-      return "";
-    }
+      const turnEndedMessages = ["turn ended", "ready for next turn?"];
+      [headerMessage, footerMessage] = turnEndedMessages;
+    } 
+
+    return [headerMessage, footerMessage];
   }
 
   getHint(roomCode) {
     const game = gameStore.getGame(roomCode);
+    const hint = game.hint;
 
-    return game.hint;
+    return hint;
   }
 
   setHint(game, hint) {
