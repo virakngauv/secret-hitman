@@ -12,14 +12,14 @@ function GameFooterHitman(props) {
     invalidateHint();
   }
 
-  function handleEndTurn() {
+  function handleFinishTurn() {
     endPlayerTurn(setTiles);
   }
 
   return (
     <ButtonGroup className="game-footer ms-auto me-auto d-flex" size="sm">
       <Button className="btn-menu" size="sm" variant="outline-secondary" id="report-invalid-hint-button" onClick={handleInvalidateHint} disabled={isHintEmpty || isInactive}>Invalid Hint</Button>
-      <Button className="btn-menu" size="sm" variant="outline-secondary" id="end-turn-button" onClick={handleEndTurn} disabled={isInactive}>End Turn</Button>
+      <Button className="btn-menu" size="sm" variant="outline-secondary" id="end-turn-button" onClick={handleFinishTurn} disabled={isInactive}>Finish Turn</Button>
     </ButtonGroup>
   );
 }
