@@ -35,7 +35,7 @@ const TurnStatus = {
 
 class GameService {
   constructor() {
-    this.maxRounds = 3;
+    this.maxRounds = 2;
     this.totalNumberOfTiles = 12;
   }
 
