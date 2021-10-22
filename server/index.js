@@ -339,6 +339,7 @@ io.on("connection", (socket) => {
       io.to(roomCode).emit("messageChange");
       io.to(roomCode).emit("hintChange");
       io.to(roomCode).emit("tileChange");
+      io.to(roomCode).emit("canSeeBoardChange");
     }
   });
 
