@@ -303,21 +303,40 @@ class GameService {
   getMessagesForUser(roomCode, userID) {
     const game = gameStore.getGame(roomCode);
     const turnStatus = game.turnStatus;
-    const playerIsCodemaster = game.players.get(userID).status === PlayerStatus.CODEMASTER;
     const hint = game.hint;
+
+    const players = game.players;
+    const player = players.get(userID);
+    const playerStatus = player.status;
+    const playerCanSeeBoard = player.canSeeBoard;
+    const allPlayersReady = Array.from(players.values()).reduce(
+      (readyStatusSoFar, currentPlayer) => {
+        return readyStatusSoFar && currentPlayer.status === PlayerStatus.ACTIVE
+      }, true
+    );
 
     let headerMessage = "";
     let footerMessage = "";
 
     if (turnStatus === TurnStatus.STARTED && hint === "") {
-      const preHintMessage = playerIsCodemaster ? "type your hint below" : "hint pending..";
+      const preHintMessage = playerStatus === PlayerStatus.CODEMASTER ? "type your hint below" : "hint pending..";
       headerMessage = preHintMessage;
     } else if (turnStatus === TurnStatus.PAUSED) {
       const turnPausedMessage = "hint marked as invalid, pending codemaster..";
       headerMessage = turnPausedMessage;
     } else if (turnStatus === TurnStatus.ENDED) {
-      const turnEndedMessages = ["turn ended", "ready for next turn?"];
-      [headerMessage, footerMessage] = turnEndedMessages;
+      const turnEndedMessages = "turn ended";
+      headerMessage = turnEndedMessages;
+
+      if (!playerCanSeeBoard) {
+        footerMessage = "Reveal Tiles?";
+      } else if (playerStatus === PlayerStatus.INACTIVE) {
+        footerMessage = "Ready for Next Turn?";
+      } else if (!allPlayersReady) {
+        footerMessage = "Waiting on Other Players";
+      } else {
+        footerMessage = "Start Next Turn?"
+      }
     } 
 
     return [headerMessage, footerMessage];

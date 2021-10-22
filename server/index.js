@@ -365,6 +365,7 @@ io.on("connection", (socket) => {
       gameService.markPlayerStatus(roomCode, userID, status);
 
       io.to(roomCode).emit("playerChange");
+      io.to(roomCode).emit("messagesChange");
     }
     // START TEMP CODE
     const players = gameStore.getGame(roomCode).players.values();

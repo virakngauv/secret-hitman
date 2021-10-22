@@ -117,7 +117,7 @@ function GameScreen() {
       {hint && <Announcer message={hint} />}
       <GameBoard tiles={tiles} />
       {footerMessage && <Announcer message={footerMessage} />}
-      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} />
+      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} setMessages={setMessages} />
 
       <Modal show={isPaused && isCodemaster} centered>
         <Modal.Header>
