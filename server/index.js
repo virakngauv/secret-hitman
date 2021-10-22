@@ -448,9 +448,14 @@ io.on("connection", (socket) => {
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       gameService.kickPlayer(roomCode, playerIDToKick);
+      gameService.checkAndEndTurnIfTurnShouldEnd(roomCode);
 
       // TODO: check to see if event listener is still registered if a player joins mid-game (I think event listener is set on lobby screen which will have been skipped)
       io.to(roomCode).emit("playerKicked", playerIDToKick);
+      io.to(roomCode).emit("turnStatusChange");
+      io.to(roomCode).emit("playerChange");
+      io.to(roomCode).emit("messagesChange");
+      io.to(roomCode).emit("hintChange");
     }
   });
 

@@ -126,25 +126,18 @@ class GameService {
     
     let nextCodemasterIndex = currentCodemasterIndex === null ? 0 : currentCodemasterIndex + 1
 
-    if (nextCodemasterIndex === playerArchive.length) {
-      // game.roundNumber = roundNumber + 1;
-      this.incrementRoundNumber(game);
-      nextCodemasterIndex = 0;
-      // game.currentCodemasterIndex = 0;
-    }
+    while (nextCodemasterIndex !== currentCodemasterIndex) {
+      if (nextCodemasterIndex === playerArchive.length) {
+        // game.roundNumber = roundNumber + 1;
+        this.incrementRoundNumber(game);
+        nextCodemasterIndex = 0;
+        // game.currentCodemasterIndex = 0;
+      }
 
-    console.log(`assignNextCodemaster's game.roundNumber is ${game.roundNumber}`);
-
-    if (game.roundNumber > this.maxRounds) {
-      this.updateGameState(roomCode, GameState.END);
-      return;
-    }
-
-    while (nextCodemasterIndex < playerArchive.length) {
-      // // Prevent infinite loop
-      // if (nextCodemasterIndex === currentCodemasterIndex) {
-      //   break;
-      // }
+      if (game.roundNumber > this.maxRounds) {
+        this.updateGameState(roomCode, GameState.END);
+        return;
+      }
 
       const nextPossibleCodemaster = players.get(playerArchive[nextCodemasterIndex]);
       
