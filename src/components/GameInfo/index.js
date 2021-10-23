@@ -10,7 +10,7 @@ function GameInfo(props) {
       <Row className="game-info">
         <Col className="d-flex">
           <div className="fs-sm ms-auto me-3">
-            <b>Code:</b> {`${roomCode}`}
+            <b>Room:</b> {`${roomCode}`}
           </div>
         </Col>
         {roundInfo.length === 2 && 
