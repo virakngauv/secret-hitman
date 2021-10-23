@@ -45,7 +45,7 @@ function LobbyFooter(props) {
     <>
       <Row>
         <Col className="d-flex mt-4">
-          <Button onClick={toggleReadyStatus} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-1">
+          <Button onClick={toggleReadyStatus} variant="outline-secondary" size="sm" className="btn-menu ms-auto me-1" id={`toggle-ready-button-${isReady}`} key={`toggle-ready-button-${isReady}`}>
             {!isReady ? "I'm Ready!" : "Not Ready"}
           </Button>
           <Button disabled={!allPlayersReady} onClick={handleStartGame} variant="outline-secondary" size="sm" className="btn-menu ms-1 me-auto">
