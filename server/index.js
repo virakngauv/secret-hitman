@@ -27,11 +27,11 @@ const httpServer = http.createServer(app);
 const io = new Server(httpServer);
 httpServer.listen(80);
 
-app.use(express.static("./build"));
-app.get("*", (req, res, next) => {
-  res.sendFile("index.html", { root: "./build" });
-  next();
-});
+// app.use(express.static("./build"));
+// app.get("*", (req, res, next) => {
+//   res.sendFile("index.html", { root: "./build" });
+//   next();
+// });
 
 try {
   const credentials = {
@@ -44,16 +44,24 @@ try {
   httpsServer.listen(443);
 
   // If https server exists, force its usage
-  app.use((req, res) => {
+  app.use((req, res, next) => {
     console.log(`Inside https force TKTK "!req.secure" is ${!req.secure}`);
     if (!req.secure) {
       console.log(`Inside if-block from https force TKTK`);
       res.redirect("https://" + req.headers.host + req.url);
     }
+
+    next();
   })
 } catch (e) {
   console.error(`Error: ${e}`);
 }
+
+app.use(express.static("./build"));
+// app.get("*", (req, res) => {
+//   res.sendFile("index.html", { root: "./build" });
+//   // next();
+// });
 
 const gameService = new GameService();
 
