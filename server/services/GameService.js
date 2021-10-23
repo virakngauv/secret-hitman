@@ -315,6 +315,8 @@ class GameService {
       }, true
     );
 
+    const isLastTurn = this.isLastTurn(game);
+
     let headerMessage = "";
     let footerMessage = "";
 
@@ -325,7 +327,7 @@ class GameService {
       const turnPausedMessage = "hint marked as invalid, pending codemaster..";
       headerMessage = turnPausedMessage;
     } else if (turnStatus === TurnStatus.ENDED) {
-      const turnEndedMessages = "turn ended";
+      const turnEndedMessages = isLastTurn ? "game over" : "turn ended";
       headerMessage = turnEndedMessages;
 
       if (!playerCanSeeBoard) {
@@ -334,12 +336,23 @@ class GameService {
         footerMessage = "Ready for Next Turn?";
       } else if (!allPlayersReady) {
         footerMessage = "Waiting on Other Players";
+      } else if (isLastTurn) {
+        footerMessage = "See Rankings?"
       } else {
         footerMessage = "Start Next Turn?"
       }
     } 
 
     return [headerMessage, footerMessage];
+  }
+
+  isLastTurn(game) {
+    const isLastRound = game.roundNumber === this.maxRounds;
+    const lastPlayerID = Array.from(game.players.values()).pop()?.id;
+    const codemasterID = game.playerArchive[game.codemasterIndex];
+    const lastPlayerIsCodemaster = lastPlayerID === codemasterID;
+
+    return isLastRound && lastPlayerIsCodemaster;
   }
 
   getHint(roomCode) {
