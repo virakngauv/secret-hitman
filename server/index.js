@@ -28,8 +28,9 @@ const io = new Server(httpServer);
 httpServer.listen(80);
 
 app.use(express.static("./build"));
-app.get("*", (req, res) => {
+app.get("*", (req, res, next) => {
   res.sendFile("index.html", { root: "./build" });
+  next();
 });
 
 try {
