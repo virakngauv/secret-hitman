@@ -13,7 +13,7 @@ function JoinGameScreen(props) {
   const [name, setName] = useState("");
   const handleNameChange = (e) => {setName(e.target.value);};
   const [roomCode, setRoomCode] = useState(initialRoomCode);
-  const handleRoomCodeChange = (e) => {setRoomCode(e.target.value);};
+  const handleRoomCodeChange = (e) => {setRoomCode(e.target.value?.toLowerCase());};
 
   const history = useHistory();
   const goBack = () => history.goBack();

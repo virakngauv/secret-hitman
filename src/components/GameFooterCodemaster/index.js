@@ -64,9 +64,6 @@ function GameFooterCodemaster(props) {
           }}
           disabled={hasInitialHint}
         >
-          <Dropdown.Item eventKey="Infinity">Infinity</Dropdown.Item>
-          <Dropdown.Item eventKey="Zero">Zero</Dropdown.Item>
-          <Dropdown.Divider />
           <Dropdown.Item eventKey="6">6</Dropdown.Item>
           <Dropdown.Item eventKey="5">5</Dropdown.Item>
           <Dropdown.Item eventKey="4">4</Dropdown.Item>

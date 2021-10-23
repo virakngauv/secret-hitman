@@ -21,8 +21,9 @@ const TurnStatus = {
   ENDED: "ended",
 };
 
-function GameScreen() {
-  const { roomCode } = useParams();
+function GameScreen(props) {
+  // const { roomCode } = useParams();
+  const roomCode = props.roomCode;
   const history = useHistory();
 
   // TODO: get value from server
