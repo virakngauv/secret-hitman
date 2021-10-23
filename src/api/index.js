@@ -51,6 +51,10 @@ export function getGameState(roomCode, setGameState) {
   socket.emit("getGameState", roomCode, (gameState) => setGameState(gameState));
 }
 
+export function getRoundInfo(setRoundInfo) {
+  socket.emit("getRoundInfo", (roundInfo) => setRoundInfo(roundInfo));
+}
+
 export function getPlayers(setPlayers) {
   socket.emit("getPlayers", (players) => setPlayers(players));
 }

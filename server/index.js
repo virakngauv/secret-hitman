@@ -123,10 +123,20 @@ io.on("connection", (socket) => {
   socket.on("getGameState", (roomCode, setGameState) => {
     if (gameStore.hasGame(roomCode)) {
       const gameState = gameStore.getGame(roomCode).gameState;
-      console.log(`getGameState's gameState is ${gameState}`);
+      // console.log(`getGameState's gameState is ${gameState}`);
       setGameState(gameState);
     }
   });
+
+  socket.on("getRoundInfo", (setRoundInfo) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const roundInfo = gameService.getRoundInfo(roomCode);
+      setRoundInfo(roundInfo);
+    }
+  })
 
   socket.on("getPlayers", (setPlayers) => {
     const roomCode = socket.roomCode;
@@ -334,6 +344,7 @@ io.on("connection", (socket) => {
       gameService.startNextTurn(roomCode);
 
       io.to(roomCode).emit("gameStateChange");
+      io.to(roomCode).emit("roundInfoChange");
       io.to(roomCode).emit("turnStatusChange");
       io.to(roomCode).emit("playerChange");
       io.to(roomCode).emit("messagesChange");
@@ -359,7 +370,7 @@ io.on("connection", (socket) => {
     const roomCode = socket.roomCode;
     const userID = socket.userID;
 
-    console.log(`markPlayerStatus's roomCode is ${roomCode} and userID is ${userID}`);
+    // console.log(`markPlayerStatus's roomCode is ${roomCode} and userID is ${userID}`);
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       gameService.markPlayerStatus(roomCode, userID, status);
@@ -367,10 +378,10 @@ io.on("connection", (socket) => {
       io.to(roomCode).emit("playerChange");
       io.to(roomCode).emit("messagesChange");
     }
-    // START TEMP CODE
-    const players = gameStore.getGame(roomCode).players.values();
-    console.log(`markPlayerStatus's players is ${JSON.stringify(players, null, 2)}`);
-    // END TEMP CODE
+    // // START TEMP CODE
+    // const players = gameStore.getGame(roomCode).players.values();
+    // // console.log(`markPlayerStatus's players is ${JSON.stringify(players, null, 2)}`);
+    // // END TEMP CODE
   });
 
   socket.on("getPlayerCanSeeBoard", (setPlayerCanSeeBoard) => {
@@ -445,7 +456,7 @@ io.on("connection", (socket) => {
   socket.on("kickPlayer", (playerIDToKick) => {
     const roomCode = socket.roomCode;
     const userID = socket.userID;
-    console.log(`kickPlayer(server) has roomCode ${roomCode}, playerIDToKick ${playerIDToKick}`);
+    // console.log(`kickPlayer(server) has roomCode ${roomCode}, playerIDToKick ${playerIDToKick}`);
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       gameService.kickPlayer(roomCode, playerIDToKick);

@@ -365,6 +365,15 @@ class GameService {
     this.setHint(game, hint);
   }
 
+  getRoundInfo(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    const currentRoundNumber = game.roundNumber;
+    const maxRoundNumber = this.maxRounds;
+    const roundInfo = [currentRoundNumber, maxRoundNumber];
+
+    return roundInfo;
+  }
+
   getPlayers(roomCode) {
     const game = gameStore.getGame(roomCode);
     const players = game.players;
@@ -447,9 +456,9 @@ class GameService {
     const userID = game.playerArchive[codemasterIndex];
     const codemaster = game.players.get(userID);
 
-    console.log(`codemasterIndex is ${codemasterIndex}`);
-    console.log(`userID is ${userID}`);
-    console.log(`codemaster is ${codemaster}`);
+    // console.log(`codemasterIndex is ${codemasterIndex}`);
+    // console.log(`userID is ${userID}`);
+    // console.log(`codemaster is ${codemaster}`);
 
     // Checking to see if codemaster is still in the game (possibly kicked)
     if (codemaster) {

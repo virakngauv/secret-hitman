@@ -2,14 +2,12 @@ import Container from "react-bootstrap/Container";
 import Announcer from "../Announcer";
 import PlayerRoster from "../PlayerRoster";
 import GameBoard from "../GameBoard";
-import GameFooter from "../GameFooter"
+import GameFooter from "../GameFooter";
+import GameInfo from "../GameInfo";
 import { useEffect, useState } from "react";
-import Type from "../../constants/type.js";
-import Status from "../../constants/status.js";
-import State from "../../constants/state.js";
 import { useHistory, useParams } from "react-router";
-import { Button, ButtonGroup, Col, Modal, Row } from "react-bootstrap";
-import { getPlayers, getTiles, getMessages, getHint, getTurnStatus, getPlayerCanSeeBoard, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
+import { Button, Modal } from "react-bootstrap";
+import { getRoundInfo, getPlayers, getTiles, getMessages, getHint, getTurnStatus, getPlayerCanSeeBoard, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
 
 const PlayerStatus = {
   ACTIVE: "active",
@@ -28,6 +26,7 @@ function GameScreen() {
   const history = useHistory();
 
   // TODO: get value from server
+  const [roundInfo, setRoundInfo] = useState([0, 0])
   const [players, setPlayers] = useState([]);
   // const [isCodemaster, setIsCodemaster] = useState(false);
   const playerID = sessionStorage.getItem("playerID");
@@ -59,6 +58,7 @@ function GameScreen() {
   const isTurnEnded = turnStatus === TurnStatus.ENDED;
 
   useEffect(() => {
+    getRoundInfo(setRoundInfo);
     getPlayers(setPlayers);
     getTiles(setTiles);
     getMessages(setMessages);
@@ -66,6 +66,7 @@ function GameScreen() {
     getTurnStatus(setTurnStatus);
     getPlayerCanSeeBoard(setPlayerCanSeeBoard);
 
+    registerListener("roundInfoChange", () => getRoundInfo(setRoundInfo));
     registerListener("playerChange", () => getPlayers(setPlayers));
     registerListener("tileChange", () => getTiles(setTiles));
     registerListener("messagesChange", () => getMessages(setMessages));
@@ -112,6 +113,7 @@ function GameScreen() {
 
   return (
     <Container className="screen">
+      <GameInfo roomCode={roomCode} roundInfo={roundInfo} />
       <PlayerRoster players={players} />
       {headerMessage && <Announcer message={headerMessage} />}
       {hint && <Announcer message={hint} />}
