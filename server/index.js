@@ -41,6 +41,13 @@ try {
   const httpsServer = https.createServer(credentials, app);
   io.attach(httpsServer);
   httpsServer.listen(443);
+
+  // If https server exists, force its usage
+  app.use((req, res) => {
+    if (!req.secure) {
+      res.redirect("https://" + req.headers.host + req.url);
+    }
+  })
 } catch (e) {
   console.error(`Error: ${e}`);
 }
