@@ -7,8 +7,9 @@ import MenuHeader from "../MenuHeader/index.js";
 import RoomCode from "../RoomCode/index.js";
 import { getPlayers, leaveRoom, registerListener } from "../../api";
 
-function LobbyScreen() {
-  const { roomCode } = useParams();
+function LobbyScreen(props) {
+  // const { roomCode } = useParams();
+  const roomCode = props.roomCode;
   const [players, setPlayers] = useState([]);
   const history = useHistory();
 

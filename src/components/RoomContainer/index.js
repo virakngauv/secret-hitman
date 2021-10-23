@@ -14,7 +14,8 @@ function RoomContainer() {
     END: "end",
   }
 
-  const { roomCode } = useParams();
+  let { roomCode } = useParams();
+  roomCode = roomCode.toLowerCase();
   const [isUserInRoom, setIsUserInRoom] = useState(null);
   const [gameState, setGameState] = useState();
   // const history = useHistory();
@@ -41,9 +42,9 @@ function RoomContainer() {
 
   switch (gameState) {
     case GameState.LOBBY:
-      return <LobbyScreen />
+      return <LobbyScreen roomCode={roomCode} />
     case GameState.GAME:
-      return <GameScreen />
+      return <GameScreen roomCode={roomCode} />
     case GameState.END:
       return <EndScreen setGameState={setGameState} />
     default:

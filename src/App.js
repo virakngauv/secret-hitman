@@ -31,12 +31,12 @@ function App() {
           <Route path="/rules">
             <RulesScreen />
           </Route>
-          <Route path="/temp-mid-game">
+          {/* <Route path="/temp-mid-game">
             <GameScreen />
           </Route>
           <Route path="/temp-end-game">
             <EndScreen />
-          </Route>
+          </Route> */}
           <Route path="/:roomCode">
             <RoomContainer />
           </Route>
