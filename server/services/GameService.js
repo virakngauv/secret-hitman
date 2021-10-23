@@ -321,25 +321,23 @@ class GameService {
     let footerMessage = "";
 
     if (turnStatus === TurnStatus.STARTED && hint === "") {
-      const preHintMessage = playerStatus === PlayerStatus.CODEMASTER ? "type your hint below" : "hint pending..";
-      headerMessage = preHintMessage;
+      headerMessage = playerStatus === PlayerStatus.CODEMASTER ? "type your hint below" : "hint pending..";
     } else if (turnStatus === TurnStatus.PAUSED) {
-      const turnPausedMessage = "hint marked as invalid, pending codemaster..";
-      headerMessage = turnPausedMessage;
+      headerMessage = "hint marked as invalid, pending codemaster..";
     } else if (turnStatus === TurnStatus.ENDED) {
-      const turnEndedMessages = isLastTurn ? "game over" : "turn ended";
-      headerMessage = turnEndedMessages;
+      headerMessage = isLastTurn ? "last turn ended" : "turn ended";
 
       if (!playerCanSeeBoard) {
         footerMessage = "Reveal Tiles?";
       } else if (playerStatus === PlayerStatus.INACTIVE) {
-        footerMessage = "Ready for Next Turn?";
+        footerMessage = isLastTurn ? "Ready?" : "Ready for Next Turn?";
+      } else if (isLastTurn) {
+        // If last turn, skips the "waiting on other players" message
+        footerMessage = "See Rankings?";
       } else if (!allPlayersReady) {
         footerMessage = "Waiting on Other Players";
-      } else if (isLastTurn) {
-        footerMessage = "See Rankings?"
       } else {
-        footerMessage = "Start Next Turn?"
+        footerMessage = "Start Next Turn?";
       }
     } 
 
@@ -348,9 +346,12 @@ class GameService {
 
   isLastTurn(game) {
     const isLastRound = game.roundNumber === this.maxRounds;
-    const lastPlayerID = Array.from(game.players.values()).pop()?.id;
-    const codemasterID = game.playerArchive[game.codemasterIndex];
+    console.log(`game.roundNumber is ${game.roundNumber} and this.maxRound is ${this.maxRounds}`);
+
+    const lastPlayerID = Array.from(game.players.keys()).pop();
+    const codemasterID = game.playerArchive[game.currentCodemasterIndex];
     const lastPlayerIsCodemaster = lastPlayerID === codemasterID;
+    console.log(`lastPlayerID is ${lastPlayerID} and codemasterID is ${codemasterID}`);
 
     return isLastRound && lastPlayerIsCodemaster;
   }
