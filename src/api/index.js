@@ -51,6 +51,10 @@ export function getGameState(roomCode, setGameState) {
   socket.emit("getGameState", roomCode, (gameState) => setGameState(gameState));
 }
 
+export function getRoundInfo(setRoundInfo) {
+  socket.emit("getRoundInfo", (roundInfo) => setRoundInfo(roundInfo));
+}
+
 export function getPlayers(setPlayers) {
   socket.emit("getPlayers", (players) => setPlayers(players));
 }
@@ -71,8 +75,8 @@ export function revealBoard(setTiles) {
   socket.emit("revealBoard", (tiles) => setTiles(tiles));
 }
 
-export function getMessage(setMessage) {
-  socket.emit("getMessage", (message) => setMessage(message));
+export function getMessages(setMessages) {
+  socket.emit("getMessages", (messages) => setMessages(messages));
 }
 
 export function getHint(setHint) {

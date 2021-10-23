@@ -1,5 +1,5 @@
 import { Col, Row } from "react-bootstrap";
-import "./index.css"
+import "./index.css";
 
 function MenuHeader(props) {
   const title = props.title;

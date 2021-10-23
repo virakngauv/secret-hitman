@@ -50,6 +50,7 @@ function GameBoardTile(props) {
   return (
     <Col>
       <Button
+        key={word}
         className={tileClassName}
         variant={buttonVariant}
         disabled={state === State.DISABLED_OPAQUE || state === State.DISABLED_TRANSPARENT}

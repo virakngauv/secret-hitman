@@ -35,7 +35,7 @@ const TurnStatus = {
 
 class GameService {
   constructor() {
-    this.maxRounds = 3;
+    this.maxRounds = 2;
     this.totalNumberOfTiles = 12;
   }
 
@@ -56,6 +56,7 @@ class GameService {
     // Tiles will be active, which is funny if people want to select tiles before the hint is revealed
     // this.markAllPlayersInactive(game);
     this.assignNextCodemaster(roomCode);
+    this.incrementRoundNumber(game);
     this.setupNewTiles(game);
   }
 
@@ -122,28 +123,21 @@ class GameService {
     const currentCodemasterIndex = game.currentCodemasterIndex;
     const players = game.players;
     const playerArchive = game.playerArchive;
-    const roundNumber = game.roundNumber;
     
     let nextCodemasterIndex = currentCodemasterIndex === null ? 0 : currentCodemasterIndex + 1
 
-    if (nextCodemasterIndex === playerArchive.length) {
-      game.roundNumber = roundNumber + 1;
-      nextCodemasterIndex = 0;
-      // game.currentCodemasterIndex = 0;
-    }
+    while (nextCodemasterIndex !== currentCodemasterIndex) {
+      if (nextCodemasterIndex === playerArchive.length) {
+        // game.roundNumber = roundNumber + 1;
+        this.incrementRoundNumber(game);
+        nextCodemasterIndex = 0;
+        // game.currentCodemasterIndex = 0;
+      }
 
-    console.log(`assignNextCodemaster's game.roundNumber is ${game.roundNumber}`);
-
-    if (game.roundNumber > this.maxRounds) {
-      this.updateGameState(roomCode, GameState.END);
-      return;
-    }
-
-    while (nextCodemasterIndex < playerArchive.length) {
-      // // Prevent infinite loop
-      // if (nextCodemasterIndex === currentCodemasterIndex) {
-      //   break;
-      // }
+      if (game.roundNumber > this.maxRounds) {
+        this.updateGameState(roomCode, GameState.END);
+        return;
+      }
 
       const nextPossibleCodemaster = players.get(playerArchive[nextCodemasterIndex]);
       
@@ -156,6 +150,10 @@ class GameService {
 
       nextCodemasterIndex = nextCodemasterIndex + 1;
     }
+  }
+
+  incrementRoundNumber(game) {
+    game.roundNumber += 1;
   }
 
   setupNewTiles(game) {
@@ -302,34 +300,57 @@ class GameService {
     return tilesCopy;
   }
 
-  getMessageForUser(roomCode, userID) {
+  getMessagesForUser(roomCode, userID) {
     const game = gameStore.getGame(roomCode);
-    const playerIsCodemaster = game.players.get(userID).status === PlayerStatus.CODEMASTER;
     const turnStatus = game.turnStatus;
     const hint = game.hint;
 
+    const players = game.players;
+    const player = players.get(userID);
+    const playerStatus = player.status;
+    const playerCanSeeBoard = player.canSeeBoard;
+    const allPlayersReady = Array.from(players.values()).reduce(
+      (readyStatusSoFar, currentPlayer) => {
+        return readyStatusSoFar && currentPlayer.status === PlayerStatus.ACTIVE
+      }, true
+    );
+
+    let headerMessage = "";
+    let footerMessage = "";
+
     if (turnStatus === TurnStatus.STARTED && hint === "") {
-      const turnStartedMessage = playerIsCodemaster ? "type your hint below" : "hint pending..";
-      return turnStartedMessage;
+      const preHintMessage = playerStatus === PlayerStatus.CODEMASTER ? "type your hint below" : "hint pending..";
+      headerMessage = preHintMessage;
     } else if (turnStatus === TurnStatus.PAUSED) {
       const turnPausedMessage = "hint marked as invalid, pending codemaster..";
-      return turnPausedMessage
+      headerMessage = turnPausedMessage;
     } else if (turnStatus === TurnStatus.ENDED) {
-      const turnEndedMessage = "ready for next turn?";
-      return turnEndedMessage;
-    } else {
-      return "";
-    }
+      const turnEndedMessages = "turn ended";
+      headerMessage = turnEndedMessages;
+
+      if (!playerCanSeeBoard) {
+        footerMessage = "Reveal Tiles?";
+      } else if (playerStatus === PlayerStatus.INACTIVE) {
+        footerMessage = "Ready for Next Turn?";
+      } else if (!allPlayersReady) {
+        footerMessage = "Waiting on Other Players";
+      } else {
+        footerMessage = "Start Next Turn?"
+      }
+    } 
+
+    return [headerMessage, footerMessage];
   }
 
   getHint(roomCode) {
     const game = gameStore.getGame(roomCode);
+    const hint = game.hint;
 
-    return game.hint;
+    return hint;
   }
 
   setHint(game, hint) {
-    console.log(`setHint(server)'s hint is ${hint}`);
+    // console.log(`setHint(server)'s hint is ${hint}`);
     game.hint = hint;
   }
 
@@ -342,6 +363,15 @@ class GameService {
     // TODO: make constant for default hint for use here and on init
     const hint = "";
     this.setHint(game, hint);
+  }
+
+  getRoundInfo(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    const currentRoundNumber = game.roundNumber;
+    const maxRoundNumber = this.maxRounds;
+    const roundInfo = [currentRoundNumber, maxRoundNumber];
+
+    return roundInfo;
   }
 
   getPlayers(roomCode) {
@@ -426,9 +456,9 @@ class GameService {
     const userID = game.playerArchive[codemasterIndex];
     const codemaster = game.players.get(userID);
 
-    console.log(`codemasterIndex is ${codemasterIndex}`);
-    console.log(`userID is ${userID}`);
-    console.log(`codemaster is ${codemaster}`);
+    // console.log(`codemasterIndex is ${codemasterIndex}`);
+    // console.log(`userID is ${userID}`);
+    // console.log(`codemaster is ${codemaster}`);
 
     // Checking to see if codemaster is still in the game (possibly kicked)
     if (codemaster) {

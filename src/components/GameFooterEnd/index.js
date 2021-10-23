@@ -1,6 +1,6 @@
-import { ButtonGroup } from 'react-bootstrap';
+import { Row, Col, ButtonGroup } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
-import { getPlayerCanSeeBoard, markPlayerStatus, revealBoard, startNextTurn } from "../../api";
+import { getPlayerCanSeeBoard, getMessages, markPlayerStatus, revealBoard, startNextTurn } from "../../api";
 
 // TODO: Make enum for PlayerStatus
 const PlayerStatus = {
@@ -16,6 +16,7 @@ function GameFooterEnd(props) {
   const playerCanSeeBoard = props.playerCanSeeBoard;
   const setPlayerCanSeeBoard = props.setPlayerCanSeeBoard;
   const players = props.players;
+  const setMessages = props.setMessages;
   // const isInactive = props.isInactive;
   // const hint = props.hint;
   // const isHintEmpty = hint === "" ? true : false;
@@ -23,6 +24,7 @@ function GameFooterEnd(props) {
   function handleRevealBoard() {
     revealBoard(setTiles);
     getPlayerCanSeeBoard(setPlayerCanSeeBoard);
+    getMessages(setMessages);
   }
 
   function toggleReadyStatus() {
@@ -31,6 +33,8 @@ function GameFooterEnd(props) {
     } else if (!isActive) {
       markPlayerStatus(PlayerStatus.ACTIVE);
     }
+
+    getMessages(setMessages);
   }
 
   function handleNextTurn() {
@@ -41,16 +45,41 @@ function GameFooterEnd(props) {
   const allPlayersReady = players.reduce(
     (readyStatusSoFar, currentPlayer) => {
       return readyStatusSoFar && currentPlayer.status === PlayerStatus.ACTIVE
-    }, true);
-
-  return (
-    <ButtonGroup className="game-footer ms-auto me-auto d-flex" size="sm">
-      <Button className="btn-menu" size="sm" variant="outline-secondary" id="reveal-board-button" onClick={handleRevealBoard} disabled={playerCanSeeBoard}>Reveal Tiles</Button>
-      {!isActive ? 
-        <Button className="btn-menu" size="sm" variant="outline-secondary" id="end-turn-button" onClick={toggleReadyStatus}>I'm Ready!</Button> :
-        <Button className="btn-menu" size="sm" variant="outline-secondary" id="next-turn-button" onClick={handleNextTurn} disabled={!allPlayersReady}>Next Turn</Button>}
-    </ButtonGroup>
+    }, true
   );
+
+  if (!playerCanSeeBoard) {
+    return (
+      <Row>
+        <Col className="d-flex">
+          <Button className="btn-menu btn-game-footer ms-auto me-auto" size="sm" variant="outline-secondary" id="reveal-board-button" onClick={handleRevealBoard}>
+            Reveal Tiles
+          </Button>
+        </Col>
+      </Row>
+    )
+  } else if (!isActive) {
+    return (
+      <Row>
+        <Col className="d-flex">
+          <Button className="btn-menu btn-game-footer ms-auto me-auto" size="sm" variant="outline-secondary" id="end-turn-button" onClick={toggleReadyStatus}>
+            I'm Ready!
+          </Button>
+        </Col>
+      </Row>
+    )
+  } else {
+    return (
+      <Row>
+        <Col className="d-flex">
+          <Button className="btn-menu btn-game-footer ms-auto me-auto" size="sm" variant="outline-secondary" id="next-turn-button" onClick={handleNextTurn} disabled={!allPlayersReady}>
+            Let's Go!
+          </Button>
+        </Col>
+      </Row>
+
+    )
+  }
 }
   
 export default GameFooterEnd;

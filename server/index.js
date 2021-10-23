@@ -123,10 +123,20 @@ io.on("connection", (socket) => {
   socket.on("getGameState", (roomCode, setGameState) => {
     if (gameStore.hasGame(roomCode)) {
       const gameState = gameStore.getGame(roomCode).gameState;
-      console.log(`getGameState's gameState is ${gameState}`);
+      // console.log(`getGameState's gameState is ${gameState}`);
       setGameState(gameState);
     }
   });
+
+  socket.on("getRoundInfo", (setRoundInfo) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const roundInfo = gameService.getRoundInfo(roomCode);
+      setRoundInfo(roundInfo);
+    }
+  })
 
   socket.on("getPlayers", (setPlayers) => {
     const roomCode = socket.roomCode;
@@ -198,7 +208,7 @@ io.on("connection", (socket) => {
         io.to(roomCode).emit("turnStatusChange");
         // io.to(roomCode).emit("tileChange");
         // io.to(roomCode).emit("playerChange");
-        io.to(roomCode).emit("messageChange");
+        io.to(roomCode).emit("messagesChange");
         io.to(roomCode).emit("hintChange");
       }
     }
@@ -221,13 +231,13 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("getMessage", (setMessage) => {
+  socket.on("getMessages", (setMessages) => {
     const roomCode = socket.roomCode;
     const userID = socket.userID;
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
-      const message = gameService.getMessageForUser(roomCode, userID);
-      setMessage(message);
+      const messages = gameService.getMessagesForUser(roomCode, userID);
+      setMessages(messages);
     }
   })
 
@@ -250,7 +260,7 @@ io.on("connection", (socket) => {
       if (playerStatus === PlayerStatus.CODEMASTER) {
         gameService.setHint(game, hint);
 
-        io.to(roomCode).emit("messageChange");
+        io.to(roomCode).emit("messagesChange");
         io.to(roomCode).emit("hintChange");
       }
     }
@@ -281,7 +291,7 @@ io.on("connection", (socket) => {
         // TODO: getHint listener should check turn status
 
         io.to(roomCode).emit("turnStatusChange");
-        io.to(roomCode).emit("messageChange");
+        io.to(roomCode).emit("messagesChange");
         io.to(roomCode).emit("tileChange");
       }
     }
@@ -296,7 +306,7 @@ io.on("connection", (socket) => {
 
       io.to(roomCode).emit("turnStatusChange");
       io.to(roomCode).emit("playerChange");
-      io.to(roomCode).emit("messageChange");
+      io.to(roomCode).emit("messagesChange");
       io.to(roomCode).emit("hintChange");
       io.to(roomCode).emit("tileChange");
     }
@@ -310,7 +320,7 @@ io.on("connection", (socket) => {
       gameService.unpauseTurn(roomCode);
 
       io.to(roomCode).emit("turnStatusChange");
-      io.to(roomCode).emit("messageChange");
+      io.to(roomCode).emit("messagesChange");
       io.to(roomCode).emit("hintChange");
       io.to(roomCode).emit("tileChange");
     }
@@ -334,11 +344,13 @@ io.on("connection", (socket) => {
       gameService.startNextTurn(roomCode);
 
       io.to(roomCode).emit("gameStateChange");
+      io.to(roomCode).emit("roundInfoChange");
       io.to(roomCode).emit("turnStatusChange");
       io.to(roomCode).emit("playerChange");
-      io.to(roomCode).emit("messageChange");
+      io.to(roomCode).emit("messagesChange");
       io.to(roomCode).emit("hintChange");
       io.to(roomCode).emit("tileChange");
+      io.to(roomCode).emit("canSeeBoardChange");
     }
   });
 
@@ -358,17 +370,18 @@ io.on("connection", (socket) => {
     const roomCode = socket.roomCode;
     const userID = socket.userID;
 
-    console.log(`markPlayerStatus's roomCode is ${roomCode} and userID is ${userID}`);
+    // console.log(`markPlayerStatus's roomCode is ${roomCode} and userID is ${userID}`);
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       gameService.markPlayerStatus(roomCode, userID, status);
 
       io.to(roomCode).emit("playerChange");
+      io.to(roomCode).emit("messagesChange");
     }
-    // START TEMP CODE
-    const players = gameStore.getGame(roomCode).players.values();
-    console.log(`markPlayerStatus's players is ${JSON.stringify(players, null, 2)}`);
-    // END TEMP CODE
+    // // START TEMP CODE
+    // const players = gameStore.getGame(roomCode).players.values();
+    // // console.log(`markPlayerStatus's players is ${JSON.stringify(players, null, 2)}`);
+    // // END TEMP CODE
   });
 
   socket.on("getPlayerCanSeeBoard", (setPlayerCanSeeBoard) => {
@@ -396,7 +409,7 @@ io.on("connection", (socket) => {
 
       io.to(roomCode).emit("turnStatusChange");
       io.to(roomCode).emit("playerChange");
-      io.to(roomCode).emit("messageChange");
+      io.to(roomCode).emit("messagesChange");
       io.to(roomCode).emit("hintChange");
     }
   });
@@ -443,13 +456,18 @@ io.on("connection", (socket) => {
   socket.on("kickPlayer", (playerIDToKick) => {
     const roomCode = socket.roomCode;
     const userID = socket.userID;
-    console.log(`kickPlayer(server) has roomCode ${roomCode}, playerIDToKick ${playerIDToKick}`);
+    // console.log(`kickPlayer(server) has roomCode ${roomCode}, playerIDToKick ${playerIDToKick}`);
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       gameService.kickPlayer(roomCode, playerIDToKick);
+      gameService.checkAndEndTurnIfTurnShouldEnd(roomCode);
 
       // TODO: check to see if event listener is still registered if a player joins mid-game (I think event listener is set on lobby screen which will have been skipped)
       io.to(roomCode).emit("playerKicked", playerIDToKick);
+      io.to(roomCode).emit("turnStatusChange");
+      io.to(roomCode).emit("playerChange");
+      io.to(roomCode).emit("messagesChange");
+      io.to(roomCode).emit("hintChange");
     }
   });
 
