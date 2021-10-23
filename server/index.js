@@ -58,10 +58,10 @@ try {
 }
 
 app.use(express.static("./build"));
-// app.get("*", (req, res) => {
-//   res.sendFile("index.html", { root: "./build" });
-//   // next();
-// });
+app.get("*", (req, res) => {
+  res.sendFile("index.html", { root: "./build" });
+  // next();
+});
 
 const gameService = new GameService();
 
