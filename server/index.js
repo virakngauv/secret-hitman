@@ -45,7 +45,9 @@ try {
 
   // If https server exists, force its usage
   app.use((req, res) => {
+    console.log(`Inside https force TKTK "!req.secure" is ${!req.secure}`);
     if (!req.secure) {
+      console.log(`Inside if-block from https force TKTK`);
       res.redirect("https://" + req.headers.host + req.url);
     }
   })
