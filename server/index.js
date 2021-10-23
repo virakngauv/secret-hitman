@@ -45,9 +45,9 @@ try {
 
   // If https server exists, force its usage
   app.use((req, res, next) => {
-    console.log(`Inside https force TKTK "!req.secure" is ${!req.secure}`);
+    // console.log(`Inside https force TKTK "!req.secure" is ${!req.secure}`);
     if (!req.secure) {
-      console.log(`Inside if-block from https force TKTK`);
+      // console.log(`Inside if-block from https force TKTK`);
       res.redirect("https://" + req.headers.host + req.url);
     }
 
@@ -57,6 +57,7 @@ try {
   console.error(`Error: ${e}`);
 }
 
+// Look for any static files (css and the like) and if they can't be found, serve index.html
 app.use(express.static("./build"));
 app.get("*", (req, res) => {
   res.sendFile("index.html", { root: "./build" });
