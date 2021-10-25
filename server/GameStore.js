@@ -30,38 +30,22 @@ class GameStore {
   createGame() {
     const roomCode = this.generateNewRoomCode();
 
-    // const game = new Map();
     const game = {
       gameState: GameState.LOBBY,
       players: new Map(),
       playerArchive: [],
       currentCodemasterIndex: null,
+      currentCodemasterID: null,
       roundNumber: 0,
-      hint: "",
-      tiles: [],
+      turnNumber: 0,
+      // hint: "",
+      // tiles: [],
+      roundStatus: null,
       turnStatus: null,
       dictionary: shuffledArray(original),
       nextDictionary: [],
     }
-    // game.set("state", "GameState.LOBBY");
-    // game.set("players", new Map([
-    //   [userID, {
-    //     "name": name,
-    //     "status": PlayerStatus.INACTIVE,
-    //     "oldScore": 0,
-    //     "newScore": 0,
-    //   }]]));
-    //   // new Map([["name", name],["status", PlayerStatus.INACTIVE],["oldScore", 0],["newScore", 0]])]]));
-    // game.set("hint", "");
-    // game.set("tiles", []);
-    // game.set("turnStatus", null)
-    // game.set("dictionary", shuffledArray(original));
-    // game.set("nextDictionary", []);
-
     this.games.set(roomCode, game);
-
-    // console.log("game is ", game);
-
     return roomCode
   }
 
@@ -89,7 +73,6 @@ class GameStore {
       const game = this.getGame(roomCode);
       const gameState = game.gameState;
       const turnStatus = game.turnStatus;
-      // TODO: probably add an && turnStatus !== TurnStatus.ENDED to the playerStatus initial value logic
       const playerStatus = gameState === GameState.GAME && turnStatus !== TurnStatus.ENDED ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
       const playerCanSeeBoard = turnStatus === TurnStatus.ENDED ? true : false;
 
@@ -99,6 +82,8 @@ class GameStore {
         status: playerStatus,
         oldScore: 0,
         newScore: 0,
+        hint: "",
+        tiles: [],
         canSeeBoard: playerCanSeeBoard,
       };
 

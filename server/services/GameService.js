@@ -259,33 +259,6 @@ class GameService {
           tile.state = TileState.DISABLED_TRANSPARENT
         }
       }
-
-      // switch (claimerID) {
-      //   case playerID:
-      //     tile.state = TileState.DISABLED_OPAQUE;
-      //     break;
-      //   case null:
-      //     tile.type = null;
-
-      //     if (playerStatus === PlayerStatus.ACTIVE) {
-      //       tile.state = TileState.ENABLED;
-      //     } else if (playerStatus === PlayerStatus.INACTIVE) {
-      //       tile.state = TileState.DISABLED_TRANSPARENT;
-      //     } else {
-      //       // Should not be reachable
-      //       console.warn(`Possible Error: playerStatus is ${playerStatus}`);
-      //     }
-      //     break;
-      //   // Default case reached if claimed by another player:
-      //   default:
-      //     if (tileType === TileType.ASSASSIN && playerStatus === PlayerStatus.ACTIVE) {
-      //       tile.claimer = null;
-      //       tile.type = null;
-      //       tile.state = TileState.ENABLED;
-      //     } else {
-      //       tile.state = TileState.DISABLED_TRANSPARENT
-      //     }
-      // }
     });
 
     if (turnStatus === TurnStatus.PAUSED) {
