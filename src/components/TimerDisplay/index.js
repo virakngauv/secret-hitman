@@ -33,16 +33,23 @@ function TimerDisplay(props) {
   //   }, 600);
   // }
 
-  if (!blinkTimerID && totalMiliseconds <= 0) {
-    const timerID = setInterval(() => {
-      setBlinkTime(prevBlinkTime => !prevBlinkTime);
-      console.log(`should be blinking now.. blinkTime is ${blinkTime}`);
-    }, 700);
-
-    setBlinkTimerID(timerID);
+  useEffect(() => {
+    let timerID;
+    if (!blinkTimerID && totalMiliseconds <= 0) {
+      timerID = setInterval(() => {
+        setBlinkTime(prevBlinkTime => !prevBlinkTime);
+        console.log(`should be blinking now.. blinkTime is ${blinkTime}`);
+      }, 700);
   
-    console.log(`timerID is ${timerID}`);
-  }
+      setBlinkTimerID(timerID);
+    
+      console.log(`timerID is ${timerID}`);
+    }
+
+    return () => clearInterval(timerID);
+  }, [blinkTime, blinkTimerID, totalMiliseconds])
+
+
 
   // const timerID = setInterval(() => {
   //   setBlinkTime(!blinkTime);
