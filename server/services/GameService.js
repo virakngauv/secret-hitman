@@ -132,6 +132,7 @@ class GameService {
   preparePlayersForNextTurn(game) {
     const players = game.players;
     players.forEach((player) => {
+      player.status = PlayerStatus.ACTIVE;
       player.oldScore += player.newScore;
       player.newScore = 0;
       player.canSeeBoard = false;
