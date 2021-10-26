@@ -319,11 +319,20 @@ class GameService {
 
   getMessagesForUser(roomCode, userID) {
     const game = gameStore.getGame(roomCode);
+    const codemaster = game.players.get(game.currentCodemasterID);
+    const player = game.players.get(userID);
+    const roundPhase = game.roundPhase;
     const turnStatus = game.turnStatus;
-    const hint = game.hint;
+    // const hint = roundPhase === RoundPhase.HINT ? 
+    const hint = (() => {
+      if (roundPhase === RoundPhase.HINT) {
+        return player.hint;
+      } else if (roundPhase === RoundPhase.GUESS) {
+        return codemaster.hint;
+      }
+    })();
 
     const players = game.players;
-    const player = players.get(userID);
     const playerStatus = player.status;
     const playerCanSeeBoard = player.canSeeBoard;
     const allPlayersReady = Array.from(players.values()).reduce(
@@ -337,14 +346,18 @@ class GameService {
     let headerMessage = "";
     let footerMessage = "";
 
-    if (turnStatus === TurnStatus.STARTED && hint === "") {
-      headerMessage = playerStatus === PlayerStatus.CODEMASTER ? "type your hint below" : "hint pending..";
-    } else if (turnStatus === TurnStatus.PAUSED) {
-      headerMessage = "hint marked as invalid, pending codemaster..";
-    } else if (turnStatus === TurnStatus.ENDED) {
+    if (roundPhase === RoundPhase.HINT && hint === "") {
+      // headerMessage = playerStatus === PlayerStatus.CODEMASTER ? "type your hint below" : "hint pending..";
+      headerMessage = "type your hint below";
+    } 
+    // else if (turnStatus === TurnStatus.PAUSED) {
+    //   headerMessage = "hint marked as invalid, pending codemaster..";
+    // } 
+    else if (roundPhase === RoundPhase.GUESS && turnStatus === TurnStatus.ENDED) {
       headerMessage = isLastTurn ? "last turn ended" : "turn ended";
 
       if (!playerCanSeeBoard) {
+        // TODO automatically show board on turn end
         footerMessage = "Reveal Tiles?";
       } else if (playerStatus === PlayerStatus.INACTIVE) {
         footerMessage = isLastTurn ? "Ready?" : "Ready for Next Turn?";
