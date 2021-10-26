@@ -69,7 +69,7 @@ app.get("*", (req, res) => {
   // next();
 });
 
-const gameService = new GameService();
+const gameService = new GameService(io);
 
 io.use((socket, next) => {
   const userID = socket.handshake.auth.userID;
@@ -393,15 +393,15 @@ io.on("connection", (socket) => {
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       gameService.startNextTurn(roomCode);
 
-      io.to(roomCode).emit("gameStateChange");
-      io.to(roomCode).emit("roundInfoChange");
-      io.to(roomCode).emit("roundPhaseChange");
-      io.to(roomCode).emit("turnStatusChange");
-      io.to(roomCode).emit("playerChange");
-      io.to(roomCode).emit("messagesChange");
-      io.to(roomCode).emit("hintChange");
-      io.to(roomCode).emit("tileChange");
-      io.to(roomCode).emit("canSeeBoardChange");
+      // io.to(roomCode).emit("gameStateChange");
+      // io.to(roomCode).emit("roundInfoChange");
+      // io.to(roomCode).emit("roundPhaseChange");
+      // io.to(roomCode).emit("turnStatusChange");
+      // io.to(roomCode).emit("playerChange");
+      // io.to(roomCode).emit("messagesChange");
+      // io.to(roomCode).emit("hintChange");
+      // io.to(roomCode).emit("tileChange");
+      // io.to(roomCode).emit("canSeeBoardChange");
     }
   });
 
@@ -484,23 +484,24 @@ io.on("connection", (socket) => {
       // TODO: remove magic number
       const totalTime = 10000;
       // const totalTime = 90000;
-      const timerTimeChangeEmitter = (time) => io.to(roomCode).volatile.emit("timerTimeChange", time);
+      // const timerTimeChangeEmitter = (time) => io.to(roomCode).volatile.emit("timerTimeChange", time);
       const startGuessPhase = () => {
         gameService.startGuessPhase(roomCode);
         gameService.startNextTurn(roomCode);
 
-        io.to(roomCode).emit("gameStateChange");
-        io.to(roomCode).emit("roundInfoChange");
-        io.to(roomCode).emit("roundPhaseChange");
-        io.to(roomCode).emit("turnStatusChange");
-        io.to(roomCode).emit("playerChange");
-        io.to(roomCode).emit("messagesChange");
-        io.to(roomCode).emit("hintChange");
-        io.to(roomCode).emit("tileChange");
-        io.to(roomCode).emit("canSeeBoardChange");
-        io.to(roomCode).emit("timerTimeChange", null);
+        // io.to(roomCode).emit("gameStateChange");
+        // io.to(roomCode).emit("roundInfoChange");
+        // io.to(roomCode).emit("roundPhaseChange");
+        // io.to(roomCode).emit("turnStatusChange");
+        // io.to(roomCode).emit("playerChange");
+        // io.to(roomCode).emit("messagesChange");
+        // io.to(roomCode).emit("hintChange");
+        // io.to(roomCode).emit("tileChange");
+        // io.to(roomCode).emit("canSeeBoardChange");
+        // io.to(roomCode).emit("timerTimeChange", null);
       };
-      gameService.startTimer(roomCode, totalTime, timerTimeChangeEmitter, startGuessPhase);
+
+      gameService.startTimer(roomCode, totalTime, startGuessPhase, `socket.on("startGame")`);
       io.to(roomCode).emit("gameStateChange");
     }
   });
@@ -534,6 +535,7 @@ io.on("connection", (socket) => {
       gameService.kickPlayer(roomCode, playerIDToKick);
       gameService.checkAndEndTurnIfTurnShouldEnd(roomCode);
 
+      // TODO: see what events are required now that kicking is only possible in the lobby
       // TODO: check to see if event listener is still registered if a player joins mid-game (I think event listener is set on lobby screen which will have been skipped)
       io.to(roomCode).emit("playerKicked", playerIDToKick);
       io.to(roomCode).emit("turnStatusChange");
