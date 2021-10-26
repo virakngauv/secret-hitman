@@ -22,6 +22,11 @@ const PlayerStatus = {
   CODEMASTER: "codemaster",
 };
 
+const RoundPhase = {
+  HINT: "hint",
+  GUESS: "guess",
+};
+
 const app = express();
 const httpServer = http.createServer(app);
 const io = new Server(httpServer);
@@ -115,7 +120,7 @@ io.on("connection", (socket) => {
     const roomCode = gameStore.createGame();
     // userStore.addRoomCode(userID, roomCode);
     userStore.setPlayerID(userID, playerID);
-    gameStore.addNewPlayerToGame(userID, name, playerID, roomCode);
+    gameService.addNewPlayerToGame(userID, name, playerID, roomCode);
     socket.join(roomCode);
     goToLobby(roomCode);
   });
@@ -132,7 +137,7 @@ io.on("connection", (socket) => {
       //   gameService.loadGameDataForUser(roomCode, userID);
       // };
       userStore.setPlayerID(userID, playerID);
-      gameStore.addNewPlayerToGame(userID, name, playerID, roomCode);
+      gameService.addNewPlayerToGame(userID, name, playerID, roomCode);
       socket.join(roomCode);
       socket.broadcast.to(roomCode).emit("playerChange");
       goToRoom();
@@ -270,19 +275,32 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("submitHint", (roomCode, hint) => {
+  socket.on("submitHint", (hint) => {
+    const roomCode = socket.roomCode;
     const userID = socket.userID;
 
-    if (gameStore.hasGame(roomCode)) {
-      const game = gameStore.getGame(roomCode);
-      const playerStatus = game.players.get(userID)?.status;
-      if (playerStatus === PlayerStatus.CODEMASTER) {
-        gameService.setHint(game, hint);
+    if (gameService.isValidRoomAndCodemaster(roomCode, userID)) {
+      gameService.setHintForPlayer(roomCode, hint, userID);
+      
 
+      const roundPhase = gameService.getRoundPhase(roomCode);
+      if (roundPhase === RoundPhase.HINT) {
+        gameService.markPlayerStatus(roomCode, userID, PlayerStatus.ACTIVE);
+      } else if (roundPhase === RoundPhase.GUESS) {
         io.to(roomCode).emit("messagesChange");
         io.to(roomCode).emit("hintChange");
       }
     }
+    // if (gameStore.hasGame(roomCode)) {
+    //   const game = gameStore.getGame(roomCode);
+    //   const playerStatus = game.players.get(userID)?.status;
+    //   if (playerStatus === PlayerStatus.CODEMASTER) {
+    //     gameService.setHint(game, hint);
+
+    //     io.to(roomCode).emit("messagesChange");
+    //     io.to(roomCode).emit("hintChange");
+    //   }
+    // }
   });
 
   socket.on("invalidateHint", () => {
@@ -447,7 +465,24 @@ io.on("connection", (socket) => {
     // console.log(`isInLobby is ${isInLobby} and allPlayersReady is ${allPlayersReady}`);
     if (isInLobby && allPlayersReady) {
       gameService.initializeGame(roomCode);
+      
+      // TODO: remove magic number
+      const totalTime = 90000;
+      const timerChangeEmitter = (time) => io.to(roomCode).volatile.emit("timerChange", time);
+      const startGuessPhase = () => {
+        gameService.startGuessPhase(roomCode);
+        gameService.startNextTurn(roomCode);
 
+        io.to(roomCode).emit("gameStateChange");
+        io.to(roomCode).emit("roundInfoChange");
+        io.to(roomCode).emit("turnStatusChange");
+        io.to(roomCode).emit("playerChange");
+        io.to(roomCode).emit("messagesChange");
+        io.to(roomCode).emit("hintChange");
+        io.to(roomCode).emit("tileChange");
+        io.to(roomCode).emit("canSeeBoardChange");
+      };
+      gameService.startTimer(roomCode, totalTime, timerChangeEmitter, startGuessPhase);
       io.to(roomCode).emit("gameStateChange");
     }
   });

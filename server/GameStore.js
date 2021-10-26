@@ -40,7 +40,7 @@ class GameStore {
       turnNumber: 0,
       // hint: "",
       // tiles: [],
-      roundStatus: null,
+      roundPhase: null,
       turnStatus: null,
       dictionary: shuffledArray(original),
       nextDictionary: [],
@@ -67,30 +67,30 @@ class GameStore {
     return roomCode;
   }
 
-  // TODO: move adding players and removing players to the game service class 
-  addNewPlayerToGame(userID, name, playerID, roomCode) {
-    if (this.hasGame(roomCode)) {
-      const game = this.getGame(roomCode);
-      const gameState = game.gameState;
-      const turnStatus = game.turnStatus;
-      const playerStatus = gameState === GameState.GAME && turnStatus !== TurnStatus.ENDED ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
-      const playerCanSeeBoard = turnStatus === TurnStatus.ENDED ? true : false;
+  // // TODO: move adding players and removing players to the game service class 
+  // addNewPlayerToGame(userID, name, playerID, roomCode) {
+  //   if (this.hasGame(roomCode)) {
+  //     const game = this.getGame(roomCode);
+  //     const gameState = game.gameState;
+  //     const turnStatus = game.turnStatus;
+  //     const playerStatus = gameState === GameState.GAME && turnStatus !== TurnStatus.ENDED ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
+  //     const playerCanSeeBoard = turnStatus === TurnStatus.ENDED ? true : false;
 
-      const player = {
-        name,
-        id: playerID,
-        status: playerStatus,
-        oldScore: 0,
-        newScore: 0,
-        hint: "",
-        tiles: [],
-        canSeeBoard: playerCanSeeBoard,
-      };
+  //     const player = {
+  //       name,
+  //       id: playerID,
+  //       status: playerStatus,
+  //       oldScore: 0,
+  //       newScore: 0,
+  //       hint: "",
+  //       tiles: [],
+  //       canSeeBoard: playerCanSeeBoard,
+  //     };
 
-      game.players.set(userID, player);
-      game.playerArchive.push(userID);
-    }
-  }
+  //     game.players.set(userID, player);
+  //     game.playerArchive.push(userID);
+  //   }
+  // }
 
   // removePlayerFromGame(userID, roomCode) {
   //   console.log(`removing ${userID} from game ${roomCode}`);

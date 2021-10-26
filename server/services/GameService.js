@@ -27,37 +27,40 @@ const TileState = {
   DISABLED_TRANSPARENT: "disabled-transparent",
 };
 
+const RoundPhase = {
+  HINT: "hint",
+  GUESS: "guess",
+};
+
 const TurnStatus = {
   STARTED: "started",
   PAUSED: "paused",
   ENDED: "ended",
-}
+};
 
 class GameService {
   constructor() {
     this.maxRounds = 2;
     this.totalNumberOfTiles = 12;
+    this.numberOfAssassinTiles = 1;
+    this.numberOfTargetTiles = 5;
+    this.numberOfCivilianTiles = 6;
   }
 
   initializeGame(roomCode) {
-    console.log(`Inside initializeGame with roomCode: ${roomCode}`);
-
-    // TODO: init game
-    /*
-      gamestate: game
-      players: codemaster assigned, others made inactive
-      tiles: pull from dictionary, assign types
-
-    */
+    // console.log(`Inside initializeGame with roomCode: ${roomCode}`);
     const game = gameStore.getGame(roomCode);
 
     this.updateGameState(roomCode, GameState.GAME);
+    this.updateRoundPhase(game, RoundPhase.HINT)
     this.updateTurnStatus(game, TurnStatus.STARTED);
     // Tiles will be active, which is funny if people want to select tiles before the hint is revealed
     // this.markAllPlayersInactive(game);
-    this.assignNextCodemaster(roomCode);
+    this.markAllPlayersCodemaster(roomCode);
+    // this.assignNextCodemaster(roomCode);
     this.incrementRoundNumber(game);
-    this.setupNewTiles(game);
+    this.incrementTurnNumber(game);
+    // this.setupNewTilesForAllPlayers(game);
   }
 
   resetGame(roomCode) {
@@ -97,6 +100,23 @@ class GameService {
     game.gameState = gameState;
   }
 
+  getRoundPhase(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    return game.roundPhase;
+  }
+
+  updateRoundPhase(game, roundPhase) {
+    game.roundPhase = roundPhase;
+  }
+
+  startGuessPhase(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    this.updateTurnStatus(game, TurnStatus.ENDED);
+    this.updateRoundPhase(game, RoundPhase.GUESS);
+    // this.assignNextCodemaster(roomCode);
+    // this.startNextTurn(roomCode);
+  }
+
   updateTurnStatus(game, turnStatus) {
     game.turnStatus = turnStatus;
   }
@@ -128,10 +148,9 @@ class GameService {
 
     while (nextCodemasterIndex !== currentCodemasterIndex) {
       if (nextCodemasterIndex === playerArchive.length) {
-        // game.roundNumber = roundNumber + 1;
         this.incrementRoundNumber(game);
+        // TODO: make function for starting next hint phase
         nextCodemasterIndex = 0;
-        // game.currentCodemasterIndex = 0;
       }
 
       if (game.roundNumber > this.maxRounds) {
@@ -139,12 +158,15 @@ class GameService {
         return;
       }
 
-      const nextPossibleCodemaster = players.get(playerArchive[nextCodemasterIndex]);
+      const nextPossibleCodemasterID = playerArchive[nextCodemasterIndex];
+      const nextPossibleCodemaster = players.get(nextPossibleCodemasterID);
       
       if (nextPossibleCodemaster) {
         nextPossibleCodemaster.status = PlayerStatus.CODEMASTER;
         nextPossibleCodemaster.canSeeBoard = true;
         game.currentCodemasterIndex = nextCodemasterIndex;
+        game.currentCodemasterID = nextPossibleCodemasterID;
+        this.incrementTurnNumber(game);
         break;
       }
 
@@ -156,19 +178,28 @@ class GameService {
     game.roundNumber += 1;
   }
 
-  setupNewTiles(game) {
-    game.tiles = [];
-    game.tiles.push(...this.getTilesOfType(1, TileType.ASSASSIN));
-    game.tiles.push(...this.getTilesOfType(5, TileType.TARGET));
-    game.tiles.push(...this.getTilesOfType(6, TileType.CIVILIAN));
+  incrementTurnNumber(game) {
+    game.turnNumber += 1;
+  }
 
-    for (let i = 0; i < game.tiles.length; i++) {
-      game.tiles[i].word = this.getNextDictionaryWord(game);
+  setupNewTiles(game) {
+    const tiles = [];
+    tiles.push(...this.getTilesOfType(this.numberOfAssassinTiles, TileType.ASSASSIN));
+    tiles.push(...this.getTilesOfType(this.numberOfTargetTiles, TileType.TARGET));
+    tiles.push(...this.getTilesOfType(this.numberOfCivilianTiles, TileType.CIVILIAN));
+
+    for (let i = 0; i < tiles.length; i++) {
+      tiles[i].word = this.getNextDictionaryWord(game);
     }
 
-    console.log(JSON.stringify(game.tiles, null, 2));
+    return shuffledArray(tiles);
+  }
 
-    game.tiles = shuffledArray(game.tiles);
+  setupNewTilesForAllPlayers(game) {
+    const players = game.players;
+    players.forEach((player) => {
+      player.tiles = this.setupNewTiles(game);
+    })
   }
 
   getNextDictionaryWord(game) {
@@ -197,13 +228,25 @@ class GameService {
   getTilesForUser(roomCode, userID) {
     // const tiles = [...game.tiles]; 
     const game = gameStore.getGame(roomCode);
-    const tilesCopy = game.tiles.map(tile => {return {...tile}});
+
+    const roundPhase = game.roundPhase;
+    if (roundPhase === RoundPhase.HINT) {
+      const playerTilesCopy = game.players.get(userID).tiles.map(tile => {return {...tile}});
+      playerTilesCopy.forEach((tile) => {
+        delete tile.claimerIDs;
+        tile.state = TileState.DISABLED_OPAQUE;
+      });
+
+      return playerTilesCopy;
+    }
+
+    const currentCodemasterID = game.currentCodemasterID;
+    const currentCodemaster = game.players.get(currentCodemasterID);
+    const tilesCopy = currentCodemaster.tiles.map(tile => {return {...tile}});
     const playerID = userStore.getPlayerID(userID);
     const playerStatus = this.getPlayerStatus(game, playerID);
     const playerCanSeeBoard = this.getPlayerCanSeeBoard(roomCode, userID);
     const turnStatus = game.turnStatus;
-
-
     if (playerStatus === PlayerStatus.CODEMASTER || playerCanSeeBoard) {
       tilesCopy.forEach((tile) => {
         delete tile.claimerIDs;
@@ -336,9 +379,14 @@ class GameService {
     return hint;
   }
 
-  setHint(game, hint) {
-    // console.log(`setHint(server)'s hint is ${hint}`);
-    game.hint = hint;
+  // setHint(game, hint) {
+  //   game.hint = hint;
+  // }
+
+  setHintForPlayer(roomCode, hint, userID) {
+    const game = gameStore.getGame(roomCode);
+    const player = game.players.get(userID);
+    player.hint = hint;
   }
 
   // TODO: rename to pauseTurn()
@@ -346,11 +394,11 @@ class GameService {
     game.turnStatus = TurnStatus.PAUSED;
   }
 
-  resetHint(game) {
-    // TODO: make constant for default hint for use here and on init
-    const hint = "";
-    this.setHint(game, hint);
-  }
+  // resetHint(game) {
+  //   // TODO: make constant for default hint for use here and on init
+  //   const hint = "";
+  //   this.setHint(game, hint);
+  // }
 
   getRoundInfo(roomCode) {
     const game = gameStore.getGame(roomCode);
@@ -386,6 +434,15 @@ class GameService {
     // }
 
     // console.log(`GameService's markPlayerStatus's player is ${JSON.stringify(player, null, 2)} and playerStatus is ${playerStatus}`);
+  }
+
+  markAllPlayersCodemaster(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    const players = game.players;
+    players.forEach((player, userID) => {
+      this.markPlayerStatus(roomCode, userID, PlayerStatus.CODEMASTER);
+      this.markPlayerCanSeeBoard(roomCode, userID);
+    })
   }
 
   getPlayerCanSeeBoard(roomCode, userID) {
@@ -510,15 +567,15 @@ class GameService {
 
   startNextTurn(roomCode) {
     const game = gameStore.getGame(roomCode);
+    const turnStatus = game.turnStatus;
 
-    // check turn is ended
-    // prepare for next turn
-    //    update game object
-    this.preparePlayersForNextTurn(game);
-    this.assignNextCodemaster(roomCode);
-    this.resetHint(game);
-    this.setupNewTiles(game);
-    this.updateTurnStatus(game, TurnStatus.STARTED);
+    if (turnStatus === TurnStatus.ENDED) {
+      this.preparePlayersForNextTurn(game);
+      this.assignNextCodemaster(roomCode);
+      // this.resetHint(game);
+      // this.setupNewTiles(game);
+      this.updateTurnStatus(game, TurnStatus.STARTED);
+    }
   }
 
   resetTurn(roomCode) {
@@ -559,6 +616,28 @@ class GameService {
     }
   }
 
+  addNewPlayerToGame(userID, name, playerID, roomCode) {
+    const game = gameStore.getGame(roomCode);
+    const gameState = game.gameState;
+    const turnStatus = game.turnStatus;
+    const playerStatus = gameState === GameState.GAME && turnStatus !== TurnStatus.ENDED ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
+    const playerCanSeeBoard = turnStatus === TurnStatus.ENDED ? true : false;
+
+    const player = {
+      name,
+      id: playerID,
+      status: playerStatus,
+      oldScore: 0,
+      newScore: 0,
+      hint: "",
+      tiles: this.setupNewTiles(game),
+      canSeeBoard: playerCanSeeBoard,
+    };
+
+    game.players.set(userID, player);
+    game.playerArchive.push(userID);
+  }
+
   kickPlayer(roomCode, playerIDToKick) {
     const game = gameStore.getGame(roomCode);
     const userID = userStore.getUserID(playerIDToKick);
@@ -574,8 +653,25 @@ class GameService {
       //   this.games.get(roomCode).players.delete(userID);
       // }
     }
+  }
 
+  startTimer(roomCode, totalTime, timerChangeEmitter, functionToExecute) {
+    const game = gameStore.getGame(roomCode);
 
+    let time = totalTime;
+    const timerID = setInterval(() => {
+      timerChangeEmitter(time);
+      time -= 1000;
+
+      if (time <= 0) {
+        functionToExecute();
+        clearInterval(timerID);
+      }
+    }, 1000);
+
+    console.log(`curious about what the timer object looks like. timerID is ${timerID}`);
+
+    game.timerID = timerID;
   }
 }
 
