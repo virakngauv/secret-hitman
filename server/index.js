@@ -270,7 +270,7 @@ io.on("connection", (socket) => {
     const userID = socket.userID;
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
-      const hint = gameService.getHint(roomCode);
+      const hint = gameService.getHint(roomCode, userID);
       setHint(hint);
     }
   });
@@ -280,6 +280,7 @@ io.on("connection", (socket) => {
     const userID = socket.userID;
 
     if (gameService.isValidRoomAndCodemaster(roomCode, userID)) {
+      console.log(`submithint's hint is ${hint}`);
       gameService.setHintForPlayer(roomCode, hint, userID);
       
 
@@ -287,9 +288,10 @@ io.on("connection", (socket) => {
       if (roundPhase === RoundPhase.HINT) {
         gameService.markPlayerStatus(roomCode, userID, PlayerStatus.ACTIVE);
       } else if (roundPhase === RoundPhase.GUESS) {
-        io.to(roomCode).emit("messagesChange");
-        io.to(roomCode).emit("hintChange");
       }
+
+      io.to(roomCode).emit("messagesChange");
+      io.to(roomCode).emit("hintChange");
     }
     // if (gameStore.hasGame(roomCode)) {
     //   const game = gameStore.getGame(roomCode);

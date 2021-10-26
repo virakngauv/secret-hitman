@@ -52,6 +52,8 @@ function GameScreen(props) {
 
   const [headerMessage, footerMessage] = messages;
 
+  console.log(`messages is ${messages}, hint is ${hint}`);
+
   // console.log(`tiles.areRevealed is ${tiles.areRevealed}`);
 
   // // TODO: format this on the server side like the game tiles

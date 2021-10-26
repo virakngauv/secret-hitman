@@ -83,9 +83,9 @@ export function getHint(setHint) {
   socket.emit("getHint", (hint) => setHint(hint));
 }
 
-export function submitHint(roomCode, hint) {
-  socket.emit("submitHint", roomCode, hint);
-  console.log(`submitHint(client)'s hint is ${hint}`);
+export function submitHint(hint) {
+  socket.emit("submitHint", hint);
+  // console.log(`submitHint(client)'s hint is ${hint}`);
 }
 
 export function invalidateHint() {

@@ -373,11 +373,21 @@ class GameService {
     return isLastRound && lastPlayerIsCodemaster;
   }
 
-  getHint(roomCode) {
+  getHint(roomCode, userID) {
     const game = gameStore.getGame(roomCode);
-    const hint = game.hint;
+    const roundPhase = game.roundPhase;
+    console.log(`players is: ${JSON.stringify(Array.from(game.players.values()), null, 2)}`);
 
-    return hint;
+    if (roundPhase === RoundPhase.HINT) {
+      const player = game.players.get(userID);
+      return player.hint;
+    } else if (roundPhase === RoundPhase.GUESS) {
+      const currentCodemaster = game.players.get(game.currentCodemasterID);
+      return currentCodemaster.hint;
+    } else {
+      console.warn(`Possible Error: Should not be asking for hint when RoundPhase is not Hint or Guess`);
+      return "";
+    }
   }
 
   // setHint(game, hint) {
@@ -518,7 +528,8 @@ class GameService {
 
   claimTile(roomCode, userID, tileIndex) {
     const game = gameStore.getGame(roomCode);
-    const tile = game.tiles[tileIndex];
+    const codemaster = game.players.get(game.currentCodemasterID);
+    const tile = codemaster.tiles[tileIndex];
     const playerName = game.players.get(userID).name;
     const playerStatus = game.players.get(userID).status;
     const playerID = userStore.getPlayerID(userID);
