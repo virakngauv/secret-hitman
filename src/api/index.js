@@ -100,6 +100,10 @@ export function keepHint() {
   socket.emit("keepHint");
 }
 
+export function getRoundPhase(setRoundPhase) {
+  socket.emit("getRoundPhase", setRoundPhase);
+}
+
 export function getTurnStatus(setTurnStatus) {
   socket.emit("getTurnStatus", setTurnStatus);
 }

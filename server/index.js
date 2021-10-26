@@ -229,6 +229,7 @@ io.on("connection", (socket) => {
       //   then the screen doesn't properly go to how I want the end screen to look like
       const turnIsEnded = gameService.checkIfTurnIsEnded(roomCode);
       if (turnIsEnded) {
+        io.to(roomCode).emit("roundPhaseChange");
         io.to(roomCode).emit("turnStatusChange");
         // io.to(roomCode).emit("tileChange");
         // io.to(roomCode).emit("playerChange");
@@ -365,6 +366,16 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("getRoundPhase", (setRoundPhase) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const roundPhase = gameService.getRoundPhase(roomCode);
+      setRoundPhase(roundPhase);
+    }
+  })
+
   socket.on("getTurnStatus", (setTurnStatus) => {
     const roomCode = socket.roomCode;
     const userID = socket.userID;
@@ -384,6 +395,7 @@ io.on("connection", (socket) => {
 
       io.to(roomCode).emit("gameStateChange");
       io.to(roomCode).emit("roundInfoChange");
+      io.to(roomCode).emit("roundPhaseChange");
       io.to(roomCode).emit("turnStatusChange");
       io.to(roomCode).emit("playerChange");
       io.to(roomCode).emit("messagesChange");
@@ -446,6 +458,7 @@ io.on("connection", (socket) => {
       const tiles = gameService.getTilesForUser(roomCode, userID);
       setTiles(tiles);
 
+      io.to(roomCode).emit("roundPhaseChange");
       io.to(roomCode).emit("turnStatusChange");
       io.to(roomCode).emit("playerChange");
       io.to(roomCode).emit("messagesChange");
@@ -478,6 +491,7 @@ io.on("connection", (socket) => {
 
         io.to(roomCode).emit("gameStateChange");
         io.to(roomCode).emit("roundInfoChange");
+        io.to(roomCode).emit("roundPhaseChange");
         io.to(roomCode).emit("turnStatusChange");
         io.to(roomCode).emit("playerChange");
         io.to(roomCode).emit("messagesChange");

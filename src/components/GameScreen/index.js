@@ -8,7 +8,7 @@ import TimerDisplay from "../TimerDisplay";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { Button, Modal } from "react-bootstrap";
-import { getRoundInfo, getPlayers, getTiles, getMessages, getHint, getTurnStatus, getPlayerCanSeeBoard, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
+import { getRoundInfo, getPlayers, getTiles, getMessages, getHint, getRoundPhase, getTurnStatus, getPlayerCanSeeBoard, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
 
 const PlayerStatus = {
   ACTIVE: "active",
@@ -45,6 +45,7 @@ function GameScreen(props) {
   const [tiles, setTiles] = useState([]);
   const [messages, setMessages] = useState(["", ""]);
   const [hint, setHint] = useState("");
+  const [roundPhase, setRoundPhase] = useState();
   const [turnStatus, setTurnStatus] = useState();
   // TODO: maybe move playerCanSeeBoard and associated API calls to a lower component if nothing else needs it
   const [playerCanSeeBoard, setPlayerCanSeeBoard] = useState(false);
@@ -68,6 +69,7 @@ function GameScreen(props) {
     getTiles(setTiles);
     getMessages(setMessages);
     getHint(setHint);
+    getRoundPhase(setRoundPhase);
     getTurnStatus(setTurnStatus);
     getPlayerCanSeeBoard(setPlayerCanSeeBoard);
 
@@ -76,6 +78,7 @@ function GameScreen(props) {
     registerListener("tileChange", () => getTiles(setTiles));
     registerListener("messagesChange", () => getMessages(setMessages));
     registerListener("hintChange", () => getHint(setHint));
+    registerListener("roundPhaseChange", () => getRoundPhase(setRoundPhase));
     registerListener("turnStatusChange", () => getTurnStatus(setTurnStatus));
     registerListener("canSeeBoardChange", () => getPlayerCanSeeBoard(setPlayerCanSeeBoard));
     registerListener("timerTimeChange", (time) => setTimerTime(time) );
@@ -126,7 +129,7 @@ function GameScreen(props) {
       {hint && <Announcer message={hint} />}
       <GameBoard tiles={tiles} />
       {footerMessage && <Announcer message={footerMessage} />}
-      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} setMessages={setMessages} />
+      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} setMessages={setMessages} roundPhase={roundPhase} />
 
       <Modal show={isPaused && isCodemaster} centered>
         <Modal.Header>
