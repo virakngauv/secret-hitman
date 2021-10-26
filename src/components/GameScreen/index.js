@@ -4,8 +4,9 @@ import PlayerRoster from "../PlayerRoster";
 import GameBoard from "../GameBoard";
 import GameFooter from "../GameFooter";
 import GameInfo from "../GameInfo";
+import TimerDisplay from "../TimerDisplay";
 import { useEffect, useState } from "react";
-import { useHistory, useParams } from "react-router";
+import { useHistory } from "react-router";
 import { Button, Modal } from "react-bootstrap";
 import { getRoundInfo, getPlayers, getTiles, getMessages, getHint, getTurnStatus, getPlayerCanSeeBoard, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
 
@@ -47,7 +48,7 @@ function GameScreen(props) {
   const [turnStatus, setTurnStatus] = useState();
   // TODO: maybe move playerCanSeeBoard and associated API calls to a lower component if nothing else needs it
   const [playerCanSeeBoard, setPlayerCanSeeBoard] = useState(false);
-  const [timer, setTimer] = useState();
+  const [timerTime, setTimerTime] = useState(null);
 
   const [headerMessage, footerMessage] = messages;
 
@@ -75,7 +76,7 @@ function GameScreen(props) {
     registerListener("hintChange", () => getHint(setHint));
     registerListener("turnStatusChange", () => getTurnStatus(setTurnStatus));
     registerListener("canSeeBoardChange", () => getPlayerCanSeeBoard(setPlayerCanSeeBoard));
-    registerListener("timerChange", (time) => setTimer(time) );
+    registerListener("timerTimeChange", (time) => setTimerTime(time) );
 
     registerListener("playerKicked", (kickedPlayerID) => {
       const playerID = sessionStorage.getItem("playerID");
@@ -118,7 +119,7 @@ function GameScreen(props) {
     <Container className="screen">
       <GameInfo roomCode={roomCode} roundInfo={roundInfo} />
       <PlayerRoster players={players} />
-      {timer && <Announcer message={timer} />}
+      {timerTime !== null && <TimerDisplay time={timerTime} setTimerTime={setTimerTime} />}
       {headerMessage && <Announcer message={headerMessage} />}
       {hint && <Announcer message={hint} />}
       <GameBoard tiles={tiles} />

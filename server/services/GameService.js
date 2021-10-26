@@ -660,13 +660,19 @@ class GameService {
 
     let time = totalTime;
     const timerID = setInterval(() => {
-      timerChangeEmitter(time);
-      time -= 1000;
-
-      if (time <= 0) {
+      if (time > 0) {
+        timerChangeEmitter(time);
+      } else if (time <= 0) {
+        timerChangeEmitter(0);
+        console.log(`timer is less than 0`);
+      } if (time <= -3000) {
+        console.log(`timer is less than 3000`);
+        // Always provide a 3 second buffer before executing the desired function
         functionToExecute();
         clearInterval(timerID);
       }
+
+      time -= 1000;
     }, 1000);
 
     console.log(`curious about what the timer object looks like. timerID is ${timerID}`);
