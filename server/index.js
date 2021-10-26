@@ -467,7 +467,8 @@ io.on("connection", (socket) => {
       gameService.initializeGame(roomCode);
       
       // TODO: remove magic number
-      const totalTime = 90000;
+      const totalTime = 10000;
+      // const totalTime = 90000;
       const timerTimeChangeEmitter = (time) => io.to(roomCode).volatile.emit("timerTimeChange", time);
       const startGuessPhase = () => {
         gameService.startGuessPhase(roomCode);
@@ -481,6 +482,7 @@ io.on("connection", (socket) => {
         io.to(roomCode).emit("hintChange");
         io.to(roomCode).emit("tileChange");
         io.to(roomCode).emit("canSeeBoardChange");
+        io.to(roomCode).emit("timerTimeChange", null);
       };
       gameService.startTimer(roomCode, totalTime, timerTimeChangeEmitter, startGuessPhase);
       io.to(roomCode).emit("gameStateChange");

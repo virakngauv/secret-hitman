@@ -618,9 +618,19 @@ class GameService {
 
   addNewPlayerToGame(userID, name, playerID, roomCode) {
     const game = gameStore.getGame(roomCode);
-    const gameState = game.gameState;
+    // const gameState = game.gameState;
+    const roundPhase = game.roundPhase;
     const turnStatus = game.turnStatus;
-    const playerStatus = gameState === GameState.GAME && turnStatus !== TurnStatus.ENDED ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
+    // const playerStatus = gameState === GameState.GAME && turnStatus !== TurnStatus.ENDED ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
+    const playerStatus = (() => {
+      if (roundPhase === RoundPhase.HINT) {
+        return PlayerStatus.CODEMASTER;
+      } else if (roundPhase === RoundPhase.GUESS && turnStatus !== TurnStatus.ENDED) {
+        return PlayerStatus.ACTIVE;
+      } else {
+        return PlayerStatus.INACTIVE;
+      }
+    })();
     const playerCanSeeBoard = turnStatus === TurnStatus.ENDED ? true : false;
 
     const player = {
