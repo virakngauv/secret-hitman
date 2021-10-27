@@ -111,13 +111,14 @@ class GameService {
     game.roundPhase = roundPhase;
   }
 
-  startGuessPhase(roomCode) {
-    const game = gameStore.getGame(roomCode);
-    this.updateTurnStatus(game, TurnStatus.ENDED);
-    this.updateRoundPhase(game, RoundPhase.GUESS);
-    // this.assignNextCodemaster(roomCode);
-    // this.startNextTurn(roomCode);
-  }
+  // // Maybe incorporate this into startNextTurn?
+  // startGuessPhase(roomCode) {
+  //   const game = gameStore.getGame(roomCode);
+  //   this.updateTurnStatus(game, TurnStatus.ENDED);
+  //   this.updateRoundPhase(game, RoundPhase.GUESS);
+  //   // this.assignNextCodemaster(roomCode);
+  //   // this.startNextTurn(roomCode);
+  // }
 
   updateTurnStatus(game, turnStatus) {
     game.turnStatus = turnStatus;
@@ -361,6 +362,11 @@ class GameService {
     // //   headerMessage = "hint marked as invalid, pending codemaster..";
     // // } 
     // else 
+    if (roundPhase === RoundPhase.HINT && turnStatus === TurnStatus.ENDED) {
+      headerMessage = "hint locked in!";
+      footerMessage = "start guess phase?"
+    }
+
     if (roundPhase === RoundPhase.GUESS && turnStatus === TurnStatus.ENDED) {
       headerMessage = isLastTurn ? "last turn ended" : "turn ended";
 
@@ -635,7 +641,12 @@ class GameService {
 
   startNextTurn(roomCode) {
     const game = gameStore.getGame(roomCode);
+    const roundPhase = game.roundPhase;
     const turnStatus = game.turnStatus;
+
+    if (roundPhase === RoundPhase.HINT) {
+      this.updateRoundPhase(game, RoundPhase.GUESS);
+    }
 
     if (turnStatus === TurnStatus.ENDED) {
       this.preparePlayersForNextTurn(game);

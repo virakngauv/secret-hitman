@@ -528,7 +528,7 @@ io.on("connection", (socket) => {
         // io.to(roomCode).emit("timerTimeChange", null);
       };
 
-      gameService.startTimer(roomCode, totalTime, startGuessPhase, `socket.on("startGame")`);
+      gameService.startTimer(roomCode, totalTime, () => gameService.endTurn(roomCode), `socket.on("startGame")`);
       io.to(roomCode).emit("gameStateChange");
     }
   });
