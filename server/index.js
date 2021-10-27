@@ -285,11 +285,11 @@ io.on("connection", (socket) => {
       gameService.setHintForPlayer(roomCode, hint, userID);
       
 
-      const roundPhase = gameService.getRoundPhase(roomCode);
-      if (roundPhase === RoundPhase.HINT) {
-        gameService.markPlayerStatus(roomCode, userID, PlayerStatus.ACTIVE);
-      } else if (roundPhase === RoundPhase.GUESS) {
-      }
+      // const roundPhase = gameService.getRoundPhase(roomCode);
+      // if (roundPhase === RoundPhase.HINT) {
+      //   gameService.markPlayerStatus(roomCode, userID, PlayerStatus.ACTIVE);
+      // } else if (roundPhase === RoundPhase.GUESS) {
+      // }
 
       io.to(roomCode).emit("messagesChange");
       io.to(roomCode).emit("hintChange");

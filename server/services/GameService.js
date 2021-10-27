@@ -52,6 +52,7 @@ class GameService {
   initializeGame(roomCode) {
     // console.log(`Inside initializeGame with roomCode: ${roomCode}`);
     const game = gameStore.getGame(roomCode);
+    // console.log(`1__initializeGame's players is ${JSON.stringify(Array.from(game.players.values()), null, 2)}`);
 
     this.updateGameState(roomCode, GameState.GAME);
     this.updateRoundPhase(game, RoundPhase.HINT)
@@ -63,6 +64,7 @@ class GameService {
     this.incrementRoundNumber(game);
     this.incrementTurnNumber(game);
     // this.setupNewTilesForAllPlayers(game);
+    // console.log(`2__initializeGame's players is ${JSON.stringify(Array.from(game.players.values()), null, 2)}`);
   }
 
   resetGame(roomCode) {
@@ -480,6 +482,9 @@ class GameService {
     const game = gameStore.getGame(roomCode);
     const player = game.players.get(userID);
     player.status = playerStatus;
+    console.log(`markPlayerStatus's playerStatus is ${playerStatus}`);
+
+    // console.log(`markPlayerStatus's players is ${JSON.stringify(Array.from(game.players.values()), null, 2)}`);
 
     // if (playerStatus === PlayerStatus.INACTIVE) {
     //   this.endPlayerTurn(roomCode, userID);
@@ -560,17 +565,25 @@ class GameService {
 
     game.turnStatus = TurnStatus.ENDED;
 
+    // console.log(`1__endTurn's players is ${JSON.stringify(Array.from(game.players.values()), null, 2)}`);
+
+
+
     if (roundPhase === RoundPhase.HINT) {
       this.updateBlankHints(roomCode);
     } else if (roundPhase === RoundPhase.GUESS) {
-      this.markAllPlayersInactive(roomCode);
+      // // below is not needed if status is not used to advance turns anymore right? only needed to see who is still guessing and lobby
+      // this.markAllPlayersInactive(roomCode);
     }
     
     this.markAllPlayersCanSeeBoardTrue(roomCode);
+
+    // console.log(`2__endTurn's players is ${JSON.stringify(Array.from(game.players.values()), null, 2)}`);
     
     
     // Changing the order of the events below affects order that components are updated
     // Messages should be before Turn Status before Timer
+    this.io.to(roomCode).emit("hintChange");
     this.io.to(roomCode).emit("playerChange");
     this.io.to(roomCode).emit("messagesChange");
     this.io.to(roomCode).emit("turnStatusChange");
