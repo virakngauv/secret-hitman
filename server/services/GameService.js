@@ -539,15 +539,18 @@ class GameService {
 
   endTurn(roomCode) {
     const game = gameStore.getGame(roomCode);
-    this.clearGameTimer(roomCode);
 
     game.turnStatus = TurnStatus.ENDED;
     this.markAllPlayersInactive(roomCode);
     this.markAllPlayersCanSeeBoardTrue(roomCode);
-
-    this.io.to(roomCode).emit("turnStatusChange");
+    
+    
+    // Changing the order of the events below affects order that components are updated
+    // Messages should be before Turn Status before Timer
     this.io.to(roomCode).emit("playerChange");
     this.io.to(roomCode).emit("messagesChange");
+    this.io.to(roomCode).emit("turnStatusChange");
+    this.clearGameTimer(roomCode);
     this.io.to(roomCode).emit("tileChange");
     // this.io.to(roomCode).emit("timerTimeChange", null);
     // clearInterval(game.timerID);
@@ -641,17 +644,7 @@ class GameService {
       // this.setupNewTiles(game);
       this.updateTurnStatus(game, TurnStatus.STARTED);
 
-      // START TEMP CODE
-      this.io.to(roomCode).emit("timerTimeChange", 27000);  
-      // END TEMP CODE
-      if (game.gameState === GameState.GAME) {
-        // TODO: remove magic number
-        const totalTime = 25000;
-        this.startTimer(roomCode, totalTime, () => this.endTurn(roomCode), `GameService's startNextTurn`);
-        // START TEMP CODE
-        this.io.to(roomCode).emit("timerTimeChange", 99000);  
-        // END TEMP CODE
-      }
+
 
       this.io.to(roomCode).emit("gameStateChange");
       this.io.to(roomCode).emit("roundInfoChange");
@@ -661,7 +654,13 @@ class GameService {
       this.io.to(roomCode).emit("messagesChange");
       this.io.to(roomCode).emit("hintChange");
       this.io.to(roomCode).emit("tileChange");
-      this.io.to(roomCode).emit("canSeeBoardChange");
+
+      // TODO: remove magic number
+      const totalTime = 25000;
+      if (game.gameState === GameState.GAME) {
+        this.startTimer(roomCode, totalTime, () => this.endTurn(roomCode), `GameService's startNextTurn`);
+      }
+      // this.io.to(roomCode).emit("canSeeBoardChange");
     }
   }
 
@@ -756,22 +755,31 @@ class GameService {
     // this.clearGameTimer(roomCode);
     console.log(`starting timer from ${originForConsoleLog}`);
     const game = gameStore.getGame(roomCode);
-    const timerTimeChangeEmitter = (time) => this.io.to(roomCode).volatile.emit("timerTimeChange", time);
+    // const timerTimeChangeEmitter = (time) => this.io.to(roomCode).volatile.emit("timerTimeChange", time);
 
-    let time = totalTime;
+    // Rounding down to nearest second to ensure it hits time === 0 if-block
+    let time = Math.floor(totalTime / 1000) * 1000;
     const tickTimer = () => {
       // console.log(`message from ${originForConsoleLog}`);
-      if (time > 0) {
-        timerTimeChangeEmitter(time);
-      } else if (time <= 0) {
-        timerTimeChangeEmitter(0);
-        // console.log(`time is less than 0: ${time}`);
-      } if (time <= -1000) {
+      if (time >= 0) {
+        // timerTimeChangeEmitter(time);
+        game.timerTime = time;
+        this.io.to(roomCode).emit("timerTimeChange");
+      } 
+      // else if (time === 0) {
+      //   // timerTimeChangeEmitter(0);
+      //   // console.log(`time is less than 0: ${time}`);
+      //   game.timerTime = 0;
+      //   this.io.to(roomCode).emit("timerTimeChange");
+      //   console.log(`time is less than 0: ${time}`);
+      // } 
+      if (time <= -1000) {
         // console.log(`time is less than or equal to 1000: ${time}`);
         // Always provide a 1 second buffer before executing the desired function
         functionToExecute();
         clearInterval(timerID);
-        this.io.to(roomCode).emit("timerTimeChange", null);
+        // this.io.to(roomCode).emit("timerTimeChange", null);
+        // this.io.to(roomCode).emit("timerTimeChange");
       }
 
       time -= 1000;
@@ -785,6 +793,11 @@ class GameService {
     this.io.to(roomCode).emit("timerIDChange");
   }
 
+  getTimerTime(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    return game.timerTime;
+  }
+
   getTimerID(roomCode) {
     const game = gameStore.getGame(roomCode);
     return game.timerID;
@@ -796,7 +809,7 @@ class GameService {
     // End Node Timer
     clearInterval(game.timerID);
 
-    // Clear ID from Game Object
+    // Clear ID from Game Object and Client
     game.timerID = null;
     this.io.to(roomCode).emit("timerIDChange");
   }
@@ -805,12 +818,15 @@ class GameService {
     const game = gameStore.getGame(roomCode);
 
     // Clear client timers
-    this.io.to(roomCode).emit("timerTimeChange", null);
+    game.timerTime = null;
+    // this.io.to(roomCode).emit("timerTimeChange", null);
+    this.io.to(roomCode).emit("timerTimeChange");
+    
 
     // End Node Timer
     clearInterval(game.timerID);
 
-    // Clear ID from Game Object
+    // Clear ID from Game Object and Client
     game.timerID = null;
     this.io.to(roomCode).emit("timerIDChange");
   }

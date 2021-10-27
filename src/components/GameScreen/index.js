@@ -8,7 +8,7 @@ import TimerDisplay from "../TimerDisplay";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { Button, Modal } from "react-bootstrap";
-import { getRoundInfo, getPlayers, getTiles, getMessages, getHint, getRoundPhase, getTurnStatus, getTimerID, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
+import { getRoundInfo, getPlayers, getTiles, getMessages, getHint, getRoundPhase, getTurnStatus, getTimerTime, getTimerID, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
 
 const PlayerStatus = {
   ACTIVE: "active",
@@ -74,6 +74,7 @@ function GameScreen(props) {
     getRoundPhase(setRoundPhase);
     getTurnStatus(setTurnStatus);
     // getPlayerCanSeeBoard(setPlayerCanSeeBoard);
+    getTimerTime(setTimerTime);
     getTimerID(setTimerID);
 
     registerListener("roundInfoChange", () => getRoundInfo(setRoundInfo));
@@ -84,7 +85,8 @@ function GameScreen(props) {
     registerListener("roundPhaseChange", () => getRoundPhase(setRoundPhase));
     registerListener("turnStatusChange", () => getTurnStatus(setTurnStatus));
     // registerListener("canSeeBoardChange", () => getPlayerCanSeeBoard(setPlayerCanSeeBoard));
-    registerListener("timerTimeChange", (time) => setTimerTime(time));
+    // registerListener("timerTimeChange", (time) => setTimerTime(time));
+    registerListener("timerTimeChange", () => getTimerTime(setTimerTime));
     registerListener("timerIDChange", () => getTimerID(setTimerID));
 
     registerListener("playerKicked", (kickedPlayerID) => {

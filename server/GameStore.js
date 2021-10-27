@@ -45,6 +45,7 @@ class GameStore {
       dictionary: shuffledArray(original),
       nextDictionary: [],
       timerID: null,
+      timerTime: null,
     }
     this.games.set(roomCode, game);
     return roomCode

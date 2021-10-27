@@ -116,8 +116,12 @@ export function markPlayerStatus(status) {
   socket.emit("markPlayerStatus", status);
 }
 
-export function getPlayerCanSeeBoard(setPlayerCanSeeBoard) {
-  socket.emit("getPlayerCanSeeBoard", setPlayerCanSeeBoard);
+// export function getPlayerCanSeeBoard(setPlayerCanSeeBoard) {
+//   socket.emit("getPlayerCanSeeBoard", setPlayerCanSeeBoard);
+// }
+
+export function getTimerTime(setTimerTime) {
+  socket.emit("getTimerTime", setTimerTime);
 }
 
 export function getTimerID(setTimerID) {

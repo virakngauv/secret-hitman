@@ -440,13 +440,23 @@ io.on("connection", (socket) => {
     // // END TEMP CODE
   });
 
-  socket.on("getPlayerCanSeeBoard", (setPlayerCanSeeBoard) => {
+  // socket.on("getPlayerCanSeeBoard", (setPlayerCanSeeBoard) => {
+  //   const roomCode = socket.roomCode;
+  //   const userID = socket.userID;
+
+  //   if (gameService.isValidRoomAndUser(roomCode, userID)) {
+  //     const playerCanSeeBoard = gameService.getPlayerCanSeeBoard(roomCode, userID);
+  //     setPlayerCanSeeBoard(playerCanSeeBoard);
+  //   }
+  // });
+
+  socket.on("getTimerTime", (setTimerTime) => {
     const roomCode = socket.roomCode;
     const userID = socket.userID;
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
-      const playerCanSeeBoard = gameService.getPlayerCanSeeBoard(roomCode, userID);
-      setPlayerCanSeeBoard(playerCanSeeBoard);
+      const timerTime = gameService.getTimerTime(roomCode);
+      setTimerTime(timerTime);
     }
   });
 
@@ -459,7 +469,7 @@ io.on("connection", (socket) => {
       // console.log(`stringified timerID is: ${JSON.stringify(timerID, null, 2)}`);
       setTimerID(timerID);
     }
-  })
+  });
 
   socket.on("endPlayerTurn", (setTiles) => {
     const roomCode = socket.roomCode;
