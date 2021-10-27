@@ -120,6 +120,10 @@ export function getPlayerCanSeeBoard(setPlayerCanSeeBoard) {
   socket.emit("getPlayerCanSeeBoard", setPlayerCanSeeBoard);
 }
 
+export function getTimerID(setTimerID) {
+  socket.emit("getTimerID", setTimerID);
+}
+
 // export function markPlayerCanSeeBoard(canSeeBoard, setTiles) {
 //   socket.emit("markPlayerCanSeeBoard", canSeeBoard);
 // }
@@ -144,6 +148,10 @@ export function kickPlayer(playerIDToKick) {
   console.log("I am in kickPlayer in the api");
 
   socket.emit("kickPlayer", playerIDToKick);
+}
+
+export function pauseTimer() {
+  socket.emit("pauseTimer");
 }
 
 export function leaveRoom(roomCode) {

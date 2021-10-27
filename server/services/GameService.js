@@ -358,19 +358,22 @@ class GameService {
     else if (roundPhase === RoundPhase.GUESS && turnStatus === TurnStatus.ENDED) {
       headerMessage = isLastTurn ? "last turn ended" : "turn ended";
 
-      if (!playerCanSeeBoard) {
-        // TODO automatically show board on turn end
-        footerMessage = "Reveal Tiles?";
-      } else if (playerStatus === PlayerStatus.INACTIVE) {
-        footerMessage = isLastTurn ? "Ready?" : "Ready for Next Turn?";
-      } else if (isLastTurn) {
-        // If last turn, skips the "waiting on other players" message
-        footerMessage = "See Rankings?";
-      } else if (!allPlayersReady) {
-        footerMessage = "Waiting on Other Players";
-      } else {
-        footerMessage = "Start Next Turn?";
-      }
+      // if (!playerCanSeeBoard) {
+      //   // TODO automatically show board on turn end
+      //   footerMessage = "Reveal Tiles?";
+      // } else if (playerStatus === PlayerStatus.INACTIVE) {
+      //   footerMessage = isLastTurn ? "Ready?" : "Ready for Next Turn?";
+      // } else if (isLastTurn) {
+      //   // If last turn, skips the "waiting on other players" message
+      //   footerMessage = "See Rankings?";
+      // } else if (!allPlayersReady) {
+      //   footerMessage = "Waiting on Other Players";
+      // } else {
+      //   footerMessage = "Start Next Turn?";
+      // }
+
+      footerMessage = isLastTurn ? "see rankings?" : "start next turn?";
+
     } 
 
     return [headerMessage, footerMessage];
@@ -484,6 +487,14 @@ class GameService {
     player.canSeeBoard = true;
   }
 
+  markAllPlayersCanSeeBoardTrue(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    const players = game.players;
+    players.forEach((player, userID) => {
+      this.markPlayerCanSeeBoard(roomCode, userID);
+    });
+  }
+
   checkAndEndTurnIfTurnShouldEnd(roomCode) {
     // this.markPlayerStatus(roomCode, userID, PlayerStatus.INACTIVE);
 
@@ -514,11 +525,13 @@ class GameService {
 
     game.turnStatus = TurnStatus.ENDED;
     this.markAllPlayersInactive(roomCode);
+    this.markAllPlayersCanSeeBoardTrue(roomCode);
 
     this.io.to(roomCode).emit("turnStatusChange");
     this.io.to(roomCode).emit("playerChange");
-    this.io.to(roomCode).emit("timerTimeChange", null);
-    clearInterval(game.timerID);
+    // this.io.to(roomCode).emit("timerTimeChange", null);
+    // clearInterval(game.timerID);
+    this.clearGameTimer(roomCode);
   }
 
   checkIfTurnIsEnded(roomCode) {
@@ -736,11 +749,42 @@ class GameService {
       }
 
       time -= 1000;
-    }, 1000);
+    }, 1000)[Symbol.toPrimitive]();
 
     console.log(`curious about what the timer object looks like. timerID is ${timerID}`);
 
     game.timerID = timerID;
+    this.io.to(roomCode).emit("timerIDChange");
+  }
+
+  getTimerID(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    return game.timerID;
+  }
+
+  pauseGameTimer(roomCode) {
+    const game = gameStore.getGame(roomCode);
+
+    // End Node Timer
+    clearInterval(game.timerID);
+
+    // Clear ID from Game Object
+    game.timerID = null;
+    this.io.to(roomCode).emit("timerIDChange");
+  }
+
+  clearGameTimer(roomCode) {
+    const game = gameStore.getGame(roomCode);
+
+    // Clear client timers
+    this.io.to(roomCode).emit("timerTimeChange", null);
+
+    // End Node Timer
+    clearInterval(game.timerID);
+
+    // Clear ID from Game Object
+    game.timerID = null;
+    this.io.to(roomCode).emit("timerIDChange");
   }
 }
 

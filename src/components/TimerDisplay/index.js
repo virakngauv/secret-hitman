@@ -1,12 +1,13 @@
 import Announcer from "../Announcer";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 
 function TimerDisplay(props) {
   const totalMiliseconds = props.time;
-  const setTimerTime = props.setTimerTime;
+  // const setTimerTime = props.setTimerTime;
+  const isTurnEnded = props.isTurnEnded;
 
-  const [blinkTime, setBlinkTime] = useState(false);
-  const [blinkTimerID, setBlinkTimerID] = useState();
+  // const [blinkTime, setBlinkTime] = useState(false);
+  // const [blinkTimerID, setBlinkTimerID] = useState();
 
   function timerString(time) {
     var n = Math.abs(time);
@@ -21,7 +22,7 @@ function TimerDisplay(props) {
   const seconds = (totalSeconds - (minutes * 60));
   const minutesString = timerString(minutes);
   const secondsString = timerString(seconds);
-  const time = blinkTime ? `:` : `${minutesString}:${secondsString}`;
+  const time = isTurnEnded ? `Starting next turn in.. ${seconds}..` : `${minutesString}:${secondsString}`;
 
   // useEffect(() => {
 
@@ -33,21 +34,21 @@ function TimerDisplay(props) {
   //   }, 600);
   // }
 
-  useEffect(() => {
-    let timerID;
-    if (!blinkTimerID && totalMiliseconds <= 0) {
-      timerID = setInterval(() => {
-        setBlinkTime(prevBlinkTime => !prevBlinkTime);
-        console.log(`should be blinking now.. blinkTime is ${blinkTime}`);
-      }, 700);
+  // useEffect(() => {
+  //   let timerID;
+  //   if (!blinkTimerID && totalMiliseconds <= 0) {
+  //     timerID = setInterval(() => {
+  //       setBlinkTime(prevBlinkTime => !prevBlinkTime);
+  //       console.log(`should be blinking now.. blinkTime is ${blinkTime}`);
+  //     }, 700);
   
-      setBlinkTimerID(timerID);
+  //     setBlinkTimerID(timerID);
     
-      console.log(`timerID is ${timerID}`);
-    }
+  //     console.log(`timerID is ${timerID}`);
+  //   }
 
-    return () => clearInterval(timerID);
-  }, [blinkTime, blinkTimerID, totalMiliseconds])
+  //   return () => clearInterval(timerID);
+  // }, [blinkTime, blinkTimerID, totalMiliseconds])
 
 
 

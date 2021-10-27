@@ -1,14 +1,14 @@
 import { original } from "./dictionaries/index.js";
 import { generateRandomRoomCode } from "./helpers/index.js";
 import { shuffledArray } from "./helpers/util/index.js";
-import UserStore from "./UserStore.js";
+// import UserStore from "./UserStore.js";
 
 // TODO: Make enum for PlayerStatus, GameStatus
-const PlayerStatus = {
-  ACTIVE: "active",
-  INACTIVE: "inactive", 
-  CODEMASTER: "codemaster",
-};
+// const PlayerStatus = {
+//   ACTIVE: "active",
+//   INACTIVE: "inactive", 
+//   CODEMASTER: "codemaster",
+// };
 
 const GameState = {
   LOBBY: "lobby",
@@ -16,11 +16,11 @@ const GameState = {
   END: "end",
 };
 
-const TurnStatus = {
-  STARTED: "started",
-  PAUSED: "paused",
-  ENDED: "ended",
-}
+// const TurnStatus = {
+//   STARTED: "started",
+//   PAUSED: "paused",
+//   ENDED: "ended",
+// }
 
 class GameStore {
   constructor() {
@@ -44,6 +44,7 @@ class GameStore {
       turnStatus: null,
       dictionary: shuffledArray(original),
       nextDictionary: [],
+      timerID: null,
     }
     this.games.set(roomCode, game);
     return roomCode

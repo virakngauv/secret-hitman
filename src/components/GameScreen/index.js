@@ -8,7 +8,7 @@ import TimerDisplay from "../TimerDisplay";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { Button, Modal } from "react-bootstrap";
-import { getRoundInfo, getPlayers, getTiles, getMessages, getHint, getRoundPhase, getTurnStatus, getPlayerCanSeeBoard, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
+import { getRoundInfo, getPlayers, getTiles, getMessages, getHint, getRoundPhase, getTurnStatus, getPlayerCanSeeBoard, getTimerID, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
 
 const PlayerStatus = {
   ACTIVE: "active",
@@ -50,6 +50,7 @@ function GameScreen(props) {
   // TODO: maybe move playerCanSeeBoard and associated API calls to a lower component if nothing else needs it
   const [playerCanSeeBoard, setPlayerCanSeeBoard] = useState(false);
   const [timerTime, setTimerTime] = useState(null);
+  const [timerID, setTimerID] = useState(null);
 
   const [headerMessage, footerMessage] = messages;
 
@@ -72,6 +73,7 @@ function GameScreen(props) {
     getRoundPhase(setRoundPhase);
     getTurnStatus(setTurnStatus);
     getPlayerCanSeeBoard(setPlayerCanSeeBoard);
+    getTimerID(setTimerID);
 
     registerListener("roundInfoChange", () => getRoundInfo(setRoundInfo));
     registerListener("playerChange", () => getPlayers(setPlayers));
@@ -81,7 +83,8 @@ function GameScreen(props) {
     registerListener("roundPhaseChange", () => getRoundPhase(setRoundPhase));
     registerListener("turnStatusChange", () => getTurnStatus(setTurnStatus));
     registerListener("canSeeBoardChange", () => getPlayerCanSeeBoard(setPlayerCanSeeBoard));
-    registerListener("timerTimeChange", (time) => setTimerTime(time) );
+    registerListener("timerTimeChange", (time) => setTimerTime(time));
+    registerListener("timerIDChange", () => getTimerID(setTimerID));
 
     registerListener("playerKicked", (kickedPlayerID) => {
       const playerID = sessionStorage.getItem("playerID");
@@ -124,12 +127,13 @@ function GameScreen(props) {
     <Container className="screen">
       <GameInfo roomCode={roomCode} roundInfo={roundInfo} />
       <PlayerRoster players={players} />
-      {timerTime !== null && <TimerDisplay time={timerTime} setTimerTime={setTimerTime} />}
+      {timerTime !== null && <TimerDisplay time={timerTime} isTurnEnded={isTurnEnded} />}
       {headerMessage && <Announcer message={headerMessage} />}
       {hint && <Announcer message={hint} />}
       <GameBoard tiles={tiles} />
       {footerMessage && <Announcer message={footerMessage} />}
-      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} setMessages={setMessages} roundPhase={roundPhase} />
+      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} roundPhase={roundPhase} timerTime={timerTime} timerID={timerID} />
+      {/* <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} setMessages={setMessages} roundPhase={roundPhase} /> */}
 
       <Modal show={isPaused && isCodemaster} centered>
         <Modal.Header>

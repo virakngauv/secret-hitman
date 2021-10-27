@@ -12,18 +12,21 @@ function GameFooter(props) {
   const roomCode = props.roomCode;
   const isCodemaster = props.isCodemaster;
   const isInactive = props.isInactive;
-  const isActive = props.isActive;
+  // const isActive = props.isActive;
   const isTurnEnded = props.isTurnEnded;
   const hint = props.hint;
   const setTiles = props.setTiles;
-  const playerCanSeeBoard = props.playerCanSeeBoard;
-  const setPlayerCanSeeBoard = props.setPlayerCanSeeBoard;
-  const players = props.players;
-  const setMessages = props.setMessages;
+  // const playerCanSeeBoard = props.playerCanSeeBoard;
+  // const setPlayerCanSeeBoard = props.setPlayerCanSeeBoard;
+  // const players = props.players;
+  // const setMessages = props.setMessages;
   const roundPhase = props.roundPhase;
+  const timerTime = props.timerTime;
+  const timerID = props.timerID;
 
   if (isTurnEnded) {
-    return <GameFooterEnd isCodemaster={isCodemaster} isActive={isActive} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} setMessages={setMessages} />
+    return <GameFooterEnd timerTime={timerTime} timerID={timerID} />
+    // return <GameFooterEnd isCodemaster={isCodemaster} isActive={isActive} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} setMessages={setMessages} />
   } else if (isCodemaster) {
     if (roundPhase === RoundPhase.HINT) {
       return <GameFooterCodemaster roomCode={roomCode} hint={hint} />

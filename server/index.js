@@ -391,7 +391,8 @@ io.on("connection", (socket) => {
     const userID = socket.userID;
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
-      gameService.startNextTurn(roomCode);
+      gameService.startTimer(roomCode, 5000, () => gameService.startNextTurn(roomCode), `socket.on("startNextTurn)`);
+      // gameService.startNextTurn(roomCode);
 
       // io.to(roomCode).emit("gameStateChange");
       // io.to(roomCode).emit("roundInfoChange");
@@ -442,6 +443,17 @@ io.on("connection", (socket) => {
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       const playerCanSeeBoard = gameService.getPlayerCanSeeBoard(roomCode, userID);
       setPlayerCanSeeBoard(playerCanSeeBoard);
+    }
+  });
+
+  socket.on("getTimerID", (setTimerID) => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const timerID = gameService.getTimerID(roomCode);
+      console.log(`stringified timerID is: ${JSON.stringify(timerID, null, 2)}`);
+      setTimerID(timerID);
     }
   })
 
@@ -542,6 +554,15 @@ io.on("connection", (socket) => {
       io.to(roomCode).emit("playerChange");
       io.to(roomCode).emit("messagesChange");
       io.to(roomCode).emit("hintChange");
+    }
+  });
+
+  socket.on("pauseTimer", () => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      gameService.pauseGameTimer(roomCode);
     }
   });
 
