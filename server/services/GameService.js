@@ -540,6 +540,8 @@ class GameService {
 
     this.io.to(roomCode).emit("turnStatusChange");
     this.io.to(roomCode).emit("playerChange");
+    this.io.to(roomCode).emit("messagesChange");
+    this.io.to(roomCode).emit("tileChange");
     // this.io.to(roomCode).emit("timerTimeChange", null);
     // clearInterval(game.timerID);
     this.clearGameTimer(roomCode);
