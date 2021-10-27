@@ -456,9 +456,13 @@ class GameService {
 
   getRoundInfo(roomCode) {
     const game = gameStore.getGame(roomCode);
+    const players = Array.from(game.players.values());
+
+    const currentTurnNumber = 1 + players.findIndex((player) => player.status === PlayerStatus.CODEMASTER);
+    const maxTurnNumber = players.length;
     const currentRoundNumber = game.roundNumber;
     const maxRoundNumber = this.maxRounds;
-    const roundInfo = [currentRoundNumber, maxRoundNumber];
+    const roundInfo = [currentTurnNumber, maxTurnNumber, currentRoundNumber, maxRoundNumber];
 
     return roundInfo;
   }

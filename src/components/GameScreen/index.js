@@ -27,7 +27,7 @@ function GameScreen(props) {
   const history = useHistory();
 
   // TODO: get value from server
-  const [roundInfo, setRoundInfo] = useState([0, 0])
+  const [roundInfo, setRoundInfo] = useState([0, 0, 0, 0])
   const [players, setPlayers] = useState([]);
   // const [isCodemaster, setIsCodemaster] = useState(false);
   const playerID = sessionStorage.getItem("playerID");
