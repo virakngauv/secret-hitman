@@ -456,7 +456,7 @@ io.on("connection", (socket) => {
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       const timerID = gameService.getTimerID(roomCode);
-      console.log(`stringified timerID is: ${JSON.stringify(timerID, null, 2)}`);
+      // console.log(`stringified timerID is: ${JSON.stringify(timerID, null, 2)}`);
       setTimerID(timerID);
     }
   })
@@ -492,13 +492,14 @@ io.on("connection", (socket) => {
     const allPlayersReady = game && Array.from(game.players.values()).reduce(
       (readyStatusSoFar, currentPlayer) => {
         return readyStatusSoFar && currentPlayer.status === PlayerStatus.ACTIVE
-      }, true);
+      }, true
+    );
     // console.log(`isInLobby is ${isInLobby} and allPlayersReady is ${allPlayersReady}`);
     if (isInLobby && allPlayersReady) {
       gameService.initializeGame(roomCode);
       
       // TODO: remove magic number
-      const totalTime = 10000;
+      const totalTime = 15000;
       // const totalTime = 90000;
       // const timerTimeChangeEmitter = (time) => io.to(roomCode).volatile.emit("timerTimeChange", time);
       const startGuessPhase = () => {

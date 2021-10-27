@@ -129,10 +129,10 @@ function GameScreen(props) {
       <GameInfo roomCode={roomCode} roundInfo={roundInfo} />
       <PlayerRoster players={players} />
       {timerTime !== null && <TimerDisplay time={timerTime} isTurnEnded={isTurnEnded} />}
-      {headerMessage && <Announcer message={headerMessage} />}
+      {timerTime === null && headerMessage && <Announcer message={headerMessage} />}
       {hint && <Announcer message={hint} />}
       <GameBoard tiles={tiles} />
-      {footerMessage && <Announcer message={footerMessage} />}
+      {timerTime === null && footerMessage && <Announcer message={footerMessage} />}
       <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} roundPhase={roundPhase} timerTime={timerTime} timerID={timerID} />
       {/* <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} setMessages={setMessages} roundPhase={roundPhase} /> */}
 

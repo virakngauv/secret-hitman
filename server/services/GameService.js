@@ -539,6 +539,7 @@ class GameService {
 
   endTurn(roomCode) {
     const game = gameStore.getGame(roomCode);
+    this.clearGameTimer(roomCode);
 
     game.turnStatus = TurnStatus.ENDED;
     this.markAllPlayersInactive(roomCode);
@@ -550,7 +551,7 @@ class GameService {
     this.io.to(roomCode).emit("tileChange");
     // this.io.to(roomCode).emit("timerTimeChange", null);
     // clearInterval(game.timerID);
-    this.clearGameTimer(roomCode);
+
   }
 
   checkIfTurnIsEnded(roomCode) {
@@ -640,11 +641,16 @@ class GameService {
       // this.setupNewTiles(game);
       this.updateTurnStatus(game, TurnStatus.STARTED);
 
-
+      // START TEMP CODE
+      this.io.to(roomCode).emit("timerTimeChange", 27000);  
+      // END TEMP CODE
       if (game.gameState === GameState.GAME) {
         // TODO: remove magic number
         const totalTime = 25000;
         this.startTimer(roomCode, totalTime, () => this.endTurn(roomCode), `GameService's startNextTurn`);
+        // START TEMP CODE
+        this.io.to(roomCode).emit("timerTimeChange", 99000);  
+        // END TEMP CODE
       }
 
       this.io.to(roomCode).emit("gameStateChange");
@@ -747,20 +753,21 @@ class GameService {
   }
 
   startTimer(roomCode, totalTime, functionToExecute, originForConsoleLog) {
+    // this.clearGameTimer(roomCode);
     console.log(`starting timer from ${originForConsoleLog}`);
     const game = gameStore.getGame(roomCode);
     const timerTimeChangeEmitter = (time) => this.io.to(roomCode).volatile.emit("timerTimeChange", time);
 
     let time = totalTime;
-    const timerID = setInterval(() => {
-      console.log(`message from ${originForConsoleLog}`);
+    const tickTimer = () => {
+      // console.log(`message from ${originForConsoleLog}`);
       if (time > 0) {
         timerTimeChangeEmitter(time);
       } else if (time <= 0) {
         timerTimeChangeEmitter(0);
-        console.log(`time is less than 0: ${time}`);
+        // console.log(`time is less than 0: ${time}`);
       } if (time <= -1000) {
-        console.log(`time is less than or equal to 1000: ${time}`);
+        // console.log(`time is less than or equal to 1000: ${time}`);
         // Always provide a 1 second buffer before executing the desired function
         functionToExecute();
         clearInterval(timerID);
@@ -768,9 +775,11 @@ class GameService {
       }
 
       time -= 1000;
-    }, 1000)[Symbol.toPrimitive]();
+    };
+    tickTimer();
+    const timerID = setInterval(tickTimer, 1000)[Symbol.toPrimitive]();
 
-    console.log(`curious about what the timer object looks like. timerID is ${timerID}`);
+    // console.log(`curious about what the timer object looks like. timerID is ${timerID}`);
 
     game.timerID = timerID;
     this.io.to(roomCode).emit("timerIDChange");
