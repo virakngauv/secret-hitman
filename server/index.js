@@ -391,7 +391,10 @@ io.on("connection", (socket) => {
     const userID = socket.userID;
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
-      gameService.startTimer(roomCode, 5000, () => gameService.startNextTurn(roomCode), `socket.on("startNextTurn)`);
+      const timerID = gameService.getTimerID(roomCode);
+      if (!timerID) {
+        gameService.startTimer(roomCode, 5000, () => gameService.startNextTurn(roomCode), `socket.on("startNextTurn)`);
+      }
       // gameService.startNextTurn(roomCode);
 
       // io.to(roomCode).emit("gameStateChange");

@@ -504,9 +504,20 @@ class GameService {
     const noPlayersActive = Array.from(players.values()).reduce(
       (readyStatusSoFar, currentPlayer) => {
         return readyStatusSoFar && currentPlayer.status !== PlayerStatus.ACTIVE
-      }, true);
-    
-    if (noPlayersActive) {
+      }, true
+    );
+
+    const numberOfTargetsClaimed = players.get(game.currentCodemasterID).tiles.reduce(
+      (numberOfTargetsClaimedSoFar, currentTile) => {
+        return currentTile.type === TileType.TARGET && currentTile.claimers.length > 0 ? numberOfTargetsClaimedSoFar + 1 : numberOfTargetsClaimedSoFar;
+      }, 0
+    );
+    const allTargetsClaimed = numberOfTargetsClaimed === this.numberOfTargetTiles;
+    console.log(`numberOfTargetsClaimed is ${numberOfTargetsClaimed}`);
+    console.log(`this.numberOfTargetTiles is ${this.numberOfTargetTiles}`);
+    console.log(`allTargetsClaimed is ${allTargetsClaimed}`);
+
+    if (noPlayersActive || allTargetsClaimed) {
       this.endTurn(roomCode);
     }
   }
