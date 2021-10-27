@@ -430,6 +430,17 @@ class GameService {
     player.hint = hint;
   }
 
+  // TODO: pull "NO HINT, 🍀" into constant or config obj
+  updateBlankHints(roomCode) {
+    const game = gameStore.getGame(roomCode);
+    const players = game.players;
+    players.forEach((player) => {
+      if (player.hint === "") {
+        player.hint = "NO HINT, 🍀";
+      }
+    });
+  }
+
   // TODO: rename to pauseTurn()
   invalidateHint(game) {
     game.turnStatus = TurnStatus.PAUSED;
@@ -545,9 +556,16 @@ class GameService {
 
   endTurn(roomCode) {
     const game = gameStore.getGame(roomCode);
+    const roundPhase = game.roundPhase;
 
     game.turnStatus = TurnStatus.ENDED;
-    this.markAllPlayersInactive(roomCode);
+
+    if (roundPhase === RoundPhase.HINT) {
+      this.updateBlankHints(roomCode);
+    } else if (roundPhase === RoundPhase.GUESS) {
+      this.markAllPlayersInactive(roomCode);
+    }
+    
     this.markAllPlayersCanSeeBoardTrue(roomCode);
     
     
@@ -728,6 +746,7 @@ class GameService {
         return PlayerStatus.INACTIVE;
       }
     })();
+    const hint = roundPhase === RoundPhase.GUESS ? "NO HINT, 🍀" : "";
     const playerCanSeeBoard = turnStatus === TurnStatus.ENDED ? true : false;
 
     const player = {
@@ -736,7 +755,7 @@ class GameService {
       status: playerStatus,
       oldScore: 0,
       newScore: 0,
-      hint: "",
+      hint: hint,
       tiles: this.setupNewTiles(game),
       canSeeBoard: playerCanSeeBoard,
     };
