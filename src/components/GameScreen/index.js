@@ -8,7 +8,7 @@ import TimerDisplay from "../TimerDisplay";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import { Button, Modal } from "react-bootstrap";
-import { getRoundInfo, getPlayers, getTiles, getMessages, getHint, getRoundPhase, getTurnStatus, getPlayerCanSeeBoard, getTimerID, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
+import { getRoundInfo, getPlayers, getTiles, getMessages, getHint, getRoundPhase, getTurnStatus, getTimerID, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
 
 const PlayerStatus = {
   ACTIVE: "active",
@@ -36,7 +36,7 @@ function GameScreen(props) {
   // TODO: should not be passing 3 separate booleans for 1 player status
   const isCodemaster = player && player.status === PlayerStatus.CODEMASTER;
   const isInactive = player && player.status === PlayerStatus.INACTIVE;
-  const isActive = player && player.status === PlayerStatus.ACTIVE;
+  // const isActive = player && player.status === PlayerStatus.ACTIVE;
   // const [isForceDisabled, setIsForceDisabled] = useState(false);
   // setIsForceDisabled(isCodemaster);
 
@@ -44,11 +44,12 @@ function GameScreen(props) {
 
   const [tiles, setTiles] = useState([]);
   const [messages, setMessages] = useState(["", ""]);
+  // const [showMessages, setShowMessages] =  useState(true);
   const [hint, setHint] = useState("");
   const [roundPhase, setRoundPhase] = useState();
   const [turnStatus, setTurnStatus] = useState();
   // TODO: maybe move playerCanSeeBoard and associated API calls to a lower component if nothing else needs it
-  const [playerCanSeeBoard, setPlayerCanSeeBoard] = useState(false);
+  // const [playerCanSeeBoard, setPlayerCanSeeBoard] = useState(false);
   const [timerTime, setTimerTime] = useState(null);
   const [timerID, setTimerID] = useState(null);
 
@@ -72,7 +73,7 @@ function GameScreen(props) {
     getHint(setHint);
     getRoundPhase(setRoundPhase);
     getTurnStatus(setTurnStatus);
-    getPlayerCanSeeBoard(setPlayerCanSeeBoard);
+    // getPlayerCanSeeBoard(setPlayerCanSeeBoard);
     getTimerID(setTimerID);
 
     registerListener("roundInfoChange", () => getRoundInfo(setRoundInfo));
@@ -82,7 +83,7 @@ function GameScreen(props) {
     registerListener("hintChange", () => getHint(setHint));
     registerListener("roundPhaseChange", () => getRoundPhase(setRoundPhase));
     registerListener("turnStatusChange", () => getTurnStatus(setTurnStatus));
-    registerListener("canSeeBoardChange", () => getPlayerCanSeeBoard(setPlayerCanSeeBoard));
+    // registerListener("canSeeBoardChange", () => getPlayerCanSeeBoard(setPlayerCanSeeBoard));
     registerListener("timerTimeChange", (time) => setTimerTime(time));
     registerListener("timerIDChange", () => getTimerID(setTimerID));
 

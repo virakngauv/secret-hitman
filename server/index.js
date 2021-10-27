@@ -394,6 +394,7 @@ io.on("connection", (socket) => {
       const timerID = gameService.getTimerID(roomCode);
       if (!timerID) {
         gameService.startTimer(roomCode, 5000, () => gameService.startNextTurn(roomCode), `socket.on("startNextTurn)`);
+        io.to(roomCode).emit("messagesChange");
       }
       // gameService.startNextTurn(roomCode);
 

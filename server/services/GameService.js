@@ -325,6 +325,11 @@ class GameService {
     const player = game.players.get(userID);
     const roundPhase = game.roundPhase;
     const turnStatus = game.turnStatus;
+    const timerID = game.timerID;
+
+    if (timerID) {
+      return [];
+    }
     // const hint = roundPhase === RoundPhase.HINT ? 
     const hint = (() => {
       if (roundPhase === RoundPhase.HINT) {
@@ -348,14 +353,15 @@ class GameService {
     let headerMessage = "";
     let footerMessage = "";
 
-    if (roundPhase === RoundPhase.HINT && hint === "") {
-      // headerMessage = playerStatus === PlayerStatus.CODEMASTER ? "type your hint below" : "hint pending..";
-      headerMessage = "type your hint below";
-    } 
-    // else if (turnStatus === TurnStatus.PAUSED) {
-    //   headerMessage = "hint marked as invalid, pending codemaster..";
+    // if (roundPhase === RoundPhase.HINT && hint === "") {
+    //   // headerMessage = playerStatus === PlayerStatus.CODEMASTER ? "type your hint below" : "hint pending..";
+    //   headerMessage = "type your hint below";
     // } 
-    else if (roundPhase === RoundPhase.GUESS && turnStatus === TurnStatus.ENDED) {
+    // // else if (turnStatus === TurnStatus.PAUSED) {
+    // //   headerMessage = "hint marked as invalid, pending codemaster..";
+    // // } 
+    // else 
+    if (roundPhase === RoundPhase.GUESS && turnStatus === TurnStatus.ENDED) {
       headerMessage = isLastTurn ? "last turn ended" : "turn ended";
 
       // if (!playerCanSeeBoard) {
