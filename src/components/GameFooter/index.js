@@ -34,7 +34,7 @@ function GameFooter(props) {
       return null;
     }
   } else {
-    return <GameFooterHitman isInactive={isInactive} hint={hint} setTiles={setTiles} />
+    return <GameFooterHitman isInactive={isInactive} setTiles={setTiles} />
   }
 }
 

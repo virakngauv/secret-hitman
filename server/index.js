@@ -306,18 +306,16 @@ io.on("connection", (socket) => {
     // }
   });
 
-  socket.on("invalidateHint", () => {
-    const roomCode = socket.roomCode;
-    const userID = socket.userID;
+  // socket.on("invalidateHint", () => {
+  //   const roomCode = socket.roomCode;
+  //   const userID = socket.userID;
 
-    if (gameStore.hasGame(roomCode)) {
-      const game = gameStore.getGame(roomCode);
-      const player = game.players.get(userID);
-      if (player) {
-        // TODO: rewrite to markHintAsInvalid
-        gameService.invalidateHint(game);
-
-
+  //   if (gameStore.hasGame(roomCode)) {
+  //     const game = gameStore.getGame(roomCode);
+  //     const player = game.players.get(userID);
+  //     if (player) {
+  //       // TODO: rewrite to markHintAsInvalid
+  //       gameService.invalidateHint(game);
 
 
 
@@ -328,43 +326,45 @@ io.on("connection", (socket) => {
 
 
 
-        // TODO: getHint listener should check turn status
 
-        io.to(roomCode).emit("turnStatusChange");
-        io.to(roomCode).emit("messagesChange");
-        io.to(roomCode).emit("tileChange");
-      }
-    }
-  });
 
-  socket.on("discardHint", () => {
-    const roomCode = socket.roomCode;
-    const userID = socket.userID;
+  //       // TODO: getHint listener should check turn status
 
-    if (gameService.isValidRoomAndCodemaster(roomCode, userID)) {
-      gameService.resetTurn(roomCode);
+  //       io.to(roomCode).emit("turnStatusChange");
+  //       io.to(roomCode).emit("messagesChange");
+  //       io.to(roomCode).emit("tileChange");
+  //     }
+  //   }
+  // });
 
-      io.to(roomCode).emit("turnStatusChange");
-      io.to(roomCode).emit("playerChange");
-      io.to(roomCode).emit("messagesChange");
-      io.to(roomCode).emit("hintChange");
-      io.to(roomCode).emit("tileChange");
-    }
-  });
+  // socket.on("discardHint", () => {
+  //   const roomCode = socket.roomCode;
+  //   const userID = socket.userID;
 
-  socket.on("keepHint", () => {
-    const roomCode = socket.roomCode;
-    const userID = socket.userID;
+  //   if (gameService.isValidRoomAndCodemaster(roomCode, userID)) {
+  //     gameService.resetTurn(roomCode);
 
-    if (gameService.isValidRoomAndCodemaster(roomCode, userID)) {
-      gameService.unpauseTurn(roomCode);
+  //     io.to(roomCode).emit("turnStatusChange");
+  //     io.to(roomCode).emit("playerChange");
+  //     io.to(roomCode).emit("messagesChange");
+  //     io.to(roomCode).emit("hintChange");
+  //     io.to(roomCode).emit("tileChange");
+  //   }
+  // });
 
-      io.to(roomCode).emit("turnStatusChange");
-      io.to(roomCode).emit("messagesChange");
-      io.to(roomCode).emit("hintChange");
-      io.to(roomCode).emit("tileChange");
-    }
-  });
+  // socket.on("keepHint", () => {
+  //   const roomCode = socket.roomCode;
+  //   const userID = socket.userID;
+
+  //   if (gameService.isValidRoomAndCodemaster(roomCode, userID)) {
+  //     gameService.unpauseTurn(roomCode);
+
+  //     io.to(roomCode).emit("turnStatusChange");
+  //     io.to(roomCode).emit("messagesChange");
+  //     io.to(roomCode).emit("hintChange");
+  //     io.to(roomCode).emit("tileChange");
+  //   }
+  // });
 
   socket.on("getRoundPhase", (setRoundPhase) => {
     const roomCode = socket.roomCode;
@@ -560,8 +560,11 @@ io.on("connection", (socket) => {
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       gameService.kickPlayer(roomCode, playerIDToKick);
-      gameService.checkAndEndTurnIfTurnShouldEnd(roomCode);
-
+      
+      const gameState = gameService.getGameState(roomCode);
+      if (gameState === GameState.GAME) {
+        gameService.checkAndEndTurnIfTurnShouldEnd(roomCode);
+      }
       // TODO: see what events are required now that kicking is only possible in the lobby
       // TODO: check to see if event listener is still registered if a player joins mid-game (I think event listener is set on lobby screen which will have been skipped)
       io.to(roomCode).emit("playerKicked", playerIDToKick);

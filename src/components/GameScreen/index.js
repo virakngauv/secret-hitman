@@ -7,8 +7,7 @@ import GameInfo from "../GameInfo";
 import TimerDisplay from "../TimerDisplay";
 import { useEffect, useState } from "react";
 import { useHistory } from "react-router";
-import { Button, Modal } from "react-bootstrap";
-import { getRoundInfo, getPlayers, getTiles, getMessages, getHint, getRoundPhase, getTurnStatus, getTimerTime, getTimerID, discardHint, keepHint, leaveRoom, registerListener } from "../../api";
+import { getRoundInfo, getPlayers, getTiles, getMessages, getHint, getRoundPhase, getTurnStatus, getTimerTime, getTimerID, registerListener } from "../../api";
 
 const PlayerStatus = {
   ACTIVE: "active",
@@ -89,42 +88,42 @@ function GameScreen(props) {
     registerListener("timerTimeChange", () => getTimerTime(setTimerTime));
     registerListener("timerIDChange", () => getTimerID(setTimerID));
 
-    registerListener("playerKicked", (kickedPlayerID) => {
-      const playerID = sessionStorage.getItem("playerID");
-      if (playerID === kickedPlayerID) {
-        history.push("/");
-        leaveRoom(roomCode);
-      } else {
-        console.log("getPlayers cause you weren't kicked but someone else was..")
-        getPlayers(setPlayers);
-      }
-    });
+    // registerListener("playerKicked", (kickedPlayerID) => {
+    //   const playerID = sessionStorage.getItem("playerID");
+    //   if (playerID === kickedPlayerID) {
+    //     history.push("/");
+    //     leaveRoom(roomCode);
+    //   } else {
+    //     console.log("getPlayers cause you weren't kicked but someone else was..")
+    //     getPlayers(setPlayers);
+    //   }
+    // });
   }, [roomCode, history]);
 
-  // TODO: Move Modal code to Codemaster Footer
-  const isPaused = turnStatus === TurnStatus.PAUSED;
-  // const [show, setShow] = useState(isPaused);
-  // const handleClose = () => setShow(false);
-  // const handleShow = () => setShow(true);
+  // // TODO: Move Modal code to Codemaster Footer
+  // const isPaused = turnStatus === TurnStatus.PAUSED;
+  // // const [show, setShow] = useState(isPaused);
+  // // const handleClose = () => setShow(false);
+  // // const handleShow = () => setShow(true);
 
-  // console.log(`turnStatus is ${turnStatus}`);
-  // console.log(`isPaused is ${isPaused}`);
+  // // console.log(`turnStatus is ${turnStatus}`);
+  // // console.log(`isPaused is ${isPaused}`);
 
-  function handleDiscardHint() {
-    console.log(`handleDiscardHint has triggered`);
+  // function handleDiscardHint() {
+  //   console.log(`handleDiscardHint has triggered`);
 
-    discardHint();
-    /*
-    unpause
-    respondToHintInvalidation
-    */
+  //   discardHint();
+  //   /*
+  //   unpause
+  //   respondToHintInvalidation
+  //   */
 
-  }
+  // }
 
-  function handleKeepHint() {
-    console.log(`handleKeepHint has triggered`);
-    keepHint();
-  }
+  // function handleKeepHint() {
+  //   console.log(`handleKeepHint has triggered`);
+  //   keepHint();
+  // }
 
   return (
     <Container className="screen">
@@ -138,7 +137,7 @@ function GameScreen(props) {
       <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} roundPhase={roundPhase} timerTime={timerTime} timerID={timerID} />
       {/* <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} setMessages={setMessages} roundPhase={roundPhase} /> */}
 
-      <Modal show={isPaused && isCodemaster} centered>
+      {/* <Modal show={isPaused && isCodemaster} centered>
         <Modal.Header>
           <Modal.Title>Your hint was marked as invalid!</Modal.Title>
         </Modal.Header>
@@ -147,7 +146,7 @@ function GameScreen(props) {
           <Button className="btn-menu ms-auto" size="sm" variant="outline-secondary" id="discard-hint-button" onClick={handleDiscardHint}>Discard the Hint</Button>
           <Button className="btn-menu me-auto" size="sm" variant="outline-secondary" id="keep-hint-button" onClick={handleKeepHint}>Keep the Hint</Button>
         </Modal.Footer>
-      </Modal>
+      </Modal> */}
     </Container>
   );
 }

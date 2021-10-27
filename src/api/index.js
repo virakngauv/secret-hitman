@@ -88,17 +88,17 @@ export function submitHint(hint) {
   // console.log(`submitHint(client)'s hint is ${hint}`);
 }
 
-export function invalidateHint() {
-  socket.emit("invalidateHint");
-}
+// export function invalidateHint() {
+//   socket.emit("invalidateHint");
+// }
 
-export function discardHint() {
-  socket.emit("discardHint");
-}
+// export function discardHint() {
+//   socket.emit("discardHint");
+// }
 
-export function keepHint() {
-  socket.emit("keepHint");
-}
+// export function keepHint() {
+//   socket.emit("keepHint");
+// }
 
 export function getRoundPhase(setRoundPhase) {
   socket.emit("getRoundPhase", setRoundPhase);
