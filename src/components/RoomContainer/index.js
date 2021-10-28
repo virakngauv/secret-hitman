@@ -44,7 +44,7 @@ function RoomContainer() {
     case GameState.LOBBY:
       return <LobbyScreen roomCode={roomCode} />
     case GameState.GAME:
-      return <GameScreen roomCode={roomCode} />
+      return <GameScreen roomCode={roomCode} setGameState={setGameState} />
     case GameState.END:
       return <EndScreen setGameState={setGameState} />
     default:

@@ -22,10 +22,10 @@ const PlayerStatus = {
   CODEMASTER: "codemaster",
 };
 
-const RoundPhase = {
-  HINT: "hint",
-  GUESS: "guess",
-};
+// const RoundPhase = {
+//   HINT: "hint",
+//   GUESS: "guess",
+// };
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -410,6 +410,20 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("endGame", () => {
+    const roomCode = socket.roomCode;
+    const userID = socket.userID;
+
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const isLastRound = gameService.isLastRound(roomCode);
+      const isLastTurn = gameService.isLastTurn(roomCode);
+
+      if (isLastRound && isLastTurn) {
+        gameService.startNextTurn(roomCode);
+      }
+    }
+  })
+
   socket.on("markPlayerStatus", (status) => {
     //   const game = gameStore.getGame(roomCode);
     //   if (game && game.gameState === GameState.LOBBY) {
@@ -511,21 +525,21 @@ io.on("connection", (socket) => {
       // TODO: remove magic number
       // const totalTime = 90000;
       // const timerTimeChangeEmitter = (time) => io.to(roomCode).volatile.emit("timerTimeChange", time);
-      const startGuessPhase = () => {
-        gameService.startGuessPhase(roomCode);
-        gameService.startNextTurn(roomCode);
+      // const startGuessPhase = () => {
+      //   gameService.startGuessPhase(roomCode);
+      //   gameService.startNextTurn(roomCode);
 
-        // io.to(roomCode).emit("gameStateChange");
-        // io.to(roomCode).emit("roundInfoChange");
-        // io.to(roomCode).emit("roundPhaseChange");
-        // io.to(roomCode).emit("turnStatusChange");
-        // io.to(roomCode).emit("playerChange");
-        // io.to(roomCode).emit("messagesChange");
-        // io.to(roomCode).emit("hintChange");
-        // io.to(roomCode).emit("tileChange");
-        // io.to(roomCode).emit("canSeeBoardChange");
-        // io.to(roomCode).emit("timerTimeChange", null);
-      };
+      //   // io.to(roomCode).emit("gameStateChange");
+      //   // io.to(roomCode).emit("roundInfoChange");
+      //   // io.to(roomCode).emit("roundPhaseChange");
+      //   // io.to(roomCode).emit("turnStatusChange");
+      //   // io.to(roomCode).emit("playerChange");
+      //   // io.to(roomCode).emit("messagesChange");
+      //   // io.to(roomCode).emit("hintChange");
+      //   // io.to(roomCode).emit("tileChange");
+      //   // io.to(roomCode).emit("canSeeBoardChange");
+      //   // io.to(roomCode).emit("timerTimeChange", null);
+      // };
 
       gameService.startTimer(roomCode, 60000, () => gameService.endTurn(roomCode), `socket.on("startGame")`);
       io.to(roomCode).emit("gameStateChange");

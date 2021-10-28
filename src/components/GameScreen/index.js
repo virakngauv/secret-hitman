@@ -24,6 +24,7 @@ const TurnStatus = {
 function GameScreen(props) {
   // const { roomCode } = useParams();
   const roomCode = props.roomCode;
+  const setGameState = props.setGameState;
   const history = useHistory();
 
   // TODO: get value from server
@@ -134,7 +135,7 @@ function GameScreen(props) {
       {hint && <Announcer message={hint} />}
       <GameBoard tiles={tiles} />
       {timerTime === null && footerMessage && <Announcer message={footerMessage} />}
-      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} roundPhase={roundPhase} timerTime={timerTime} timerID={timerID} />
+      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} roundPhase={roundPhase} timerTime={timerTime} timerID={timerID} roundInfo={roundInfo} setGameState={setGameState}/>
       {/* <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isActive={isActive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} setMessages={setMessages} roundPhase={roundPhase} /> */}
 
       {/* <Modal show={isPaused && isCodemaster} centered>

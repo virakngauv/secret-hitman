@@ -78,7 +78,11 @@ class GameService {
       this.resetPlayers(roomCode);
       game.currentCodemasterIndex = null;
       game.roundNumber = 0;
-      game.hint = "";
+      // game.hint = "";
+      game.roundPhase = null;
+      game.turnStatus=  null;
+      game.timerID = null;
+      game.timerTime = null;
     }
   }
 
@@ -160,11 +164,12 @@ class GameService {
         this.updateRoundPhase(game, RoundPhase.HINT);
         // this.updateTurnStatus(game, TurnStatus.STARTED);
         this.markAllPlayersCodemaster(roomCode);
-        game.currentCodemasterIndex = 0;
+        game.currentCodemasterIndex = null;
         game.currentCodemasterID = null;
         // nextCodemasterIndex = 0;
 
         if (game.roundNumber > this.maxRounds) {
+          // Full reset happens on "Play Again"
           this.updateGameState(roomCode, GameState.END);
         }
         return;
@@ -335,8 +340,8 @@ class GameService {
 
   getMessagesForUser(roomCode, userID) {
     const game = gameStore.getGame(roomCode);
-    const codemaster = game.players.get(game.currentCodemasterID);
-    const player = game.players.get(userID);
+    // const codemaster = game.players.get(game.currentCodemasterID);
+    // const player = game.players.get(userID);
     const roundPhase = game.roundPhase;
     const turnStatus = game.turnStatus;
     const timerID = game.timerID;
@@ -345,25 +350,25 @@ class GameService {
       return [];
     }
     // const hint = roundPhase === RoundPhase.HINT ? 
-    const hint = (() => {
-      if (roundPhase === RoundPhase.HINT) {
-        return player.hint;
-      } else if (roundPhase === RoundPhase.GUESS) {
-        return codemaster.hint;
-      }
-    })();
+    // const hint = (() => {
+    //   if (roundPhase === RoundPhase.HINT) {
+    //     return player.hint;
+    //   } else if (roundPhase === RoundPhase.GUESS) {
+    //     return codemaster.hint;
+    //   }
+    // })();
 
-    const players = game.players;
-    const playerStatus = player.status;
-    const playerCanSeeBoard = player.canSeeBoard;
-    const allPlayersReady = Array.from(players.values()).reduce(
-      (readyStatusSoFar, currentPlayer) => {
-        return readyStatusSoFar && currentPlayer.status === PlayerStatus.ACTIVE
-      }, true
-    );
+    // const players = game.players;
+    // const playerStatus = player.status;
+    // const playerCanSeeBoard = player.canSeeBoard;
+    // const allPlayersReady = Array.from(players.values()).reduce(
+    //   (readyStatusSoFar, currentPlayer) => {
+    //     return readyStatusSoFar && currentPlayer.status === PlayerStatus.ACTIVE
+    //   }, true
+    // );
 
-    const isLastTurn = this.isLastTurn(game);
-    const isLastRound = this.isLastRound(game);
+    const isLastTurn = this.isLastTurn(roomCode);
+    const isLastRound = this.isLastRound(roomCode);
 
     let headerMessage = "";
     let footerMessage = "";
@@ -417,14 +422,16 @@ class GameService {
     return [headerMessage, footerMessage];
   }
 
-  isLastRound(game) {
+  isLastRound(roomCode) {
+    const game = gameStore.getGame(roomCode);
     const isLastRound = game.roundNumber === this.maxRounds;
 
     return isLastRound
   }
 
 
-  isLastTurn(game) {
+  isLastTurn(roomCode) {
+    const game = gameStore.getGame(roomCode);
     const lastPlayerID = Array.from(game.players.keys()).pop();
     const codemasterID = game.playerArchive[game.currentCodemasterIndex];
     const lastPlayerIsCodemaster = lastPlayerID === codemasterID;
