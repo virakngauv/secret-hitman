@@ -338,34 +338,15 @@ class GameService {
     return tilesCopy;
   }
 
-  getMessagesForUser(roomCode, userID) {
+  getMessagesForUser(roomCode) {
     const game = gameStore.getGame(roomCode);
-    // const codemaster = game.players.get(game.currentCodemasterID);
-    // const player = game.players.get(userID);
     const roundPhase = game.roundPhase;
     const turnStatus = game.turnStatus;
-    const timerID = game.timerID;
+    // const timerID = game.timerID;
 
-    if (timerID) {
-      return [];
-    }
-    // const hint = roundPhase === RoundPhase.HINT ? 
-    // const hint = (() => {
-    //   if (roundPhase === RoundPhase.HINT) {
-    //     return player.hint;
-    //   } else if (roundPhase === RoundPhase.GUESS) {
-    //     return codemaster.hint;
-    //   }
-    // })();
-
-    // const players = game.players;
-    // const playerStatus = player.status;
-    // const playerCanSeeBoard = player.canSeeBoard;
-    // const allPlayersReady = Array.from(players.values()).reduce(
-    //   (readyStatusSoFar, currentPlayer) => {
-    //     return readyStatusSoFar && currentPlayer.status === PlayerStatus.ACTIVE
-    //   }, true
-    // );
+    // if (timerID) {
+    //   return [];
+    // }
 
     const isLastTurn = this.isLastTurn(roomCode);
     const isLastRound = this.isLastRound(roomCode);
@@ -373,22 +354,16 @@ class GameService {
     let headerMessage = "";
     let footerMessage = "";
 
-    // if (roundPhase === RoundPhase.HINT && hint === "") {
-    //   // headerMessage = playerStatus === PlayerStatus.CODEMASTER ? "type your hint below" : "hint pending..";
-    //   headerMessage = "type your hint below";
-    // } 
-    // // else if (turnStatus === TurnStatus.PAUSED) {
-    // //   headerMessage = "hint marked as invalid, pending codemaster..";
-    // // } 
-    // else 
-    if (roundPhase === RoundPhase.HINT && turnStatus === TurnStatus.ENDED) {
-      headerMessage = "hint locked in!";
-      footerMessage = "start guessing phase?"
+    if (roundPhase === RoundPhase.HINT) {
+      if (turnStatus === TurnStatus.STARTED) {
+        headerMessage = "hint phase, type hint below";
+      } else if (turnStatus === TurnStatus.ENDED) {
+        headerMessage = "hints locked in!";
+        footerMessage = "start guessing phase?";
+      }
     }
 
     if (roundPhase === RoundPhase.GUESS && turnStatus === TurnStatus.ENDED) {
-      // headerMessage = isLastTurn && isLastRound ? "last turn ended" : "turn ended";
-
       [headerMessage, footerMessage] = (() => {
         if (isLastTurn) {
           if (isLastRound) {
@@ -400,23 +375,6 @@ class GameService {
           return ["turn ended", "start next turn?"]
         }
       })();
-
-      // if (!playerCanSeeBoard) {
-      //   // TODO automatically show board on turn end
-      //   footerMessage = "Reveal Tiles?";
-      // } else if (playerStatus === PlayerStatus.INACTIVE) {
-      //   footerMessage = isLastTurn ? "Ready?" : "Ready for Next Turn?";
-      // } else if (isLastTurn) {
-      //   // If last turn, skips the "waiting on other players" message
-      //   footerMessage = "See Rankings?";
-      // } else if (!allPlayersReady) {
-      //   footerMessage = "Waiting on Other Players";
-      // } else {
-      //   footerMessage = "Start Next Turn?";
-      // }
-
-      // footerMessage = isLastTurn ? "see rankings?" : "start next turn?";
-
     } 
 
     return [headerMessage, footerMessage];

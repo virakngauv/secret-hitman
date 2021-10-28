@@ -261,7 +261,7 @@ io.on("connection", (socket) => {
     const userID = socket.userID;
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
-      const messages = gameService.getMessagesForUser(roomCode, userID);
+      const messages = gameService.getMessagesForUser(roomCode);
       setMessages(messages);
     }
   })
