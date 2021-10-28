@@ -742,7 +742,7 @@ class GameService {
       this.io.to(roomCode).emit("tileChange");
 
       // TODO: remove magic number
-      const totalTime = game.roundPhase === RoundPhase.HINT ? 90000 : 15000;
+      const totalTime = game.roundPhase === RoundPhase.HINT ? 60000 : 15000;
       if (game.gameState === GameState.GAME) {
         this.startTimer(roomCode, totalTime, () => this.endTurn(roomCode), `GameService's startNextTurn`);
       }
