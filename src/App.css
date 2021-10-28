@@ -24,11 +24,35 @@ body {
   color: #000;
 }
 
-/* Overrides */
+/* Start of Overrides */
 .form-control {
   /* Copies the border of the secondary-outline type */
   border: 1px solid #6c757d;
 }
+
+/* Button holding focus even when new button is swapped in. MOBILE-ONLY BUG.*/
+.btn-outline-secondary:active {
+  color: #000;
+  background-color: transparent;
+}
+
+.btn-outline-secondary:hover {
+  color: #000;
+  background-color: transparent;
+}
+
+.btn:hover {
+  color: #000;
+}
+
+.btn-dark:disabled {
+  color: #fff;
+}
+
+.btn-success:disabled {
+  color: #fff;
+}
+/* End of Overrides */
 
 /*Default CSS from react*/
 .App {
