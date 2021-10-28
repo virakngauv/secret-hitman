@@ -393,7 +393,7 @@ io.on("connection", (socket) => {
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       const timerID = gameService.getTimerID(roomCode);
       if (!timerID) {
-        gameService.startTimer(roomCode, 5000, () => gameService.startNextTurn(roomCode), `socket.on("startNextTurn)`);
+        gameService.startTimer(roomCode, 3000, () => gameService.startNextTurn(roomCode), `socket.on("startNextTurn)`);
         io.to(roomCode).emit("messagesChange");
       }
       // gameService.startNextTurn(roomCode);
@@ -509,7 +509,6 @@ io.on("connection", (socket) => {
       gameService.initializeGame(roomCode);
       
       // TODO: remove magic number
-      const totalTime = 15000;
       // const totalTime = 90000;
       // const timerTimeChangeEmitter = (time) => io.to(roomCode).volatile.emit("timerTimeChange", time);
       const startGuessPhase = () => {
@@ -528,7 +527,7 @@ io.on("connection", (socket) => {
         // io.to(roomCode).emit("timerTimeChange", null);
       };
 
-      gameService.startTimer(roomCode, totalTime, () => gameService.endTurn(roomCode), `socket.on("startGame")`);
+      gameService.startTimer(roomCode, 60000, () => gameService.endTurn(roomCode), `socket.on("startGame")`);
       io.to(roomCode).emit("gameStateChange");
     }
   });
