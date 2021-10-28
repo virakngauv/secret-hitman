@@ -140,6 +140,7 @@ io.on("connection", (socket) => {
       gameService.addNewPlayerToGame(userID, name, playerID, roomCode);
       socket.join(roomCode);
       socket.broadcast.to(roomCode).emit("playerChange");
+      socket.broadcast.to(roomCode).emit("roundInfoChange");
       goToRoom();
     }
   });
