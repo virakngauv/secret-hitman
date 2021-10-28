@@ -1,7 +1,7 @@
 // import { useState } from 'react';
 import { Row, Col } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
-import { startNextTurn, pauseTimer } from "../../api";
+import { endGame, startNextTurn, pauseTimer, getGameState } from "../../api";
 
 // // TODO: Make enum for PlayerStatus
 // const PlayerStatus = {
@@ -13,38 +13,34 @@ import { startNextTurn, pauseTimer } from "../../api";
 function GameFooterEnd(props) {
   const timerTime = props.timerTime;
   const timerID = props.timerID;
-  // const [timerIsPaused, setTimerIsPaused] = useState(false);
-  // const isCodemaster = props.isCodemaster;
-  // const isActive = props.isActive;
-  // const setTiles = props.setTiles;
-  // const playerCanSeeBoard = props.playerCanSeeBoard;
-  // const setPlayerCanSeeBoard = props.setPlayerCanSeeBoard;
-  // const players = props.players;
-  // const setMessages = props.setMessages;
-  // // const isInactive = props.isInactive;
-  // // const hint = props.hint;
-  // // const isHintEmpty = hint === "" ? true : false;
+  const roundInfo = props.roundInfo;
+  const setGameState = props.setGameState;
 
-  // function handleRevealBoard() {
-  //   revealBoard(setTiles);
-  //   getPlayerCanSeeBoard(setPlayerCanSeeBoard);
-  //   getMessages(setMessages);
-  // }
+  const roomCode = sessionStorage.getItem("roomCode");
 
-  // function toggleReadyStatus() {
-  //   if (isActive) {
-  //     markPlayerStatus(PlayerStatus.INACTIVE);
-  //   } else if (!isActive) {
-  //     markPlayerStatus(PlayerStatus.ACTIVE);
-  //   }
+  const [isLastTurn, isLastRound] = (() => {
+    if (roundInfo.length !== 4) {
+      return [false, false];
+    }
 
-  //   getMessages(setMessages);
-  // }
+    if (roundInfo[1] === 0 || roundInfo[3] === 0) {
+      return [false, false];
+    }
+
+    const isLastTurn = roundInfo[0] === roundInfo[1];
+    const isLastRound = roundInfo[2] === roundInfo[3];
+
+    return [isLastTurn, isLastRound];
+  })();
 
   function handleNextTurn() {
-    // Either from hitting Next Turn button or from Restart Timer button
-    startNextTurn();
-    // setTimerIsPaused(false);
+    if (isLastTurn && isLastRound) {
+      endGame();
+      getGameState(roomCode, setGameState);
+    } else {
+      // Either from hitting Next Turn button or from Restart Timer button
+      startNextTurn();
+    }
   }
 
   function handlePauseTimer() {

@@ -112,6 +112,10 @@ export function startNextTurn() {
   socket.emit("startNextTurn");
 }
 
+export function endGame() {
+  socket.emit("endGame");
+}
+
 export function markPlayerStatus(status) {
   socket.emit("markPlayerStatus", status);
 }

@@ -78,7 +78,11 @@ class GameService {
       this.resetPlayers(roomCode);
       game.currentCodemasterIndex = null;
       game.roundNumber = 0;
-      game.hint = "";
+      // game.hint = "";
+      game.roundPhase = null;
+      game.turnStatus=  null;
+      game.timerID = null;
+      game.timerTime = null;
     }
   }
 
@@ -160,11 +164,12 @@ class GameService {
         this.updateRoundPhase(game, RoundPhase.HINT);
         // this.updateTurnStatus(game, TurnStatus.STARTED);
         this.markAllPlayersCodemaster(roomCode);
-        game.currentCodemasterIndex = 0;
+        game.currentCodemasterIndex = null;
         game.currentCodemasterID = null;
         // nextCodemasterIndex = 0;
 
         if (game.roundNumber > this.maxRounds) {
+          // Full reset happens on "Play Again"
           this.updateGameState(roomCode, GameState.END);
         }
         return;
@@ -333,57 +338,32 @@ class GameService {
     return tilesCopy;
   }
 
-  getMessagesForUser(roomCode, userID) {
+  getMessagesForUser(roomCode) {
     const game = gameStore.getGame(roomCode);
-    const codemaster = game.players.get(game.currentCodemasterID);
-    const player = game.players.get(userID);
     const roundPhase = game.roundPhase;
     const turnStatus = game.turnStatus;
-    const timerID = game.timerID;
+    // const timerID = game.timerID;
 
-    if (timerID) {
-      return [];
-    }
-    // const hint = roundPhase === RoundPhase.HINT ? 
-    const hint = (() => {
-      if (roundPhase === RoundPhase.HINT) {
-        return player.hint;
-      } else if (roundPhase === RoundPhase.GUESS) {
-        return codemaster.hint;
-      }
-    })();
+    // if (timerID) {
+    //   return [];
+    // }
 
-    const players = game.players;
-    const playerStatus = player.status;
-    const playerCanSeeBoard = player.canSeeBoard;
-    const allPlayersReady = Array.from(players.values()).reduce(
-      (readyStatusSoFar, currentPlayer) => {
-        return readyStatusSoFar && currentPlayer.status === PlayerStatus.ACTIVE
-      }, true
-    );
-
-    const isLastTurn = this.isLastTurn(game);
-    const isLastRound = this.isLastRound(game);
+    const isLastTurn = this.isLastTurn(roomCode);
+    const isLastRound = this.isLastRound(roomCode);
 
     let headerMessage = "";
     let footerMessage = "";
 
-    // if (roundPhase === RoundPhase.HINT && hint === "") {
-    //   // headerMessage = playerStatus === PlayerStatus.CODEMASTER ? "type your hint below" : "hint pending..";
-    //   headerMessage = "type your hint below";
-    // } 
-    // // else if (turnStatus === TurnStatus.PAUSED) {
-    // //   headerMessage = "hint marked as invalid, pending codemaster..";
-    // // } 
-    // else 
-    if (roundPhase === RoundPhase.HINT && turnStatus === TurnStatus.ENDED) {
-      headerMessage = "hint locked in!";
-      footerMessage = "start guessing phase?"
+    if (roundPhase === RoundPhase.HINT) {
+      if (turnStatus === TurnStatus.STARTED) {
+        headerMessage = "hint phase, type hint below";
+      } else if (turnStatus === TurnStatus.ENDED) {
+        headerMessage = "hints locked in!";
+        footerMessage = "start guessing phase?";
+      }
     }
 
     if (roundPhase === RoundPhase.GUESS && turnStatus === TurnStatus.ENDED) {
-      // headerMessage = isLastTurn && isLastRound ? "last turn ended" : "turn ended";
-
       [headerMessage, footerMessage] = (() => {
         if (isLastTurn) {
           if (isLastRound) {
@@ -395,36 +375,21 @@ class GameService {
           return ["turn ended", "start next turn?"]
         }
       })();
-
-      // if (!playerCanSeeBoard) {
-      //   // TODO automatically show board on turn end
-      //   footerMessage = "Reveal Tiles?";
-      // } else if (playerStatus === PlayerStatus.INACTIVE) {
-      //   footerMessage = isLastTurn ? "Ready?" : "Ready for Next Turn?";
-      // } else if (isLastTurn) {
-      //   // If last turn, skips the "waiting on other players" message
-      //   footerMessage = "See Rankings?";
-      // } else if (!allPlayersReady) {
-      //   footerMessage = "Waiting on Other Players";
-      // } else {
-      //   footerMessage = "Start Next Turn?";
-      // }
-
-      // footerMessage = isLastTurn ? "see rankings?" : "start next turn?";
-
     } 
 
     return [headerMessage, footerMessage];
   }
 
-  isLastRound(game) {
+  isLastRound(roomCode) {
+    const game = gameStore.getGame(roomCode);
     const isLastRound = game.roundNumber === this.maxRounds;
 
     return isLastRound
   }
 
 
-  isLastTurn(game) {
+  isLastTurn(roomCode) {
+    const game = gameStore.getGame(roomCode);
     const lastPlayerID = Array.from(game.players.keys()).pop();
     const codemasterID = game.playerArchive[game.currentCodemasterIndex];
     const lastPlayerIsCodemaster = lastPlayerID === codemasterID;

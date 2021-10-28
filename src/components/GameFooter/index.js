@@ -23,9 +23,11 @@ function GameFooter(props) {
   const roundPhase = props.roundPhase;
   const timerTime = props.timerTime;
   const timerID = props.timerID;
+  const roundInfo = props.roundInfo;
+  const setGameState = props.setGameState;
 
   if (isTurnEnded) {
-    return <GameFooterEnd timerTime={timerTime} timerID={timerID} />
+    return <GameFooterEnd timerTime={timerTime} timerID={timerID} roundInfo={roundInfo} setGameState={setGameState} />
     // return <GameFooterEnd isCodemaster={isCodemaster} isActive={isActive} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} setMessages={setMessages} />
   } else if (isCodemaster) {
     if (roundPhase === RoundPhase.HINT) {

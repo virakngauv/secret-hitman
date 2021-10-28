@@ -30,6 +30,10 @@ function GameFooterCodemaster(props) {
     e.preventDefault();
     e.stopPropagation();
 
+    if (hasInitialHint || isHintDefault || isHintNumberDefault) {
+      return;
+    }
+
     // TODO: maybe send as an array do to server side validations
     const fullHint = `${hint} ${hintNumber}`;
 
