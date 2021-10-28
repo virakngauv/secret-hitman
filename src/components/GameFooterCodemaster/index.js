@@ -36,7 +36,7 @@ function GameFooterCodemaster(props) {
     setHint(defaultHint);
     setHintNumber(defaultHintNumber);
 
-    submitHint(roomCode, fullHint);
+    submitHint(fullHint);
   }
 
   const isHintDefault = hint === defaultHint;

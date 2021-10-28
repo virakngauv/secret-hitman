@@ -83,21 +83,25 @@ export function getHint(setHint) {
   socket.emit("getHint", (hint) => setHint(hint));
 }
 
-export function submitHint(roomCode, hint) {
-  socket.emit("submitHint", roomCode, hint);
-  console.log(`submitHint(client)'s hint is ${hint}`);
+export function submitHint(hint) {
+  socket.emit("submitHint", hint);
+  // console.log(`submitHint(client)'s hint is ${hint}`);
 }
 
-export function invalidateHint() {
-  socket.emit("invalidateHint");
-}
+// export function invalidateHint() {
+//   socket.emit("invalidateHint");
+// }
 
-export function discardHint() {
-  socket.emit("discardHint");
-}
+// export function discardHint() {
+//   socket.emit("discardHint");
+// }
 
-export function keepHint() {
-  socket.emit("keepHint");
+// export function keepHint() {
+//   socket.emit("keepHint");
+// }
+
+export function getRoundPhase(setRoundPhase) {
+  socket.emit("getRoundPhase", setRoundPhase);
 }
 
 export function getTurnStatus(setTurnStatus) {
@@ -112,8 +116,16 @@ export function markPlayerStatus(status) {
   socket.emit("markPlayerStatus", status);
 }
 
-export function getPlayerCanSeeBoard(setPlayerCanSeeBoard) {
-  socket.emit("getPlayerCanSeeBoard", setPlayerCanSeeBoard);
+// export function getPlayerCanSeeBoard(setPlayerCanSeeBoard) {
+//   socket.emit("getPlayerCanSeeBoard", setPlayerCanSeeBoard);
+// }
+
+export function getTimerTime(setTimerTime) {
+  socket.emit("getTimerTime", setTimerTime);
+}
+
+export function getTimerID(setTimerID) {
+  socket.emit("getTimerID", setTimerID);
 }
 
 // export function markPlayerCanSeeBoard(canSeeBoard, setTiles) {
@@ -140,6 +152,10 @@ export function kickPlayer(playerIDToKick) {
   console.log("I am in kickPlayer in the api");
 
   socket.emit("kickPlayer", playerIDToKick);
+}
+
+export function pauseTimer() {
+  socket.emit("pauseTimer");
 }
 
 export function leaveRoom(roomCode) {

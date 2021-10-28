@@ -9,16 +9,24 @@ function GameInfo(props) {
     <>
       <Row className="game-info">
         <Col className="d-flex">
-          <div className="fs-sm ms-auto me-3">
+          <div className="fs-sm ms-auto me-1">
             <b>Room:</b> {`${roomCode}`}
           </div>
         </Col>
-        {roundInfo.length === 2 && 
-          <Col className="d-flex">
-            <div className="fs-sm ms-3 me-auto">
-              <b>Round:</b>  {`${roundInfo[0]}/${roundInfo[1]}`}
-            </div>
-          </Col>}
+        {roundInfo.length === 4 &&
+          <>
+            <Col className="d-flex">
+              <div className="fs-sm ms-auto me-auto">
+                <b>Turn:</b>  {`${roundInfo[0]}/${roundInfo[1]}`}
+              </div>
+            </Col>
+            <Col className="d-flex">
+              <div className="fs-sm ms-1 me-auto">
+                <b>Round:</b>  {`${roundInfo[2]}/${roundInfo[3]}`}
+              </div>
+            </Col>
+          </>
+        }
       </Row>
     </>
   );
