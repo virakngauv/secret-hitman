@@ -156,13 +156,24 @@ class GameService {
       if (nextCodemasterIndex === playerArchive.length) {
         this.incrementRoundNumber(game);
         // TODO: make function for starting next hint phase
-        nextCodemasterIndex = 0;
-      }
+        this.resetRound(game);
+        this.updateRoundPhase(game, RoundPhase.HINT);
+        // this.updateTurnStatus(game, TurnStatus.STARTED);
+        this.markAllPlayersCodemaster(roomCode);
+        game.currentCodemasterIndex = 0;
+        game.currentCodemasterID = null;
+        // nextCodemasterIndex = 0;
 
-      if (game.roundNumber > this.maxRounds) {
-        this.updateGameState(roomCode, GameState.END);
+        if (game.roundNumber > this.maxRounds) {
+          this.updateGameState(roomCode, GameState.END);
+        }
         return;
       }
+
+      // if (game.roundNumber > this.maxRounds) {
+      //   this.updateGameState(roomCode, GameState.END);
+      //   return;
+      // }
 
       const nextPossibleCodemasterID = playerArchive[nextCodemasterIndex];
       const nextPossibleCodemaster = players.get(nextPossibleCodemasterID);
@@ -352,6 +363,7 @@ class GameService {
     );
 
     const isLastTurn = this.isLastTurn(game);
+    const isLastRound = this.isLastRound(game);
 
     let headerMessage = "";
     let footerMessage = "";
@@ -366,11 +378,23 @@ class GameService {
     // else 
     if (roundPhase === RoundPhase.HINT && turnStatus === TurnStatus.ENDED) {
       headerMessage = "hint locked in!";
-      footerMessage = "start guess phase?"
+      footerMessage = "start guessing phase?"
     }
 
     if (roundPhase === RoundPhase.GUESS && turnStatus === TurnStatus.ENDED) {
-      headerMessage = isLastTurn ? "last turn ended" : "turn ended";
+      // headerMessage = isLastTurn && isLastRound ? "last turn ended" : "turn ended";
+
+      [headerMessage, footerMessage] = (() => {
+        if (isLastTurn) {
+          if (isLastRound) {
+            return ["game over!", "see rankings?"]
+          } else {
+            return ["guessing phase over", "start new hint phase?"]
+          }
+        } else {
+          return ["turn ended", "start next turn?"]
+        }
+      })();
 
       // if (!playerCanSeeBoard) {
       //   // TODO automatically show board on turn end
@@ -386,23 +410,27 @@ class GameService {
       //   footerMessage = "Start Next Turn?";
       // }
 
-      footerMessage = isLastTurn ? "see rankings?" : "start next turn?";
+      // footerMessage = isLastTurn ? "see rankings?" : "start next turn?";
 
     } 
 
     return [headerMessage, footerMessage];
   }
 
-  isLastTurn(game) {
+  isLastRound(game) {
     const isLastRound = game.roundNumber === this.maxRounds;
-    console.log(`game.roundNumber is ${game.roundNumber} and this.maxRound is ${this.maxRounds}`);
 
+    return isLastRound
+  }
+
+
+  isLastTurn(game) {
     const lastPlayerID = Array.from(game.players.keys()).pop();
     const codemasterID = game.playerArchive[game.currentCodemasterIndex];
     const lastPlayerIsCodemaster = lastPlayerID === codemasterID;
     console.log(`lastPlayerID is ${lastPlayerID} and codemasterID is ${codemasterID}`);
 
-    return isLastRound && lastPlayerIsCodemaster;
+    return lastPlayerIsCodemaster;
   }
 
   getHint(roomCode, userID) {
@@ -430,6 +458,13 @@ class GameService {
     const game = gameStore.getGame(roomCode);
     const player = game.players.get(userID);
     player.hint = hint;
+  }
+
+  resetHintsForAllPlayers(game) {
+    const players = game.players;
+    players.forEach((player) => {
+      player.hint = "";
+    });
   }
 
   // TODO: pull "NO HINT, 🍀" into constant or config obj
@@ -525,6 +560,11 @@ class GameService {
     players.forEach((player, userID) => {
       this.markPlayerCanSeeBoard(roomCode, userID);
     });
+  }
+
+  resetRound(game) {
+    this.resetHintsForAllPlayers(game);
+    this.setupNewTilesForAllPlayers(game);
   }
 
   checkAndEndTurnIfTurnShouldEnd(roomCode) {
@@ -702,7 +742,7 @@ class GameService {
       this.io.to(roomCode).emit("tileChange");
 
       // TODO: remove magic number
-      const totalTime = 25000;
+      const totalTime = game.roundPhase === RoundPhase.HINT ? 90000 : 15000;
       if (game.gameState === GameState.GAME) {
         this.startTimer(roomCode, totalTime, () => this.endTurn(roomCode), `GameService's startNextTurn`);
       }
