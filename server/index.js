@@ -205,10 +205,15 @@ io.on("connection", (socket) => {
     const userID = socket.userID;
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const gameState = gameService.getGameState(roomCode);
+      if (gameState !== GameState.GAME) {
+        io.to(socket.id).emit("gameStateChange");
+        return;
+      }
+
       gameService.claimTile(roomCode, userID, tileIndex);
 
       
-
       // TODO: if 2x RTT is too slow maybe change below to: 
       //   io.to(userID).emit("tileChange", newTiles);
       io.to(roomCode).emit("tileChange");
@@ -492,6 +497,11 @@ io.on("connection", (socket) => {
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       // gameService.endPlayerTurn(roomCode, userID);
+      const gameState = gameService.getGameState(roomCode);
+      if (gameState !== GameState.GAME) {
+        io.to(socket.id).emit("gameStateChange");
+        return;
+      }
       gameService.markPlayerStatus(roomCode, userID, PlayerStatus.INACTIVE);
 
       gameService.checkAndEndTurnIfTurnShouldEnd(roomCode);
