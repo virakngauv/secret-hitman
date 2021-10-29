@@ -6,6 +6,7 @@ import { Server } from "socket.io";
 
 import gameStore from "./GameStore.js";
 import { generateRandomId } from "./helpers/util/index.js"
+import { logGameSnapshot } from "./logger/index.js";
 import GameService from "./services/GameService.js";
 import userStore from "./UserStore.js";
 
@@ -123,6 +124,8 @@ io.on("connection", (socket) => {
     gameService.addNewPlayerToGame(userID, name, playerID, roomCode);
     socket.join(roomCode);
     goToLobby(roomCode);
+
+    logGameSnapshot(roomCode, userID, "createGame", name);
   });
 
   socket.on("joinGame", (name, roomCode, goToRoom) => {
@@ -142,6 +145,8 @@ io.on("connection", (socket) => {
       socket.broadcast.to(roomCode).emit("playerChange");
       socket.broadcast.to(roomCode).emit("roundInfoChange");
       goToRoom();
+
+      logGameSnapshot(roomCode, userID, "joinGame", roomCode);
     }
   });
 
@@ -242,9 +247,12 @@ io.on("connection", (socket) => {
         io.to(roomCode).emit("messagesChange");
         io.to(roomCode).emit("hintChange");
       }
+
+      logGameSnapshot(roomCode, userID, "claimTile", tileIndex);
     }
   });
 
+  // TODO: ensure not in use, then remove
   socket.on("revealBoard", (setTiles) => {
     const roomCode = socket.roomCode;
     const userID = socket.userID;
@@ -252,7 +260,7 @@ io.on("connection", (socket) => {
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       const turnIsEnded = gameService.checkIfTurnIsEnded(roomCode);
 
-      console.log(`revealBoard's turnIsEnded is ${turnIsEnded}`);
+      // console.log(`revealBoard's turnIsEnded is ${turnIsEnded}`);
 
       if (turnIsEnded) {
         gameService.markPlayerCanSeeBoard(roomCode, userID);
@@ -287,7 +295,7 @@ io.on("connection", (socket) => {
     const userID = socket.userID;
 
     if (gameService.isValidRoomAndCodemaster(roomCode, userID)) {
-      console.log(`submithint's hint is ${hint}`);
+      // console.log(`submithint's hint is ${hint}`);
       gameService.setHintForPlayer(roomCode, hint, userID);
       
 
@@ -299,6 +307,8 @@ io.on("connection", (socket) => {
 
       io.to(roomCode).emit("messagesChange");
       io.to(roomCode).emit("hintChange");
+
+      logGameSnapshot(roomCode, userID, "submitHint", hint);
     }
     // if (gameStore.hasGame(roomCode)) {
     //   const game = gameStore.getGame(roomCode);
@@ -399,7 +409,7 @@ io.on("connection", (socket) => {
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       const timerID = gameService.getTimerID(roomCode);
       if (!timerID) {
-        gameService.startTimer(roomCode, 3000, () => gameService.startNextTurn(roomCode), `socket.on("startNextTurn)`);
+        gameService.startTimer(roomCode, 3000, () => gameService.startNextTurn(roomCode), `startNextTurn`, `gameService.startNextTurn(roomCode)`);
         io.to(roomCode).emit("messagesChange");
       }
       // gameService.startNextTurn(roomCode);
@@ -413,6 +423,7 @@ io.on("connection", (socket) => {
       // io.to(roomCode).emit("hintChange");
       // io.to(roomCode).emit("tileChange");
       // io.to(roomCode).emit("canSeeBoardChange");
+      logGameSnapshot(roomCode, userID, "startNextTurn");
     }
   });
 
@@ -427,6 +438,8 @@ io.on("connection", (socket) => {
       if (isLastRound && isLastTurn) {
         gameService.startNextTurn(roomCode);
       }
+
+      logGameSnapshot(roomCode, userID, "endGame");
     }
   })
 
@@ -453,6 +466,8 @@ io.on("connection", (socket) => {
 
       io.to(roomCode).emit("playerChange");
       io.to(roomCode).emit("messagesChange");
+
+      logGameSnapshot(roomCode, userID, "markPlayerStatus", status);
     }
     // // START TEMP CODE
     // const players = gameStore.getGame(roomCode).players.values();
@@ -514,6 +529,8 @@ io.on("connection", (socket) => {
       io.to(roomCode).emit("playerChange");
       io.to(roomCode).emit("messagesChange");
       io.to(roomCode).emit("hintChange");
+
+      logGameSnapshot(roomCode, userID, "endPlayerTurn");
     }
   });
 
@@ -552,8 +569,12 @@ io.on("connection", (socket) => {
       //   // io.to(roomCode).emit("timerTimeChange", null);
       // };
 
-      gameService.startTimer(roomCode, 60000, () => gameService.endTurn(roomCode), `socket.on("startGame")`);
+      gameService.startTimer(roomCode, 60000, () => gameService.endTurn(roomCode), `startGame`, `gameService.endTurn`);
       io.to(roomCode).emit("gameStateChange");
+
+      // TODO: shouldn't 'startGame' have a roomCode and userID on the socket? check if can configure call to ".isValidRoomAndUser" format
+      const userID = socket.userID;
+      logGameSnapshot(roomCode, userID, "startGame", roomCode);
     }
   });
 
@@ -574,6 +595,7 @@ io.on("connection", (socket) => {
       
       // // set to game state to lobby
       // // force local game state to lobby
+      logGameSnapshot(roomCode, userID, "playAgain");
     }
   })
 
@@ -596,6 +618,8 @@ io.on("connection", (socket) => {
       io.to(roomCode).emit("playerChange");
       io.to(roomCode).emit("messagesChange");
       io.to(roomCode).emit("hintChange");
+
+      logGameSnapshot(roomCode, userID, "kickPlayer", playerIDToKick);
     }
   });
 
@@ -605,6 +629,9 @@ io.on("connection", (socket) => {
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       gameService.pauseGameTimer(roomCode);
+
+      // TODO: make enum of stuff like SocketEvent.PAUSE_TIMER that server and client share
+      logGameSnapshot(roomCode, userID, "pauseTimer");
     }
   });
 
