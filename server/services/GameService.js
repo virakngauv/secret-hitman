@@ -1,5 +1,6 @@
 import gameStore from "../GameStore.js";
 import { shuffledArray } from "../helpers/util/index.js";
+import { logTimerEvent } from "../logger/index.js";
 import userStore from "../UserStore.js";
 
 // TODO: make enum for GameState, PlayerStatus, TileType, TileState
@@ -294,7 +295,7 @@ class GameService {
           tile.state = TileState.DISABLED_TRANSPARENT;
         } else {
           // Should not be reachable
-          console.warn(`Possible Error: playerStatus is ${playerStatus}`);
+          console.warn(`Possible Error: Player Status is not Codemaster, Active, or Inactive. Player Status is ${playerStatus}`);
         }
       } else {
         // Else branch reached if claimed by another player:
@@ -393,7 +394,7 @@ class GameService {
     const lastPlayerID = Array.from(game.players.keys()).pop();
     const codemasterID = game.playerArchive[game.currentCodemasterIndex];
     const lastPlayerIsCodemaster = lastPlayerID === codemasterID;
-    console.log(`lastPlayerID is ${lastPlayerID} and codemasterID is ${codemasterID}`);
+    // console.log(`lastPlayerID is ${lastPlayerID} and codemasterID is ${codemasterID}`);
 
     return lastPlayerIsCodemaster;
   }
@@ -486,7 +487,7 @@ class GameService {
     const game = gameStore.getGame(roomCode);
     const player = game.players.get(userID);
     player.status = playerStatus;
-    console.log(`markPlayerStatus's playerStatus is ${playerStatus}`);
+    // console.log(`markPlayerStatus's playerStatus is ${playerStatus}`);
 
     // console.log(`markPlayerStatus's players is ${JSON.stringify(Array.from(game.players.values()), null, 2)}`);
 
@@ -550,9 +551,9 @@ class GameService {
       }, 0
     );
     const allTargetsClaimed = numberOfTargetsClaimed === this.numberOfTargetTiles;
-    console.log(`numberOfTargetsClaimed is ${numberOfTargetsClaimed}`);
-    console.log(`this.numberOfTargetTiles is ${this.numberOfTargetTiles}`);
-    console.log(`allTargetsClaimed is ${allTargetsClaimed}`);
+    // console.log(`numberOfTargetsClaimed is ${numberOfTargetsClaimed}`);
+    // console.log(`this.numberOfTargetTiles is ${this.numberOfTargetTiles}`);
+    // console.log(`allTargetsClaimed is ${allTargetsClaimed}`);
 
     if (noPlayersActive || allTargetsClaimed) {
       this.endTurn(roomCode);
@@ -709,7 +710,7 @@ class GameService {
       // TODO: remove magic number
       const totalTime = game.roundPhase === RoundPhase.HINT ? 60000 : 15000;
       if (game.gameState === GameState.GAME) {
-        this.startTimer(roomCode, totalTime, () => this.endTurn(roomCode), `GameService's startNextTurn`);
+        this.startTimer(roomCode, totalTime, () => this.endTurn(roomCode), `GameService.startNextTurn`, `GameService.endTurn`);
       }
       // this.io.to(roomCode).emit("canSeeBoardChange");
     }
@@ -803,9 +804,9 @@ class GameService {
     }
   }
 
-  startTimer(roomCode, totalTime, functionToExecute, originForConsoleLog) {
+  startTimer(roomCode, totalTime, functionToExecute, eventName, functionName) {
     // this.clearGameTimer(roomCode);
-    console.log(`starting timer from ${originForConsoleLog}`);
+    // console.log(`starting timer from ${eventName}`);
     const game = gameStore.getGame(roomCode);
     // const timerTimeChangeEmitter = (time) => this.io.to(roomCode).volatile.emit("timerTimeChange", time);
 
@@ -832,6 +833,8 @@ class GameService {
         clearInterval(timerID);
         // this.io.to(roomCode).emit("timerTimeChange", null);
         // this.io.to(roomCode).emit("timerTimeChange");
+
+        logTimerEvent(roomCode, eventName, functionName);
       }
 
       time -= 1000;
