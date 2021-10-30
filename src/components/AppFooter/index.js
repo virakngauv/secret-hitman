@@ -4,7 +4,7 @@ import { Row, Col, Container, OverlayTrigger, Popover } from "react-bootstrap";
 const gratitudePopover = (
   <Popover id="gratitude-popover">
     <Popover.Body className="gratitude-popover-text">
-      {`Kim, Michelle, and Pearline for UX/UI feedback. Jenny, Cynthia, and Sovathya for early design questioning. Eilene for playing with friends. Truc for encouragement. Theo for poking around. Liz for spittin' facts. And all my playtesters! (I think that includes you?)`}
+      {`Kim, Michelle, and Pearline for UX/UI feedback. Jenny, Cynthia, and Sovathya for early design questioning. Eilene and Truc for playing with friends. Theo for poking around. Liz for spittin' facts. And all my playtesters! (I think that includes you?)`}
     </Popover.Body>
   </Popover>
 );
