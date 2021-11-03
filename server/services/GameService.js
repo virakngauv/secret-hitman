@@ -366,18 +366,25 @@ class GameService {
       }
     }
 
-    if (roundPhase === RoundPhase.GUESS && turnStatus === TurnStatus.ENDED) {
-      [headerMessage, footerMessage] = (() => {
-        if (isLastTurn) {
-          if (isLastRound) {
-            return ["game over!", "see rankings?"]
+    if (roundPhase === RoundPhase.GUESS) {
+       if (turnStatus === TurnStatus.ENDED) {
+        [headerMessage, footerMessage] = (() => {
+          if (isLastTurn) {
+            if (isLastRound) {
+              return ["game over!", "see rankings?"]
+            } else {
+              return ["round over", "start new round?"]
+            }
           } else {
-            return ["round over", "start new round?"]
+            return ["turn ended", "start next turn?"]
           }
-        } else {
-          return ["turn ended", "start next turn?"]
-        }
-      })();
+        })();
+      }
+    }
+
+    if (turnStatus === TurnStatus.PAUSED) {
+      headerMessage = "timer paused";
+      footerMessage = "restart timer?";
     } 
 
     return [headerMessage, footerMessage];
@@ -697,21 +704,35 @@ class GameService {
 
   startNextTurn(roomCode) {
     const game = gameStore.getGame(roomCode);
-    const roundPhase = game.roundPhase;
-    const turnStatus = game.turnStatus;
 
-    if (roundPhase === RoundPhase.HINT) {
+    if (game.roundPhase === RoundPhase.HINT) {
       this.updateRoundPhase(game, RoundPhase.GUESS);
     }
 
-    if (turnStatus === TurnStatus.ENDED) {
+    if (game.turnStatus === TurnStatus.PAUSED) {
+      this.updateTurnStatus(game, TurnStatus.ENDED);
+    }
+
+    if (game.turnStatus === TurnStatus.ENDED) {
       this.preparePlayersForNextTurn(game);
       this.assignNextCodemaster(roomCode);
       // this.resetHint(game);
       // this.setupNewTiles(game);
       this.updateTurnStatus(game, TurnStatus.STARTED);
 
-
+      // Having event emitters before timer, prevents wrong timer type being used on client because turnStatus hasn't updated by the time the new timer is emitting events
+      const isLastRound = this.isLastRound(roomCode);
+      const isLastTurn = this.isLastTurn(roomCode);
+      if (!(isLastRound && isLastTurn)) {
+        this.io.to(roomCode).emit("gameStateChange");
+        this.io.to(roomCode).emit("roundInfoChange");
+        this.io.to(roomCode).emit("roundPhaseChange");
+        this.io.to(roomCode).emit("turnStatusChange");
+        this.io.to(roomCode).emit("playerChange");
+        this.io.to(roomCode).emit("messagesChange");
+        this.io.to(roomCode).emit("hintChange");
+        this.io.to(roomCode).emit("tileChange");
+      }
 
       // this.io.to(roomCode).emit("gameStateChange");
       // this.io.to(roomCode).emit("roundInfoChange");
@@ -880,12 +901,15 @@ class GameService {
   pauseGameTimer(roomCode) {
     const game = gameStore.getGame(roomCode);
 
-    // End Node Timer
-    clearInterval(game.timerID);
+    // // End Node Timer
+    // clearInterval(game.timerID);
 
-    // Clear ID from Game Object and Client
-    game.timerID = null;
-    this.io.to(roomCode).emit("timerIDChange");
+    // // Clear ID from Game Object and Client
+    // game.timerID = null;
+    // this.io.to(roomCode).emit("timerIDChange");
+    this.updateTurnStatus(game, TurnStatus.PAUSED);
+    this.io.to(roomCode).emit("messagesChange");
+    this.clearGameTimer(roomCode);
   }
 
   clearGameTimer(roomCode) {

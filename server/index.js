@@ -417,18 +417,18 @@ io.on("connection", (socket) => {
       // Prevent multiple players from starting Next Turn timers
       const timerID = gameService.getTimerID(roomCode);
       if (!timerID) {
-        const startNextTurn =  () => {
-          gameService.startNextTurn(roomCode);
-          io.to(roomCode).emit("gameStateChange");
-          io.to(roomCode).emit("roundInfoChange");
-          io.to(roomCode).emit("roundPhaseChange");
-          io.to(roomCode).emit("turnStatusChange");
-          io.to(roomCode).emit("playerChange");
-          io.to(roomCode).emit("messagesChange");
-          io.to(roomCode).emit("hintChange");
-          io.to(roomCode).emit("tileChange");
-        };
-        gameService.startTimer(roomCode, TimerDelay.NEXT_TURN, startNextTurn, `startNextTurn`, `gameService.startNextTurn(roomCode)`);
+        // const startNextTurn =  () => {
+        //   gameService.startNextTurn(roomCode);
+        //   io.to(roomCode).emit("gameStateChange");
+        //   io.to(roomCode).emit("roundInfoChange");
+        //   io.to(roomCode).emit("roundPhaseChange");
+        //   io.to(roomCode).emit("turnStatusChange");
+        //   io.to(roomCode).emit("playerChange");
+        //   io.to(roomCode).emit("messagesChange");
+        //   io.to(roomCode).emit("hintChange");
+        //   io.to(roomCode).emit("tileChange");
+        // };
+        gameService.startTimer(roomCode, TimerDelay.NEXT_TURN, () => gameService.startNextTurn(roomCode), `startNextTurn`, `gameService.startNextTurn(roomCode)`);
         io.to(roomCode).emit("messagesChange");
       }
       // gameService.startNextTurn(roomCode);
