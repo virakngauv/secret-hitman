@@ -371,7 +371,7 @@ class GameService {
           if (isLastRound) {
             return ["game over!", "see rankings?"]
           } else {
-            return ["guessing phase over", "start new hint phase?"]
+            return ["round over", "start new round?"]
           }
         } else {
           return ["turn ended", "start next turn?"]
