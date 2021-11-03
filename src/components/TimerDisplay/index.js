@@ -22,7 +22,7 @@ function TimerDisplay(props) {
   const seconds = (totalSeconds - (minutes * 60));
   const minutesString = timerString(minutes);
   const secondsString = timerString(seconds);
-  const time = isTurnEnded ? `Starting in.. ${seconds}..` : `${minutesString}:${secondsString}`;
+  const time = isTurnEnded ? `Starting in.. ${seconds}` : `${minutesString}:${secondsString}`;
 
   // useEffect(() => {
 

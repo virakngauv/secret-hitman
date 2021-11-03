@@ -295,9 +295,14 @@ io.on("connection", (socket) => {
     const roomCode = socket.roomCode;
     const userID = socket.userID;
 
-    if (gameService.isValidRoomAndCodemaster(roomCode, userID)) {
-      // console.log(`submithint's hint is ${hint}`);
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const gameState = gameService.getGameState(roomCode);
+      if (gameState !== GameState.GAME) {
+        io.to(socket.id).emit("gameStateChange");
+        return;
+      }
       gameService.setHintForPlayer(roomCode, hint, userID);
+      gameService.checkAndEndTurnIfTurnShouldEnd(roomCode);
       
 
       // const roundPhase = gameService.getRoundPhase(roomCode);
@@ -306,6 +311,7 @@ io.on("connection", (socket) => {
       // } else if (roundPhase === RoundPhase.GUESS) {
       // }
 
+      // TODO: can probably just emit to the socket that requested it since the hint/messages are user specific
       io.to(roomCode).emit("messagesChange");
       io.to(roomCode).emit("hintChange");
 
@@ -408,9 +414,21 @@ io.on("connection", (socket) => {
     const userID = socket.userID;
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      // Prevent multiple players from starting Next Turn timers
       const timerID = gameService.getTimerID(roomCode);
       if (!timerID) {
-        gameService.startTimer(roomCode, TimerDelay.NEXT_TURN, () => gameService.startNextTurn(roomCode), `startNextTurn`, `gameService.startNextTurn(roomCode)`);
+        const startNextTurn =  () => {
+          gameService.startNextTurn(roomCode);
+          io.to(roomCode).emit("gameStateChange");
+          io.to(roomCode).emit("roundInfoChange");
+          io.to(roomCode).emit("roundPhaseChange");
+          io.to(roomCode).emit("turnStatusChange");
+          io.to(roomCode).emit("playerChange");
+          io.to(roomCode).emit("messagesChange");
+          io.to(roomCode).emit("hintChange");
+          io.to(roomCode).emit("tileChange");
+        };
+        gameService.startTimer(roomCode, TimerDelay.NEXT_TURN, startNextTurn, `startNextTurn`, `gameService.startNextTurn(roomCode)`);
         io.to(roomCode).emit("messagesChange");
       }
       // gameService.startNextTurn(roomCode);
@@ -433,11 +451,14 @@ io.on("connection", (socket) => {
     const userID = socket.userID;
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
-      const isLastRound = gameService.isLastRound(roomCode);
-      const isLastTurn = gameService.isLastTurn(roomCode);
+      const gameState = gameService.getGameState(roomCode);
+      if (gameState !== GameState.END) {
+        const isLastRound = gameService.isLastRound(roomCode);
+        const isLastTurn = gameService.isLastTurn(roomCode);
 
-      if (isLastRound && isLastTurn) {
-        gameService.startNextTurn(roomCode);
+        if (isLastRound && isLastTurn) {
+          gameService.startNextTurn(roomCode);
+        }
       }
 
       logGameSnapshot(roomCode, userID, "endGame");

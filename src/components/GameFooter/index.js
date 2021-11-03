@@ -28,15 +28,17 @@ function GameFooter(props) {
 
   if (isTurnEnded) {
     return <GameFooterEnd timerTime={timerTime} timerID={timerID} roundInfo={roundInfo} setGameState={setGameState} />
-    // return <GameFooterEnd isCodemaster={isCodemaster} isActive={isActive} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} setMessages={setMessages} />
-  } else if (isCodemaster) {
-    if (roundPhase === RoundPhase.HINT) {
-      return <GameFooterCodemaster roomCode={roomCode} hint={hint} />
-    } else {
+  } else if (roundPhase === RoundPhase.HINT) {
+    return <GameFooterCodemaster roomCode={roomCode} hint={hint} />
+  } else if (roundPhase === RoundPhase.GUESS) {
+    if (isCodemaster) {
       return null;
+    } else {
+      return <GameFooterHitman isInactive={isInactive} setTiles={setTiles} />
     }
   } else {
-    return <GameFooterHitman isInactive={isInactive} setTiles={setTiles} />
+    // Should not be reachable
+    return null;
   }
 }
 

@@ -150,6 +150,7 @@ class GameService {
     });
   }
 
+  // TODO: this method has a lot of important functionality in it, maybe rename and move codemaster code to another function
   assignNextCodemaster(roomCode) {
     const game = gameStore.getGame(roomCode);
     const currentCodemasterIndex = game.currentCodemasterIndex;
@@ -425,6 +426,9 @@ class GameService {
     const game = gameStore.getGame(roomCode);
     const player = game.players.get(userID);
     player.hint = hint;
+
+    this.markPlayerStatus(roomCode, userID, PlayerStatus.ACTIVE);
+    this.io.to(roomCode).emit("playerChange");
   }
 
   resetHintsForAllPlayers(game) {
@@ -535,29 +539,39 @@ class GameService {
   }
 
   checkAndEndTurnIfTurnShouldEnd(roomCode) {
-    // this.markPlayerStatus(roomCode, userID, PlayerStatus.INACTIVE);
-
     const game = gameStore.getGame(roomCode);
-
     const players = game.players;
-    const noPlayersActive = Array.from(players.values()).reduce(
-      (readyStatusSoFar, currentPlayer) => {
-        return readyStatusSoFar && currentPlayer.status !== PlayerStatus.ACTIVE
-      }, true
-    );
+    const roundPhase = game.roundPhase;
 
-    const numberOfTargetsClaimed = players.get(game.currentCodemasterID).tiles.reduce(
-      (numberOfTargetsClaimedSoFar, currentTile) => {
-        return currentTile.type === TileType.TARGET && currentTile.claimers.length > 0 ? numberOfTargetsClaimedSoFar + 1 : numberOfTargetsClaimedSoFar;
-      }, 0
-    );
-    const allTargetsClaimed = numberOfTargetsClaimed === this.numberOfTargetTiles;
-    // console.log(`numberOfTargetsClaimed is ${numberOfTargetsClaimed}`);
-    // console.log(`this.numberOfTargetTiles is ${this.numberOfTargetTiles}`);
-    // console.log(`allTargetsClaimed is ${allTargetsClaimed}`);
+    if (roundPhase === RoundPhase.HINT) {
+      const noCodemastersLeft = Array.from(players.values()).reduce(
+        (readyStatusSoFar, currentPlayer) => {
+          return readyStatusSoFar && currentPlayer.status !== PlayerStatus.CODEMASTER
+        }, true
+      );
 
-    if (noPlayersActive || allTargetsClaimed) {
-      this.endTurn(roomCode);
+      if (noCodemastersLeft) {
+        this.endTurn(roomCode);
+      }
+    } else if (roundPhase === RoundPhase.GUESS) {
+      const noPlayersActive = Array.from(players.values()).reduce(
+        (readyStatusSoFar, currentPlayer) => {
+          return readyStatusSoFar && currentPlayer.status !== PlayerStatus.ACTIVE
+        }, true
+      );
+
+      const numberOfTargetsClaimed = players.get(game.currentCodemasterID).tiles.reduce(
+        (numberOfTargetsClaimedSoFar, currentTile) => {
+          return currentTile.type === TileType.TARGET && currentTile.claimers.length > 0 ? numberOfTargetsClaimedSoFar + 1 : numberOfTargetsClaimedSoFar;
+        }, 0
+      );
+      const allTargetsClaimed = numberOfTargetsClaimed === this.numberOfTargetTiles;
+
+      if (noPlayersActive || allTargetsClaimed) {
+        this.endTurn(roomCode);
+      }
+    } else {
+      console.warn(`Possible Error: Should not be checking to end turn if not in hint or guess phase.`)
     }
   }
 
@@ -699,14 +713,14 @@ class GameService {
 
 
 
-      this.io.to(roomCode).emit("gameStateChange");
-      this.io.to(roomCode).emit("roundInfoChange");
-      this.io.to(roomCode).emit("roundPhaseChange");
-      this.io.to(roomCode).emit("turnStatusChange");
-      this.io.to(roomCode).emit("playerChange");
-      this.io.to(roomCode).emit("messagesChange");
-      this.io.to(roomCode).emit("hintChange");
-      this.io.to(roomCode).emit("tileChange");
+      // this.io.to(roomCode).emit("gameStateChange");
+      // this.io.to(roomCode).emit("roundInfoChange");
+      // this.io.to(roomCode).emit("roundPhaseChange");
+      // this.io.to(roomCode).emit("turnStatusChange");
+      // this.io.to(roomCode).emit("playerChange");
+      // this.io.to(roomCode).emit("messagesChange");
+      // this.io.to(roomCode).emit("hintChange");
+      // this.io.to(roomCode).emit("tileChange");
 
       // TODO: remove magic number
       const totalTime = game.roundPhase === RoundPhase.HINT ? TimerDelay.HINT : TimerDelay.GUESS;
@@ -763,7 +777,11 @@ class GameService {
     // const playerStatus = gameState === GameState.GAME && turnStatus !== TurnStatus.ENDED ? PlayerStatus.ACTIVE : PlayerStatus.INACTIVE;
     const playerStatus = (() => {
       if (roundPhase === RoundPhase.HINT) {
-        return PlayerStatus.CODEMASTER;
+        if (turnStatus !== TurnStatus.ENDED) {
+          return PlayerStatus.CODEMASTER;
+        } else {
+          return PlayerStatus.ACTIVE;
+        }
       } else if (roundPhase === RoundPhase.GUESS && turnStatus !== TurnStatus.ENDED) {
         return PlayerStatus.ACTIVE;
       } else {
