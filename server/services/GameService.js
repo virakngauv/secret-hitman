@@ -1,3 +1,4 @@
+import { TimerDelay } from "../../constants/TimerDelay.js";
 import gameStore from "../GameStore.js";
 import { shuffledArray } from "../helpers/util/index.js";
 import { logTimerEvent } from "../logger/index.js";
@@ -708,7 +709,7 @@ class GameService {
       this.io.to(roomCode).emit("tileChange");
 
       // TODO: remove magic number
-      const totalTime = game.roundPhase === RoundPhase.HINT ? 60000 : 15000;
+      const totalTime = game.roundPhase === RoundPhase.HINT ? TimerDelay.HINT : TimerDelay.GUESS;
       if (game.gameState === GameState.GAME) {
         this.startTimer(roomCode, totalTime, () => this.endTurn(roomCode), `GameService.startNextTurn`, `GameService.endTurn`);
       }

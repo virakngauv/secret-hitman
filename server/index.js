@@ -3,6 +3,7 @@ import fs from "fs";
 import http from "http";
 import https from "https";
 import { Server } from "socket.io";
+import { TimerDelay } from "../constants/TimerDelay.js";
 
 import gameStore from "./GameStore.js";
 import { generateRandomId } from "./helpers/util/index.js"
@@ -409,7 +410,7 @@ io.on("connection", (socket) => {
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
       const timerID = gameService.getTimerID(roomCode);
       if (!timerID) {
-        gameService.startTimer(roomCode, 3000, () => gameService.startNextTurn(roomCode), `startNextTurn`, `gameService.startNextTurn(roomCode)`);
+        gameService.startTimer(roomCode, TimerDelay.NEXT_TURN, () => gameService.startNextTurn(roomCode), `startNextTurn`, `gameService.startNextTurn(roomCode)`);
         io.to(roomCode).emit("messagesChange");
       }
       // gameService.startNextTurn(roomCode);
@@ -569,7 +570,7 @@ io.on("connection", (socket) => {
       //   // io.to(roomCode).emit("timerTimeChange", null);
       // };
 
-      gameService.startTimer(roomCode, 60000, () => gameService.endTurn(roomCode), `startGame`, `gameService.endTurn`);
+      gameService.startTimer(roomCode, TimerDelay.HINT, () => gameService.endTurn(roomCode), `startGame`, `gameService.endTurn`);
       io.to(roomCode).emit("gameStateChange");
 
       // TODO: shouldn't 'startGame' have a roomCode and userID on the socket? check if can configure call to ".isValidRoomAndUser" format
