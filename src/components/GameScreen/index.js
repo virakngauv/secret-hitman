@@ -49,8 +49,9 @@ function GameScreen(props) {
   const isInactive = player && player.status === PlayerStatus.INACTIVE;
   const [headerMessage, footerMessage] = messages;
   const isTurnEnded = turnStatus === TurnStatus.ENDED;
+  const isTurnPausedOrEnded = turnStatus === TurnStatus.PAUSED || turnStatus === TurnStatus.ENDED;
   const shouldShowMessage = (message) => {
-    if (turnStatus === TurnStatus.ENDED) {
+    if (isTurnPausedOrEnded) {
       return timerTime === null && !!message;
     }
 
@@ -100,12 +101,12 @@ function GameScreen(props) {
     <Container className="screen">
       <GameInfo roomCode={roomCode} roundInfo={roundInfo} />
       <PlayerRoster players={players} />
-      {timerTime !== null && <TimerDisplay time={timerTime} isTurnEnded={isTurnEnded} />}
+      {timerTime !== null && <TimerDisplay time={timerTime} isTurnPausedOrEnded={isTurnPausedOrEnded} />}
       {shouldShowMessage(headerMessage) && <Announcer message={headerMessage} />}
       {hint && <Announcer message={hint} />}
       <GameBoard tiles={tiles} />
       {shouldShowMessage(footerMessage) && <Announcer message={footerMessage} />}
-      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isTurnEnded={isTurnEnded} hint={hint} setTiles={setTiles} roundPhase={roundPhase} timerTime={timerTime} timerID={timerID} roundInfo={roundInfo} setGameState={setGameState}/>
+      <GameFooter roomCode={roomCode} isCodemaster={isCodemaster} isInactive={isInactive} isTurnPausedOrEnded={isTurnPausedOrEnded} hint={hint} setTiles={setTiles} roundPhase={roundPhase} timerTime={timerTime} timerID={timerID} roundInfo={roundInfo} setGameState={setGameState}/>
     </Container>
   );
 }

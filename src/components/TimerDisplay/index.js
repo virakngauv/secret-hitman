@@ -4,7 +4,7 @@ import Announcer from "../Announcer";
 function TimerDisplay(props) {
   const totalMiliseconds = props.time;
   // const setTimerTime = props.setTimerTime;
-  const isTurnEnded = props.isTurnEnded;
+  const isTurnPausedOrEnded = props.isTurnPausedOrEnded;
 
   // const [blinkTime, setBlinkTime] = useState(false);
   // const [blinkTimerID, setBlinkTimerID] = useState();
@@ -22,7 +22,7 @@ function TimerDisplay(props) {
   const seconds = (totalSeconds - (minutes * 60));
   const minutesString = timerString(minutes);
   const secondsString = timerString(seconds);
-  const time = isTurnEnded ? `Starting in.. ${seconds}..` : `${minutesString}:${secondsString}`;
+  const time = isTurnPausedOrEnded ? `Starting in.. ${seconds}` : `${minutesString}:${secondsString}`;
 
   // useEffect(() => {
 

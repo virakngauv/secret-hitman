@@ -13,7 +13,7 @@ function GameFooter(props) {
   const isCodemaster = props.isCodemaster;
   const isInactive = props.isInactive;
   // const isActive = props.isActive;
-  const isTurnEnded = props.isTurnEnded;
+  const isTurnPausedOrEnded = props.isTurnPausedOrEnded;
   const hint = props.hint;
   const setTiles = props.setTiles;
   // const playerCanSeeBoard = props.playerCanSeeBoard;
@@ -26,17 +26,19 @@ function GameFooter(props) {
   const roundInfo = props.roundInfo;
   const setGameState = props.setGameState;
 
-  if (isTurnEnded) {
+  if (isTurnPausedOrEnded) {
     return <GameFooterEnd timerTime={timerTime} timerID={timerID} roundInfo={roundInfo} setGameState={setGameState} />
-    // return <GameFooterEnd isCodemaster={isCodemaster} isActive={isActive} setTiles={setTiles} playerCanSeeBoard={playerCanSeeBoard} setPlayerCanSeeBoard={setPlayerCanSeeBoard} players={players} setMessages={setMessages} />
-  } else if (isCodemaster) {
-    if (roundPhase === RoundPhase.HINT) {
-      return <GameFooterCodemaster roomCode={roomCode} hint={hint} />
-    } else {
+  } else if (roundPhase === RoundPhase.HINT) {
+    return <GameFooterCodemaster roomCode={roomCode} hint={hint} />
+  } else if (roundPhase === RoundPhase.GUESS) {
+    if (isCodemaster) {
       return null;
+    } else {
+      return <GameFooterHitman isInactive={isInactive} setTiles={setTiles} />
     }
   } else {
-    return <GameFooterHitman isInactive={isInactive} setTiles={setTiles} />
+    // Should not be reachable
+    return null;
   }
 }
 

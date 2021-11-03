@@ -3,6 +3,7 @@ import fs from "fs";
 import http from "http";
 import https from "https";
 import { Server } from "socket.io";
+import { TimerDelay } from "../constants/TimerDelay.js";
 
 import gameStore from "./GameStore.js";
 import { generateRandomId } from "./helpers/util/index.js"
@@ -294,9 +295,14 @@ io.on("connection", (socket) => {
     const roomCode = socket.roomCode;
     const userID = socket.userID;
 
-    if (gameService.isValidRoomAndCodemaster(roomCode, userID)) {
-      // console.log(`submithint's hint is ${hint}`);
+    if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      const gameState = gameService.getGameState(roomCode);
+      if (gameState !== GameState.GAME) {
+        io.to(socket.id).emit("gameStateChange");
+        return;
+      }
       gameService.setHintForPlayer(roomCode, hint, userID);
+      gameService.checkAndEndTurnIfTurnShouldEnd(roomCode);
       
 
       // const roundPhase = gameService.getRoundPhase(roomCode);
@@ -305,6 +311,7 @@ io.on("connection", (socket) => {
       // } else if (roundPhase === RoundPhase.GUESS) {
       // }
 
+      // TODO: can probably just emit to the socket that requested it since the hint/messages are user specific
       io.to(roomCode).emit("messagesChange");
       io.to(roomCode).emit("hintChange");
 
@@ -407,9 +414,21 @@ io.on("connection", (socket) => {
     const userID = socket.userID;
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
+      // Prevent multiple players from starting Next Turn timers
       const timerID = gameService.getTimerID(roomCode);
       if (!timerID) {
-        gameService.startTimer(roomCode, 3000, () => gameService.startNextTurn(roomCode), `startNextTurn`, `gameService.startNextTurn(roomCode)`);
+        // const startNextTurn =  () => {
+        //   gameService.startNextTurn(roomCode);
+        //   io.to(roomCode).emit("gameStateChange");
+        //   io.to(roomCode).emit("roundInfoChange");
+        //   io.to(roomCode).emit("roundPhaseChange");
+        //   io.to(roomCode).emit("turnStatusChange");
+        //   io.to(roomCode).emit("playerChange");
+        //   io.to(roomCode).emit("messagesChange");
+        //   io.to(roomCode).emit("hintChange");
+        //   io.to(roomCode).emit("tileChange");
+        // };
+        gameService.startTimer(roomCode, TimerDelay.NEXT_TURN, () => gameService.startNextTurn(roomCode), `startNextTurn`, `gameService.startNextTurn(roomCode)`);
         io.to(roomCode).emit("messagesChange");
       }
       // gameService.startNextTurn(roomCode);
@@ -432,11 +451,14 @@ io.on("connection", (socket) => {
     const userID = socket.userID;
 
     if (gameService.isValidRoomAndUser(roomCode, userID)) {
-      const isLastRound = gameService.isLastRound(roomCode);
-      const isLastTurn = gameService.isLastTurn(roomCode);
+      const gameState = gameService.getGameState(roomCode);
+      if (gameState !== GameState.END) {
+        const isLastRound = gameService.isLastRound(roomCode);
+        const isLastTurn = gameService.isLastTurn(roomCode);
 
-      if (isLastRound && isLastTurn) {
-        gameService.startNextTurn(roomCode);
+        if (isLastRound && isLastTurn) {
+          gameService.startNextTurn(roomCode);
+        }
       }
 
       logGameSnapshot(roomCode, userID, "endGame");
@@ -569,7 +591,7 @@ io.on("connection", (socket) => {
       //   // io.to(roomCode).emit("timerTimeChange", null);
       // };
 
-      gameService.startTimer(roomCode, 60000, () => gameService.endTurn(roomCode), `startGame`, `gameService.endTurn`);
+      gameService.startTimer(roomCode, TimerDelay.HINT, () => gameService.endTurn(roomCode), `startGame`, `gameService.endTurn`);
       io.to(roomCode).emit("gameStateChange");
 
       // TODO: shouldn't 'startGame' have a roomCode and userID on the socket? check if can configure call to ".isValidRoomAndUser" format
