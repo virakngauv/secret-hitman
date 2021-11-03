@@ -471,7 +471,15 @@ class GameService {
     const game = gameStore.getGame(roomCode);
     const players = Array.from(game.players.values());
 
-    const currentTurnNumber = 1 + players.findIndex((player) => player.status === PlayerStatus.CODEMASTER);
+    // const currentTurnNumber = 1 + players.findIndex((player) => player.status === PlayerStatus.CODEMASTER);
+    const currentTurnNumber = (() => {
+      if (game.currentCodemasterID === null) {
+        return 0;
+      } else {
+        const codemasterPlayerID = userStore.getPlayerID(game.currentCodemasterID);
+        return 1 + players.findIndex((player) => player.id === codemasterPlayerID);
+      }
+    })();
     const maxTurnNumber = players.length;
     const currentRoundNumber = game.roundNumber;
     const maxRoundNumber = this.maxRounds;
@@ -704,6 +712,8 @@ class GameService {
 
   startNextTurn(roomCode) {
     const game = gameStore.getGame(roomCode);
+    const isLastRound = this.isLastRound(roomCode);
+    const isLastTurn = this.isLastTurn(roomCode);
 
     if (game.roundPhase === RoundPhase.HINT) {
       this.updateRoundPhase(game, RoundPhase.GUESS);
@@ -720,9 +730,8 @@ class GameService {
       // this.setupNewTiles(game);
       this.updateTurnStatus(game, TurnStatus.STARTED);
 
-      // Having event emitters before timer, prevents wrong timer type being used on client because turnStatus hasn't updated by the time the new timer is emitting events
-      const isLastRound = this.isLastRound(roomCode);
-      const isLastTurn = this.isLastTurn(roomCode);
+      // Having event emitters before timer, prevents wrong timer type being used on client because turnStatus hasn't updated by the time the new timer is emitting events.
+      // Must calculate isLastRound and isLastTurn before assigning codemaster or new values will be updated.
       if (!(isLastRound && isLastTurn)) {
         this.io.to(roomCode).emit("gameStateChange");
         this.io.to(roomCode).emit("roundInfoChange");
