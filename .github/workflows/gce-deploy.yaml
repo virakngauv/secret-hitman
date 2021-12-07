@@ -59,12 +59,13 @@ jobs:
       run: |-
         docker push "gcr.io/$PROJECT_ID/$GCE_INSTANCE-image:$GITHUB_SHA"
 
-    # Add pruning and IP address update to VM startup script
+    # Add pruning, log clean up, and IP address update to VM startup script
     - name: Update startup script to prune and update IP address
       run: |-
         gcloud compute instances add-metadata $GCE_INSTANCE \
           --zone "$GCE_INSTANCE_ZONE" \
           --metadata=startup-script="#! /bin/bash
+            rm -r /home/codenames-hitman.com/var/log/letsencrypt
             docker image prune -af
             curl --location --request GET 'domains.google.com/nic/update?hostname=secrethitman.com' \
               --header 'User-Agent: VM' \
