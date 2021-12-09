@@ -21,7 +21,7 @@ on:
 
 env:
   PROJECT_ID: ${{ secrets.GCE_PROJECT }}
-  GCE_INSTANCE: sh-4
+  GCE_INSTANCE: sh-5
   GCE_INSTANCE_ZONE: us-east1-b
   DDNS_AUTH_STRING: ${{ secrets.DDNS_AUTH_STRING }}
 
@@ -65,7 +65,7 @@ jobs:
         gcloud compute instances add-metadata $GCE_INSTANCE \
           --zone "$GCE_INSTANCE_ZONE" \
           --metadata=startup-script="#! /bin/bash
-            rm -r /home/codenames-hitman.com/var/log/letsencrypt
+            rm -r /home/secrethitman.com/var/log/letsencrypt
             docker image prune -af
             curl --location --request GET 'domains.google.com/nic/update?hostname=secrethitman.com' \
               --header 'User-Agent: VM' \
